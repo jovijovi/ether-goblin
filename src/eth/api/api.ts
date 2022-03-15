@@ -159,7 +159,9 @@ export async function verifySignature(req, res) {
 		const composeKey = req.body.address + req.body.msg + req.body.sig;
 		if (cache.has(composeKey)) {
 			const result = cache.get(composeKey);
-			res.send(result);
+			res.send({
+				"verified": result,
+			});
 			return;
 		}
 

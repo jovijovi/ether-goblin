@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "strict": false,
+    "esModuleInterop": true,
+    "removeComments": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": [
+      "node_modules/@0x/typescript-typings/types",
+      "node_modules/@types"
+    ]
+  },
+  "include": [
+    "./lib/**/*",
+    "./src/**/*",
+    "./test/**/*",
+    "./scripts/**/*",
+    "./typechain-types/**/*"
+  ],
+  "files": [
+    "./hardhat.config.ts"
+  ],
+  "exclude": [
+    ".cicd",
+    "artifacts",
+    "cache",
+    "conf",
+    "devenv",
+    "dist",
+    "doc",
+    "node_modules"
+  ]
+}

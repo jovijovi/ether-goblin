@@ -1,0 +1,118 @@
+cluster:
+  name: cluster-name
+  id: dfd40d22-67f7-4590-84ae-30bace9adf72
+  description: 'cluster description'
+
+network:
+  ip: 0.0.0.0
+  httpServer:
+    enable: true
+    port: 56550
+  httpsServer:
+    enable: false
+    port: 56650
+    mutualTLS: false
+
+serviceInfo:
+  version: v1
+  hostName: HostName
+  serviceName: ether-goblin
+  processName: ether-goblin
+  ip: 127.0.0.1
+  port: 56550
+  tags:
+    - microservice
+    - typescript
+    - docker
+  id: acef44cc-e1a3-4a90-b9f1-6ccb168a7724
+
+log:
+  level: TRACE
+
+custom:
+  # Default network
+  defaultNetwork:
+    # Chain name
+    chain: polygon
+    # Network name
+    network: mumbai
+    # Use provider pool
+    providerPool: true
+
+  tx:
+    # GasLimit coefficient (%)
+    # Example: 110 means gasLimit * 110%
+    gasLimitC: 110
+    # Transfer confirmations
+    confirmations: 3
+
+  networks:
+    # Ethereum
+    ethereum:
+      mainnet:
+        # Chain ID
+        chainId: 1
+        # Provider URL
+        provider:
+          - 'YOUR PROVIDER'
+        # Blockchain explorer URL
+        browser: https://etherscan.io
+
+      ropsten:
+        chainId: 3
+        provider:
+          - 'YOUR PROVIDER'
+        browser: https://ropsten.etherscan.io
+
+      rinkeby:
+        chainId: 4
+        provider:
+          - 'YOUR PROVIDER'
+        browser: https://rinkeby.etherscan.io
+
+      goerli:
+        chainId: 5
+        provider:
+          - 'YOUR PROVIDER'
+        browser: https://goerli.etherscan.io
+
+    # Polygon
+    # Ref: https://docs.polygon.technology/docs/develop/network-details/network
+    polygon:
+      mainnet:
+        chainId: 137
+        provider:
+          - https://polygon-rpc.com
+          - https://matic-mainnet.chainstacklabs.com
+          - https://rpc-mainnet.maticvigil.com
+          - https://rpc-mainnet.matic.quiknode.pro
+          - https://matic-mainnet-full-rpc.bwarelabs.com
+        browser: https://polygonscan.com
+
+      mumbai:
+        chainId: 80001
+        provider:
+          - https://rpc-mumbai.maticvigil.com
+          - https://rpc-mumbai.matic.today
+          - https://matic-mumbai.chainstacklabs.com
+          - https://rpc-mumbai.maticvigil.com
+          - https://matic-testnet-archive-rpc.bwarelabs.com
+        browser: https://mumbai.polygonscan.com
+
+    # zkSync 2
+    zkSync:
+      # zkSync 2.0 (zkSync alpha testnet)
+      # Ref: https://v2-docs.zksync.io/dev/testnet/important-links.html
+      alpha:
+        chainId: 280
+        provider:
+          - https://zksync2-testnet.zksync.dev
+        browser: https://zksync2-testnet.zkscan.io
+
+    # Local Development
+    dev:
+      local:
+        chainId: 666
+        provider:
+          - http://localhost:8545
+        browser: http://localhost:4000

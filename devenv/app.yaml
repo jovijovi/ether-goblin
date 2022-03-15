@@ -6,6 +6,6 @@ services:
     image: ether-goblin:latest
     restart: always
     volumes:
-      - ./conf:/opt/app/conf
+      - ../conf:/opt/app/conf
     ports:
       - "56550:56550"

@@ -4,14 +4,20 @@ A microservice for calling ethereum APIs.
 
 ## Features
 
-- RESTFul APIs for ethereum
+- RESTFul APIs for the Ethereum Blockchain and its ecosystem
 - Microservice
-- Run in docker
+- Run in Docker
+
+## Supported Chains
+
+- [Ethereum](https://ethereum.org/)
+- [Polygon](https://polygon.technology/)
+- [zkSync 2.0 (alpha testnet)](https://zksync.io/)
 
 ## Development Environment
 
 - typescript `4.6.2`
-- node `v16.14.0`
+- node `v16.14.1`
 - ts-node `v10.7.0`
 - yarn `v1.22.17`
 

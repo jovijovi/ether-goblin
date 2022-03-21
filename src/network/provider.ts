@@ -53,7 +53,7 @@ export namespace MyProvider {
 		// Get random provider, range: [0, providerPool.length)
 		const index = util.random.RandIntBetween(0, providerPool.length);
 
-		log.RequestId().info("Network=%s, ChainId=%d, Provider=%s",
+		log.RequestId().trace("Network=%s, ChainId=%d, Provider=%s",
 			customConfig.GetDefaultNetwork(), providerPool[index].network.chainId, providerPool[index].connection.url);
 
 		return providerPool[index];

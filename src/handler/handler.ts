@@ -1,6 +1,7 @@
 import * as core from 'express-serve-static-core';
 import {ITaskHandler} from '@jovijovi/pedrojs-network-http';
 import * as eth from '../eth';
+import {yanft} from '../contracts';
 
 function defaultAPIs(router: core.Express) {
 	router.use(notFound);
@@ -9,6 +10,7 @@ function defaultAPIs(router: core.Express) {
 class privateImplHandlers implements ITaskHandler {
 	RegisterHandlers(router: core.Express) {
 		eth.Handler.APIs(router);
+		yanft.Handler.APIs(router);
 		defaultAPIs(router);
 	}
 }

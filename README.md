@@ -7,6 +7,7 @@ A microservice for calling ethereum APIs.
 - RESTFul APIs for the Ethereum Blockchain and its ecosystem
 - Microservice
 - Run in Docker
+- NFT APIs (under development)
 
 ## Supported Chains
 
@@ -74,6 +75,7 @@ A microservice for calling ethereum APIs.
 ## Roadmap
 
 - Documents
+- NFT APIs
 
 ## License
 

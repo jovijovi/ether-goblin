@@ -19,3 +19,4 @@
 /dist
 /*.tar
 /*.tar.gz
+/conf_dev

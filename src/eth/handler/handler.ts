@@ -13,6 +13,7 @@ function ethAPIs(router: core.Express) {
 	router.get('/api/v1/eth/balanceOf', API.getBalanceOf);
 	router.post('/api/v1/eth/transfer', API.transfer);
 	router.post('/api/v1/eth/verify', API.verifySignature);
+	router.post('/api/v1/eth/wallet', API.newWallet);
 }
 
 function publicAPIs(router: core.Express) {

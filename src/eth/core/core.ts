@@ -121,3 +121,23 @@ export async function VerifySig(address: string, msg: string, sig: string): Prom
 	const verifiedAddress = utils.verifyMessage(msg, sig)
 	return verifiedAddress.toLowerCase() === address.toLowerCase();
 }
+
+// Create new wallet address (Externally Owned Account)
+export async function NewWallet(entropy?: string): Promise<any> {
+	auditor.Check(entropy.length <= 64, "invalid entropy, max length is 64");
+	const wallet = Wallet.createRandom({
+		extraEntropy: utils.toUtf8Bytes(entropy),
+	});
+
+	const rsp = {
+		chain: customConfig.GetDefaultNetwork().chain,
+		network: customConfig.GetDefaultNetwork().network,
+		address: wallet.address,
+		pk: wallet.privateKey,
+		mnemonic: wallet.mnemonic.phrase,
+	};
+
+	log.RequestId().info("New wallet=%o", rsp);
+
+	return rsp;
+}

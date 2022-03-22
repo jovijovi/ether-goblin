@@ -179,3 +179,15 @@ export async function verifySignature(req, res) {
 
 	return;
 }
+
+// New wallet
+export async function newWallet(req, res) {
+	try {
+		const wallet = await Core.NewWallet(req.body.entropy);
+		res.send(wallet);
+	} catch (e) {
+		return MyResponse.Error(res, e);
+	}
+
+	return;
+}

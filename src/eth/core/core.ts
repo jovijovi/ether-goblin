@@ -141,3 +141,8 @@ export async function NewWallet(entropy?: string): Promise<any> {
 
 	return rsp;
 }
+
+// Verify address
+export async function VerifyAddress(address: string): Promise<boolean> {
+	return utils.isAddress(address);
+}

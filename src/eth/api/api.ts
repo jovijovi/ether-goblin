@@ -180,6 +180,42 @@ export async function verifySignature(req, res) {
 	return;
 }
 
+// Verify address
+export async function verifyAddress(req, res) {
+	if (!req.params ||
+		!req.params.address
+	) {
+		return MyResponse.BadRequest(res);
+	}
+
+	try {
+		// Set cache, ttl: 10min, max items: 1000
+		const cache = Cache.MemCache("verifyAddress", 1000 * 60 * 10, 1000);
+
+		// Check cache
+		if (cache.has(req.params.address)) {
+			const result = cache.get(req.params.address);
+			res.send({
+				"verified": result,
+			});
+			return;
+		}
+
+		const result = await Core.VerifyAddress(req.params.address);
+
+		res.send({
+			"verified": result,
+		});
+
+		// Update cache
+		cache.set(req.params.address, result);
+	} catch (e) {
+		return MyResponse.Error(res, e);
+	}
+
+	return;
+}
+
 // New wallet
 export async function newWallet(req, res) {
 	try {

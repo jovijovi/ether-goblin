@@ -27,7 +27,7 @@ serviceInfo:
   id: acef44cc-e1a3-4a90-b9f1-6ccb168a7724
 
 log:
-  level: TRACE
+  level: DEBUG
 
 custom:
   # Default network
@@ -45,6 +45,32 @@ custom:
     gasLimitC: 110
     # Transfer confirmations
     confirmations: 3
+
+  # Watchdog
+  watchdog:
+    enable: false
+    mailer:
+      smtp: 'SMTP SERVER'
+      port: 465
+      secure: true
+      user: 'YOUR EMAIL ACCOUNT'
+      password: ''
+      sender: 'Watchdog'
+      receivers:
+        - 'RECEIVER EMAIL ADDRESS'
+
+    # Check balance every 200 blocks
+    period: 200
+
+    # Rules
+    # '<': only monitor the account balance lower than the limit.
+    # '>': only monitor the account balance greater than the limit.
+    # '=': only monitor the account balance equal the limit.
+    addressList:
+      - address: 'YOUR ADDRESS'
+        rule: '<'
+        # limit unit is Wei
+        limit: '5000000000000000000'
 
   networks:
     # Ethereum

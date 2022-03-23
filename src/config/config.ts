@@ -32,10 +32,34 @@ export namespace customConfig {
 		confirmations: number
 	}
 
+	export class Mailer {
+		smtp: string
+		port: number
+		secure: boolean
+		user: string
+		password: string
+		sender: string
+		receivers: string[]
+	}
+
+	export class WatchedAddress {
+		address: string
+		rule: string
+		limit: string   // limit unit is Wei
+	}
+
+	class Watchdog {
+		enable: boolean
+		mailer: Mailer
+		period: number
+		addressList: WatchedAddress[]
+	}
+
 	export class CustomConfig {
 		defaultNetwork: DefaultNetwork
 		tx: TxConfig
 		networks: Chain
+		watchdog?: Watchdog
 	}
 
 	let customConfig: CustomConfig;
@@ -93,5 +117,14 @@ export namespace customConfig {
 	// GetBrowser returns blockchain browser URL
 	export function GetBrowser(): string {
 		return GetNetworkConfig(GetDefaultNetwork()).browser;
+	}
+
+	// GetWatchdog returns watchdog config
+	export function GetWatchdog(): Watchdog {
+		if (customConfig.watchdog) {
+			return customConfig.watchdog;
+		}
+
+		throw new Error(`GetWatchdog Failed, invalid config`);
 	}
 }

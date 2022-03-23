@@ -4,6 +4,7 @@ import {customConfig} from '../config';
 import {logo} from './logo';
 import * as network from '../network';
 import {RestfulHandlers} from '../handler';
+import {watchdog} from '../watchdog';
 
 function main() {
 	log.logo(logo);
@@ -16,7 +17,9 @@ function main() {
 		if (!r) {
 			sys.Shutdown();
 		}
-	})
+	});
+
+	watchdog.Run();
 }
 
 main();

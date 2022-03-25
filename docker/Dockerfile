@@ -7,6 +7,7 @@ ADD conf /opt/app_src/conf
 ADD contracts /opt/app_src/contracts
 ADD lib /opt/app_src/lib
 ADD src /opt/app_src/src
+ADD template /opt/app_src/template
 COPY package.json /opt/app_src/
 COPY tsconfig.json /opt/app_src/
 COPY yarn.lock /opt/app_src/

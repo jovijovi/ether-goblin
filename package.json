@@ -18,7 +18,7 @@
     "clean": "yarn hardhat clean && rm -rf ./dist",
     "test": "hardhat test",
     "typecheck": "yarn compile && yarn test && yarn tsc --noEmit",
-    "build": "yarn clean && yarn compile && tsc --build && cp -ap ./conf ./dist/",
+    "build": "yarn clean && yarn compile && tsc --build && cp -ap ./conf ./dist/ && cp -ap ./template ./dist/",
     "dev-run": "ts-node ./src/main/index.ts",
     "dist-run": "node ./dist/src/main/index.js"
   },

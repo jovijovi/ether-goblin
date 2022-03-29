@@ -8,7 +8,9 @@ export function APIs(router: core.Express) {
 
 function ethAPIs(router: core.Express) {
 	router.get('/api/v1/eth/gasPrice', API.getGasPrice);
-	router.get('/api/v1/eth/receipt', API.getReceipt);
+	router.get('/api/v1/eth/receipt', API.getTxReceipt);
+	router.get('/api/v1/eth/tx', API.getTxResponse);
+	router.get('/api/v1/eth/block', API.getBlock);
 	router.get('/api/v1/eth/blockNumber', API.getBlockNumber);
 	router.get('/api/v1/eth/balanceOf', API.getBalanceOf);
 	router.post('/api/v1/eth/transfer', API.transfer);

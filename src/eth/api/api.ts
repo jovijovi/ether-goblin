@@ -44,6 +44,32 @@ export async function getReceipt(req, res) {
 	return;
 }
 
+// Get tx
+export async function getTxResponse(req, res) {
+	if (!req.query ||
+		!req.query.txHash
+	) {
+		return MyResponse.BadRequest(res);
+	}
+
+	log.RequestId().debug("New request query=", req.query);
+
+	try {
+		const tx = await Core.GetTxResponse(req.query.txHash);
+
+		if (!tx) {
+			return MyResponse.NotFound(res);
+		}
+		res.send(tx);
+
+		log.RequestId().info("tx=", tx);
+	} catch (e) {
+		return MyResponse.Error(res, e);
+	}
+
+	return;
+}
+
 // Get block number
 export async function getBlockNumber(req, res) {
 	try {
@@ -54,6 +80,27 @@ export async function getBlockNumber(req, res) {
 		});
 
 		log.RequestId().info("blockNumber=", blockNumber);
+	} catch (e) {
+		return MyResponse.Error(res, e);
+	}
+
+	return;
+}
+
+// Get block by hash
+export async function getBlock(req, res) {
+	if (!req.query ||
+		!req.query.blockHash
+	) {
+		return MyResponse.BadRequest(res);
+	}
+
+	try {
+		const block = await Core.GetBlock(req.query.blockHash);
+
+		res.send(block);
+
+		log.RequestId().info("block=", block);
 	} catch (e) {
 		return MyResponse.Error(res, e);
 	}

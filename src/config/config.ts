@@ -1,18 +1,6 @@
 import {config} from '@jovijovi/pedrojs-common';
 
 export namespace customConfig {
-	/***************
-    # Ethereum Config Example
-    ethereum:
-      mainnet:
-        # Chain ID
-        chainId: 1
-        # Provider URL
-        provider: https://http-mainnet.chain.pixie.xyz
-        # Blockchain explorer URL
-        browser: https://etherscan.io
-	 ****************/
-
 	class Network {
 		chainId: number
 		provider: string[]
@@ -55,11 +43,23 @@ export namespace customConfig {
 		addressList: WatchedAddress[]
 	}
 
+	class Event {
+		type: string[]
+		responseCode?: string | number
+		callback: string
+	}
+
+	class Events {
+		enable: boolean
+		transfer: Event
+	}
+
 	export class CustomConfig {
 		defaultNetwork: DefaultNetwork
 		tx: TxConfig
 		networks: Chain
 		watchdog?: Watchdog
+		events?: Events
 	}
 
 	let customConfig: CustomConfig;
@@ -126,5 +126,14 @@ export namespace customConfig {
 		}
 
 		throw new Error(`GetWatchdog Failed, invalid config`);
+	}
+
+	// GetEvents returns events config
+	export function GetEvents(): Events {
+		if (customConfig.events) {
+			return customConfig.events;
+		}
+
+		throw new Error(`GetEvents Failed, invalid config`);
 	}
 }

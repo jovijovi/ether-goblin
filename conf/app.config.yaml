@@ -72,6 +72,23 @@ custom:
         # limit unit is Wei
         limit: '5000000000000000000'
 
+  # Events
+  events:
+    enable: false
+    transfer:
+      # Enabled event type
+      type:
+        # 'mint' means transfer token from zero address to another address
+        - mint
+        # 'burn' means transfer token to zero address
+        - burn
+
+      # Succeed response code
+      responseCode: 'YOUR RESPONSE CODE'
+
+      # Callback URL
+      callback: 'YOUR CALLBACK URL'
+
   networks:
     # Ethereum
     ethereum:

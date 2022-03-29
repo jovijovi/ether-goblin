@@ -1,15 +1,6 @@
 import {log} from '@jovijovi/pedrojs-common';
 import * as network from '../../../network';
-import {YaNFT, YaNFT__factory} from '../../../../typechain-types';
-import {GetWallet} from '../../../eth/core/common';
-
-// Get contract class
-function GetYaNFTContract(address: string, pk?: string): YaNFT {
-	if (!pk) {
-		return YaNFT__factory.connect(address, network.MyProvider.Get());
-	}
-	return YaNFT__factory.connect(address, GetWallet(pk));
-}
+import {GetYaNFTContract} from './common';
 
 // GetTotalSupply returns NFT contract total supply
 export async function GetTotalSupply(address: string): Promise<any> {

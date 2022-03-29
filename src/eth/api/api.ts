@@ -19,7 +19,7 @@ export async function getGasPrice(req, res) {
 }
 
 // Get tx receipt
-export async function getReceipt(req, res) {
+export async function getTxReceipt(req, res) {
 	if (!req.query ||
 		!req.query.txHash
 	) {
@@ -29,11 +29,14 @@ export async function getReceipt(req, res) {
 	log.RequestId().debug("New request query=", req.query);
 
 	try {
-		const receipt = await Core.GetReceipt(req.query.txHash);
+		const receipt: any = await Core.GetTxReceipt(req.query.txHash);
 
 		if (!receipt) {
 			return MyResponse.NotFound(res);
 		}
+		// Set value in response
+		const tx = await Core.GetTxResponse(req.query.txHash);
+		receipt.value = tx.value.toString();
 		res.send(receipt);
 
 		log.RequestId().info("receipt=", receipt);

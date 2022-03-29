@@ -108,7 +108,7 @@ export async function getBlock(req, res) {
 	return;
 }
 
-// Get block number
+// Get balance of address
 export async function getBalanceOf(req, res) {
 	if (!req.query ||
 		!req.query.address
@@ -131,7 +131,7 @@ export async function getBalanceOf(req, res) {
 	return;
 }
 
-// Get block number
+// Observer address balance
 export async function observer(req, res) {
 	if (!req.params ||
 		!req.params.address

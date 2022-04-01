@@ -81,12 +81,12 @@ export function Run() {
 
 			// Check from
 			if (tx.topics[1] == constants.HashZero && !conf.transfer.type.includes(EventTypeMint)) {
-				log.RequestId().debug("Mint event, skipped");
+				log.RequestId().trace("Mint event, skipped");
 				return;
 			}
 			// Check to
 			else if (tx.topics[2] == constants.HashZero && !conf.transfer.type.includes(EventTypeBurn)) {
-				log.RequestId().debug("Burn event, skipped");
+				log.RequestId().trace("Burn event, skipped");
 				return;
 			}
 

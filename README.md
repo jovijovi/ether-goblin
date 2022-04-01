@@ -9,6 +9,7 @@ A microservice for calling ethereum APIs.
 - Run in Docker
 - NFT APIs (under development)
 - A simple balance Watchdog
+- NFT transfer tx listener
 
 ## Supported Chains
 
@@ -77,6 +78,7 @@ A microservice for calling ethereum APIs.
 
 - Documents
 - NFT APIs
+- ERC20 APIs
 
 ## License
 

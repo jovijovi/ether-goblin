@@ -37,6 +37,21 @@ const eventQueue = new util.Queue<EventTransfer>();
 // Callback job (concurrency = 10)
 const callbackJob: queueAsPromised<EventTransfer> = fastq.promise(callback, 10);
 
+// Check if tx is ERC721 transfer
+function checkTx(tx: any): boolean {
+	if (!tx || !tx.topics) {
+		return false;
+	} else if (tx.topics.length == 4
+		&& tx.topics[0]
+		&& tx.topics[1]
+		&& tx.topics[2]
+		&& tx.topics[3]) {
+		return true;
+	}
+
+	return false;
+}
+
 export function Run() {
 	// Check config
 	const conf = customConfig.GetEvents();
@@ -59,7 +74,8 @@ export function Run() {
 
 	provider.on(evtFilter, (tx) => {
 		try {
-			if (!tx || !tx.topics) {
+			// Check Tx
+			if (!checkTx(tx)) {
 				return;
 			}
 

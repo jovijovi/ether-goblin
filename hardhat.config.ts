@@ -1,11 +1,16 @@
 import '@nomiclabs/hardhat-waffle';
 import '@typechain/hardhat';
+import {env} from 'process';
 import {HardhatUserConfig, NetworkUserConfig} from 'hardhat/types';
 import {customConfig as AppCustomConfig} from './src/config';
 import {config as AppConfig, log} from '@jovijovi/pedrojs-common';
 
 // Default app config file
 const defaultAppConfig = './conf/app.config.yaml'
+
+function getDeveloperPK(): string {
+  return env.DEVELOPER_PK ? env.DEVELOPER_PK : `1234567890123456789012345678901234567890123456789012345678901234`;
+}
 
 function getNetworkConfig(): NetworkUserConfig {
   AppConfig.LoadConfig(defaultAppConfig);
@@ -17,7 +22,7 @@ function getNetworkConfig(): NetworkUserConfig {
   return {
     chainId: AppCustomConfig.GetChainId(),
     url: AppCustomConfig.GetProvider(),
-    accounts: [`0x1234567890123456789012345678901234567890123456789012345678901234`]
+    accounts: [`0x${getDeveloperPK()}`]
   }
 }
 

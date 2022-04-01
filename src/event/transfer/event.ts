@@ -84,12 +84,14 @@ export function Run() {
 				log.RequestId().trace("Mint event, skipped");
 				return;
 			}
+
 			// Check to
 			else if (tx.topics[2] == constants.HashZero && !conf.transfer.type.includes(EventTypeBurn)) {
 				log.RequestId().trace("Burn event, skipped");
 				return;
 			}
 
+			// Build event
 			const evt: EventTransfer = {
 				address: tx.address,
 				blockNumber: tx.blockNumber,
@@ -100,6 +102,7 @@ export function Run() {
 				tokenId: Number(utils.hexValue(tx.topics[3])),
 			}
 
+			// Push event to queue
 			eventQueue.Push(evt);
 		} catch (e) {
 			log.RequestId().error(e);

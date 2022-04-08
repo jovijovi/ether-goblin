@@ -27,7 +27,7 @@ function getNetworkConfig(): NetworkUserConfig {
 }
 
 const config: HardhatUserConfig = {
-  defaultNetwork: 'custom',
+  // defaultNetwork: 'custom',
   networks: {
     custom: getNetworkConfig()
   },

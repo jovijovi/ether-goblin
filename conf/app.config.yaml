@@ -138,7 +138,6 @@ custom:
           - https://rpc-mumbai.maticvigil.com
           - https://rpc-mumbai.matic.today
           - https://matic-mumbai.chainstacklabs.com
-          - https://rpc-mumbai.maticvigil.com
           - https://matic-testnet-archive-rpc.bwarelabs.com
         browser: https://mumbai.polygonscan.com
 

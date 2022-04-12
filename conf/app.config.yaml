@@ -129,7 +129,6 @@ custom:
           - https://matic-mainnet.chainstacklabs.com
           - https://rpc-mainnet.maticvigil.com
           - https://rpc-mainnet.matic.quiknode.pro
-          - https://matic-mainnet-full-rpc.bwarelabs.com
         browser: https://polygonscan.com
 
       mumbai:
@@ -138,7 +137,6 @@ custom:
           - https://rpc-mumbai.maticvigil.com
           - https://rpc-mumbai.matic.today
           - https://matic-mumbai.chainstacklabs.com
-          - https://matic-testnet-archive-rpc.bwarelabs.com
         browser: https://mumbai.polygonscan.com
 
     # zkSync 2

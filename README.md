@@ -1,8 +1,6 @@
 # Ether Goblin
 
-[![npm](https://img.shields.io/npm/v/@jovijovi/ether-goblin.svg)](https://www.npmjs.com/package/@jovijovi/ether-goblin)
 [![GitHub Actions](https://github.com/jovijovi/ether-goblin/workflows/Test/badge.svg)](https://github.com/jovijovi/ether-goblin)
-[![Coverage](https://img.shields.io/codecov/c/github/jovijovi/ether-goblin?label=\&logo=codecov\&logoColor=fff)](https://codecov.io/gh/jovijovi/ether-goblin)
 
 A microservice for calling ethereum APIs.
 

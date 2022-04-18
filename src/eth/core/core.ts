@@ -131,7 +131,9 @@ export async function NewWallet(entropy?: string): Promise<any> {
 		extraEntropy: entropy ? utils.toUtf8Bytes(entropy) : randomFillSync(new Uint8Array(MaxEntropyLength)),
 	});
 
-	const rsp = {
+	log.RequestId().debug("New wallet address=", wallet.address);
+
+	return {
 		chain: customConfig.GetDefaultNetwork().chain,
 		network: customConfig.GetDefaultNetwork().network,
 		address: wallet.address,
@@ -148,6 +150,8 @@ export async function NewJsonWallet(password: string, entropy?: string): Promise
 	const wallet = Wallet.createRandom({
 		extraEntropy: entropy ? utils.toUtf8Bytes(entropy) : randomFillSync(new Uint8Array(MaxEntropyLength)),
 	});
+
+	log.RequestId().debug("New JSON wallet address=", wallet.address);
 
 	return await wallet.encrypt(password);
 }

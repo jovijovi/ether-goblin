@@ -156,6 +156,41 @@ export async function NewJsonWallet(password: string, entropy?: string): Promise
 	return await wallet.encrypt(password);
 }
 
+// Retrieve JSON wallet from mnemonic
+export async function RetrieveJsonWalletFromMnemonic(password: string, mnemonic: string): Promise<string> {
+	auditor.Check(password, "invalid password");
+	auditor.Check(mnemonic, "invalid mnemonic");
+	const wallet = Wallet.fromMnemonic(mnemonic);
+	log.RequestId().debug("Retrieve JSON wallet from mnemonic, address=", wallet.address);
+	return await wallet.encrypt(password);
+}
+
+// Retrieve JSON wallet from PK
+export async function RetrieveJsonWalletFromPK(password: string, pk: string): Promise<string> {
+	auditor.Check(password, "invalid password");
+	auditor.Check(pk, "invalid pk");
+	const wallet = new Wallet(pk);
+	log.RequestId().debug("Retrieve JSON wallet from PK, address=", wallet.address);
+	return await wallet.encrypt(password);
+}
+
+// Inspect JSON wallet
+export async function InspectJsonWallet(password: string, jsonWallet: string): Promise<any> {
+	auditor.Check(password, "invalid password");
+	auditor.Check(jsonWallet, "invalid pk");
+	const wallet = await Wallet.fromEncryptedJson(jsonWallet, password);
+
+	log.RequestId().debug("InspectJsonWallet address=", wallet.address);
+
+	return {
+		chain: customConfig.GetDefaultNetwork().chain,
+		network: customConfig.GetDefaultNetwork().network,
+		address: wallet.address,
+		pk: wallet.privateKey,
+		mnemonic: wallet.mnemonic ? wallet.mnemonic.phrase : undefined,
+	};
+}
+
 // Verify address
 export async function VerifyAddress(address: string): Promise<boolean> {
 	return utils.isAddress(address);

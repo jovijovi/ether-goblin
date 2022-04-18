@@ -293,3 +293,54 @@ export async function newJsonWallet(req, res) {
 
 	return;
 }
+
+// Retrieve JSON wallet from mnemonic
+export async function retrieveJsonWalletFromMnemonic(req, res) {
+	if (!req.body.password
+		|| !req.body.mnemonic) {
+		return MyResponse.BadRequest(res);
+	}
+
+	try {
+		const jsonWallet = await Core.RetrieveJsonWalletFromMnemonic(req.body.password, req.body.mnemonic);
+		res.send(jsonWallet);
+	} catch (e) {
+		return MyResponse.Error(res, e);
+	}
+
+	return;
+}
+
+// Retrieve JSON wallet from pk
+export async function retrieveJsonWalletFromPK(req, res) {
+	if (!req.body.password
+		|| !req.body.pk) {
+		return MyResponse.BadRequest(res);
+	}
+
+	try {
+		const jsonWallet = await Core.RetrieveJsonWalletFromPK(req.body.password, req.body.pk);
+		res.send(jsonWallet);
+	} catch (e) {
+		return MyResponse.Error(res, e);
+	}
+
+	return;
+}
+
+// Inspect JSON wallet
+export async function inspectJsonWallet(req, res) {
+	if (!req.body.password
+		|| !req.body.jsonWallet) {
+		return MyResponse.BadRequest(res);
+	}
+
+	try {
+		const jsonWallet = await Core.InspectJsonWallet(req.body.password, req.body.jsonWallet);
+		res.send(jsonWallet);
+	} catch (e) {
+		return MyResponse.Error(res, e);
+	}
+
+	return;
+}

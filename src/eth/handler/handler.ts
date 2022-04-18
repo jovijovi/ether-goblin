@@ -18,6 +18,9 @@ function ethAPIs(router: core.Express) {
 	router.post('/api/v1/eth/verify/:address', API.verifyAddress);
 	router.post('/api/v1/eth/wallet', API.newWallet);
 	router.post('/api/v1/eth/wallet/json', API.newJsonWallet);
+	router.post('/api/v1/eth/wallet/json/mnemonic', API.retrieveJsonWalletFromMnemonic);
+	router.post('/api/v1/eth/wallet/json/pk', API.retrieveJsonWalletFromPK);
+	router.post('/api/v1/eth/wallet/json/inspect', API.inspectJsonWallet);
 }
 
 function publicAPIs(router: core.Express) {

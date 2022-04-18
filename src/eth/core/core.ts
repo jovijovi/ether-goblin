@@ -138,10 +138,6 @@ export async function NewWallet(entropy?: string): Promise<any> {
 		pk: wallet.privateKey,
 		mnemonic: wallet.mnemonic.phrase,
 	};
-
-	log.RequestId().info("New wallet=%o", rsp);
-
-	return rsp;
 }
 
 // Create new JSON wallet

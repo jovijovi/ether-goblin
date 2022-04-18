@@ -1,9 +1,11 @@
+import {randomFillSync} from 'crypto';
 import {BigNumber, utils, Wallet} from 'ethers';
 import {Block, TransactionReceipt, TransactionResponse} from '@ethersproject/abstract-provider';
 import {auditor, log} from '@jovijovi/pedrojs-common';
 import * as network from '../../network';
 import {customConfig} from '../../config';
 import {GetConfirmations} from './common';
+import {MaxEntropyLength} from './params';
 
 // GetGasPrice returns gas price (Wei)
 export async function GetGasPrice(): Promise<any> {
@@ -140,6 +142,18 @@ export async function NewWallet(entropy?: string): Promise<any> {
 	log.RequestId().info("New wallet=%o", rsp);
 
 	return rsp;
+}
+
+// Create new JSON wallet
+export async function NewJsonWallet(password: string, entropy?: string): Promise<string> {
+	auditor.Check(password, "invalid password");
+	auditor.Check(entropy.length <= MaxEntropyLength, "invalid entropy, max length is " + MaxEntropyLength);
+
+	const wallet = Wallet.createRandom({
+		extraEntropy: entropy ? utils.toUtf8Bytes(entropy) : randomFillSync(new Uint8Array(MaxEntropyLength)),
+	});
+
+	return await wallet.encrypt(password);
 }
 
 // Verify address

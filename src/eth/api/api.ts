@@ -277,3 +277,19 @@ export async function newWallet(req, res) {
 
 	return;
 }
+
+// New JSON wallet
+export async function newJsonWallet(req, res) {
+	if (!req.body.password) {
+		return MyResponse.BadRequest(res);
+	}
+
+	try {
+		const jsonWallet = await Core.NewJsonWallet(req.body.password, req.body.entropy);
+		res.send(jsonWallet);
+	} catch (e) {
+		return MyResponse.Error(res, e);
+	}
+
+	return;
+}

@@ -5,7 +5,7 @@ import {auditor, log} from '@jovijovi/pedrojs-common';
 import * as network from '../../network';
 import {customConfig} from '../../config';
 import {GetConfirmations} from './common';
-import {MaxEntropyLength} from './params';
+import {MaxEntropyLength, StatusSuccessful} from './params';
 
 // GetGasPrice returns gas price (Wei)
 export async function GetGasPrice(): Promise<any> {
@@ -104,7 +104,7 @@ export async function Transfer(from: string, to: string, amount: string, pk: str
 	const receipt = await provider.waitForTransaction(txRsp.hash, GetConfirmations());
 
 	// Check tx status
-	if (receipt.status != 1) {
+	if (receipt.status != StatusSuccessful) {
 		log.RequestId().error("Transfer failed, error=%o", receipt);
 		return;
 	}

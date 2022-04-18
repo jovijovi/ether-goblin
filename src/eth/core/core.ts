@@ -126,9 +126,9 @@ export async function VerifySig(address: string, msg: string, sig: string): Prom
 
 // Create new wallet address (Externally Owned Account)
 export async function NewWallet(entropy?: string): Promise<any> {
-	auditor.Check(entropy.length <= 64, "invalid entropy, max length is 64");
+	auditor.Check(entropy.length <= MaxEntropyLength, "invalid entropy, max length is " + MaxEntropyLength);
 	const wallet = Wallet.createRandom({
-		extraEntropy: utils.toUtf8Bytes(entropy),
+		extraEntropy: entropy ? utils.toUtf8Bytes(entropy) : randomFillSync(new Uint8Array(MaxEntropyLength)),
 	});
 
 	const rsp = {

@@ -1,6 +1,6 @@
 {
   "name": "ether-goblin",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "A microservice for calling ethereum APIs",
   "author": "jovijovi <mageyul@hotmail.com>",
   "license": "MIT",

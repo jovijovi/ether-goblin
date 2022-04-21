@@ -12,8 +12,8 @@ export async function getGetTotalSupply(req, res) {
 
 	try {
 		// Set cache ttl to 3 seconds by default
-		if (Cache.CacheTotalSupply.has(req.params.address)) {
-			res.send(Cache.CacheTotalSupply.get(req.params.address));
+		if (Cache.CacheTotalSupplyOfNFT.has(req.params.address)) {
+			res.send(Cache.CacheTotalSupplyOfNFT.get(req.params.address));
 			return;
 		}
 
@@ -21,7 +21,7 @@ export async function getGetTotalSupply(req, res) {
 
 		res.send(result);
 
-		Cache.CacheTotalSupply.set(req.params.address, result);
+		Cache.CacheTotalSupplyOfNFT.set(req.params.address, result);
 	} catch (e) {
 		return MyResponse.Error(res, e);
 	}

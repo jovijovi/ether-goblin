@@ -109,6 +109,7 @@ export function Run() {
 		}
 	});
 
+	// TODO: improve performance
 	cron.scheduleJob('*/3 * * * * *', function () {
 		if (eventQueue.Length() == 0) {
 			return;
@@ -124,7 +125,7 @@ export function Run() {
 		callbackJob.push(evt).catch((err) => log.RequestId().error(err));
 	});
 
-	return
+	return;
 }
 
 // checkRspCode check response code (NOT HTTP status code)

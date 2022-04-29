@@ -5,7 +5,7 @@ import {logo} from './logo';
 import * as network from '../network';
 import {RestfulHandlers} from '../handler';
 import {watchdog} from '../watchdog';
-import {transferListener} from '../event';
+import {queryMintEvents, transferListener} from '../event';
 
 function main() {
 	log.logo(logo);
@@ -22,6 +22,7 @@ function main() {
 
 	watchdog.Run();
 	transferListener.Run();
+	queryMintEvents.Run();
 }
 
 main();

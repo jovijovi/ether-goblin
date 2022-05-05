@@ -21,3 +21,6 @@
 /*.tar.gz
 /conf_dev
 /flattened
+
+# db
+/database

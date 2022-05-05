@@ -1,41 +1,18 @@
 import {constants, utils} from 'ethers';
-import {log, util} from '@jovijovi/pedrojs-common';
+import {auditor, log, util} from '@jovijovi/pedrojs-common';
 import fastq, {queueAsPromised} from 'fastq';
 import got from 'got';
 import * as network from '../../network';
 import {customConfig} from '../../config';
+import {DefaultCallbackJobConcurrency, EventNameTransfer, EventTypeBurn, EventTypeMint} from './params';
+import {EventTransfer, Response} from './types';
 import cron = require('node-schedule');
-
-// Transfer Event
-type EventTransfer = {
-	address: string         // NFT Contract address
-	blockNumber: number     // Block number
-	blockHash: string       // Block hash
-	transactionHash: string // Tx hash
-	from: string            // From
-	to: string              // To
-	tokenId: number         // NFT Token ID
-}
-
-// Response of Restful API
-type Response = {
-	code: string
-	msg: string
-	data?: object
-};
-
-const EventTypeMint = 'mint';
-// const EventTypeTransfer = 'transfer';
-const EventTypeBurn = 'burn';
-
-// ERC721 Transfer event name
-const EventNameTransfer = 'Transfer(address,address,uint256)';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
 
-// Callback job (concurrency = 10)
-const callbackJob: queueAsPromised<EventTransfer> = fastq.promise(callback, 10);
+// Callback job
+const callbackJob: queueAsPromised<EventTransfer> = fastq.promise(callback, DefaultCallbackJobConcurrency);
 
 // Check if tx is ERC721 transfer
 function checkTx(tx: any): boolean {

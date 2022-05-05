@@ -13,7 +13,7 @@ import cron = require('node-schedule');
 const eventQueue = new util.Queue<EventTransfer>();
 
 // Query mint events job
-const queryMintEventsJob: queueAsPromised<Options> = fastq.promise(queryMintEvents, 1);    // Job: Check balance
+const queryMintEventsJob: queueAsPromised<Options> = fastq.promise(queryMintEvents, 1);
 
 // Execute query job
 const execQueryJob: queueAsPromised<Options> = fastq.promise(execQuery, 1);    // Job: Check balance

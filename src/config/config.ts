@@ -50,8 +50,16 @@ export namespace customConfig {
 		callback: string
 	}
 
+	class MintEvent {
+		enable: boolean
+		maxBlockRange?: number
+		responseCode?: string | number
+		callback?: string
+	}
+
 	class Events {
 		transfer: TransferEvent
+		mint: MintEvent
 	}
 
 	export class CustomConfig {

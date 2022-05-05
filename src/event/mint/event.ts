@@ -4,19 +4,10 @@ import fastq, {queueAsPromised} from 'fastq';
 import * as network from '../../network';
 import {Options} from './options';
 import {Core} from '../../eth';
-import {DefaultIntervalBlocks} from './params';
+import {DefaultMaxBlockRange, EventNameTransfer} from './params';
+import {EventTransfer} from './types';
+import {customConfig} from '../../config';
 import cron = require('node-schedule');
-
-// Transfer Event
-type EventTransfer = {
-	address: string         // NFT Contract address
-	blockNumber: number     // Block number
-	blockHash: string       // Block hash
-	transactionHash: string // Tx hash
-	from: string            // From
-	to: string              // To
-	tokenId: number         // NFT Token ID
-}
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -45,9 +36,7 @@ function checkEvent(evt: any): boolean {
 	return false;
 }
 
-// ERC721 Mint event name
-const EventNameTransfer = 'Transfer(address,address,uint256)';
-
+// Execute query mint events job
 async function execQuery(opts: Options = {
 	fromBlock: 0
 }): Promise<void> {
@@ -96,13 +85,14 @@ async function execQuery(opts: Options = {
 	return;
 }
 
-
+// Generate query mint events job
 async function queryMintEvents(opts: Options = {
-	fromBlock: 0
+	fromBlock: 0,
+	maxBlockRange: DefaultMaxBlockRange
 }): Promise<void> {
 	let nextFrom = opts.fromBlock;
 	let nextTo = 0;
-	let intervalBlocks = DefaultIntervalBlocks;
+	let blockRange = opts.maxBlockRange;
 	let leftBlocks = 0;
 	let blockNumber = await Core.GetBlockNumber();
 
@@ -114,9 +104,9 @@ async function queryMintEvents(opts: Options = {
 			continue;
 		}
 
-		intervalBlocks = leftBlocks < DefaultIntervalBlocks ? leftBlocks : DefaultIntervalBlocks;
+		blockRange = leftBlocks < opts.maxBlockRange ? leftBlocks : opts.maxBlockRange;
 
-		nextTo = nextFrom + intervalBlocks;
+		nextTo = nextFrom + blockRange;
 		execQueryJob.push({
 			fromBlock: nextFrom,
 			toBlock: nextTo,
@@ -131,12 +121,23 @@ async function queryMintEvents(opts: Options = {
 	return;
 }
 
-// TODO: add config
 export function Run() {
+	// Check config
+	const conf = customConfig.GetEvents();
+	if (!conf) {
+		log.RequestId().info('No events configuration, skipped.');
+		return;
+	} else if (!conf.mint.enable) {
+		log.RequestId().info('Query mint events job disabled.');
+		return;
+	}
+
 	log.RequestId().info("Querying mint events job is running...");
 
+	// Push query mint events job to scheduler
 	queryMintEventsJob.push({
 		fromBlock: 0,
+		maxBlockRange: conf.mint.maxBlockRange,
 	}).catch((err) => log.RequestId().error(err));
 
 	// Schedule processing job

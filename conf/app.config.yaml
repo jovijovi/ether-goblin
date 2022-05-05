@@ -90,6 +90,18 @@ custom:
       # Callback URL
       callback: 'YOUR CALLBACK URL'
 
+    mint:
+      enable: false
+
+      # eth_getLogs block range
+      maxBlockRange: 3500
+
+      # Succeed response code
+      responseCode: 'YOUR RESPONSE CODE'
+
+      # Callback URL
+      callback: 'YOUR CALLBACK URL'
+
   networks:
     # Ethereum
     ethereum:

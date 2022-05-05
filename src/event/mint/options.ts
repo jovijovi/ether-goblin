@@ -3,4 +3,5 @@ export type Options = {
 	address?: string
 	fromBlock: number
 	toBlock?: number
+	maxBlockRange?: number
 }

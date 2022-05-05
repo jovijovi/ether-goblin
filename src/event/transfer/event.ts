@@ -58,7 +58,7 @@ export function Run() {
 	if (!conf) {
 		log.RequestId().info('No events configuration, skipped.');
 		return;
-	} else if (!conf.enable) {
+	} else if (!conf.transfer.enable) {
 		log.RequestId().info('Transfer event listener disabled.');
 		return;
 	}

@@ -74,8 +74,9 @@ custom:
 
   # Events
   events:
-    enable: false
     transfer:
+      enable: false
+
       # Enabled event type
       type:
         # 'mint' means transfer token from zero address to another address

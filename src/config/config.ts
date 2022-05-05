@@ -43,15 +43,15 @@ export namespace customConfig {
 		addressList: WatchedAddress[]
 	}
 
-	class Event {
+	class TransferEvent {
+		enable: boolean
 		type: string[]
 		responseCode?: string | number
 		callback: string
 	}
 
 	class Events {
-		enable: boolean
-		transfer: Event
+		transfer: TransferEvent
 	}
 
 	export class CustomConfig {

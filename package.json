@@ -1,6 +1,6 @@
 {
   "name": "ether-goblin",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "A microservice for calling ethereum APIs",
   "author": "jovijovi <mageyul@hotmail.com>",
   "license": "MIT",
@@ -28,9 +28,9 @@
     "dist-run": "node ./dist/src/main/index.js"
   },
   "dependencies": {
-    "@jovijovi/pedrojs-common": "1.0.23",
-    "@jovijovi/pedrojs-network-http": "1.0.24",
-    "@jovijovi/pedrojs-sqlite": "1.0.22",
+    "@jovijovi/pedrojs-common": "1.0.24",
+    "@jovijovi/pedrojs-network-http": "1.0.25",
+    "@jovijovi/pedrojs-sqlite": "1.0.24",
     "@openzeppelin/contracts": "^4.6.0",
     "@types/lru-cache": "^7.6.1",
     "@types/node-schedule": "^2.1.0",

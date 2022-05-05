@@ -32,7 +32,7 @@ const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 
 function checkEvent(evt: any): boolean {
 	if (!evt || !evt.topics) {
 		return false;
-	} else if (evt.topics.length == 4
+	} else if (evt.topics.length === 4
 		&& evt.topics[0]
 		&& evt.topics[1]
 		&& evt.topics[2]
@@ -69,7 +69,7 @@ async function execQuery(opts: Options = {
 		}
 
 		// Check from
-		if (event.topics[1] != constants.HashZero) {
+		if (event.topics[1] !== constants.HashZero) {
 			log.RequestId().trace("NOT Mint event");
 			continue;
 		}

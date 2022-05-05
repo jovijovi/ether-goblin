@@ -109,20 +109,28 @@ export function Run() {
 		}
 	});
 
-	// TODO: improve performance
 	cron.scheduleJob('*/3 * * * * *', function () {
-		if (eventQueue.Length() == 0) {
+		try {
+			auditor.Check(eventQueue, "Event queue is nil");
+			const len = eventQueue.Length();
+			if (len === 0) {
+				return;
+			}
+
+			for (let i = 0; i < len; i++) {
+				const evt = eventQueue.Shift();
+				if (!evt) {
+					log.RequestId().warn("Event is nil");
+					return;
+				}
+
+				log.RequestId().debug("Processing event:", evt);
+				callbackJob.push(evt).catch((err) => log.RequestId().error(err));
+			}
+		} catch (e) {
+			log.RequestId().error("Push callback job failed, error=", e);
 			return;
 		}
-
-		const evt = eventQueue.Shift();
-		if (!evt) {
-			log.RequestId().warn("Event is nil");
-			return;
-		}
-
-		log.RequestId().debug("Processing event:", evt);
-		callbackJob.push(evt).catch((err) => log.RequestId().error(err));
 	});
 
 	return;

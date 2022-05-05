@@ -7,6 +7,7 @@ import {Core} from '../../eth';
 import {DefaultMaxBlockRange, EventNameTransfer} from './params';
 import {EventTransfer} from './types';
 import {customConfig} from '../../config';
+import * as db from './db';
 import cron = require('node-schedule');
 
 // Event queue (ASC, FIFO)
@@ -18,8 +19,8 @@ const queryMintEventsJob: queueAsPromised<Options> = fastq.promise(queryMintEven
 // Execute query job
 const execQueryJob: queueAsPromised<Options> = fastq.promise(execQuery, 1);    // Job: Check balance
 
-// Callback job (concurrency = 10)
-const callbackJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(callback, 1);
+// Dump job
+const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 1);
 
 // Check if event topics is ERC721 transfer
 function checkEvent(evt: any): boolean {
@@ -96,6 +97,9 @@ async function queryMintEvents(opts: Options = {
 	let leftBlocks = 0;
 	let blockNumber = await Core.GetBlockNumber();
 
+	// Connect to database
+	await db.Connect();
+
 	do {
 		leftBlocks = blockNumber - nextFrom;
 		if (leftBlocks <= 0) {
@@ -147,14 +151,14 @@ export function Run() {
 			return;
 		}
 
-		callbackJob.push(eventQueue).catch((err) => log.RequestId().error(err));
+		dumpJob.push(eventQueue).catch((err) => log.RequestId().error(err));
 	});
 
 	return;
 }
 
-// TODO: Event callback
-async function callback(queue: util.Queue<EventTransfer>): Promise<void> {
+// Dump events
+async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 	try {
 		const len = queue.Length();
 		if (len === 0) {
@@ -163,6 +167,8 @@ async function callback(queue: util.Queue<EventTransfer>): Promise<void> {
 
 		for (let i = 0; i < len; i++) {
 			const evt = queue.Shift();
+			// Dump event to database
+			await db.Save(evt);
 			log.RequestId().info("Count=%d, evt=%o", i + 1, evt);
 		}
 	} catch (e) {

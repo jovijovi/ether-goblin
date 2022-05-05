@@ -47,7 +47,7 @@ function checkEvent(evt: any): boolean {
 async function execQuery(opts: Options = {
 	fromBlock: 0
 }): Promise<void> {
-	log.RequestId().info("EXEC Job[%d,%d]", opts.fromBlock, opts.toBlock);
+	log.RequestId().info("EXEC JOB, blocks[%d,%d], execQueryJob=%d", opts.fromBlock, opts.toBlock, execQueryJob.length());
 
 	const provider = network.MyProvider.Get();
 	const evtFilter = {
@@ -116,13 +116,17 @@ async function queryMintEvents(opts: Options = {
 		}
 
 		blockRange = leftBlocks < opts.maxBlockRange ? leftBlocks : opts.maxBlockRange;
-
 		nextTo = nextFrom + blockRange;
+
+		if (blockRange >= 0 && blockRange <= 1) {
+			log.RequestId().info("Catch up the latest block(%d)", blockNumber);
+		}
+		log.RequestId().info("PUSH JOB, blocks[%d,%d](range=%d), execQueryJob=%d", nextFrom, nextTo, blockRange, execQueryJob.length());
+
 		execQueryJob.push({
 			fromBlock: nextFrom,
 			toBlock: nextTo,
 		}).catch((err) => log.RequestId().error(err));
-		log.RequestId().info("PUSH Job[%d,%d]", nextFrom, nextTo);
 
 		nextFrom = nextTo + 1;
 

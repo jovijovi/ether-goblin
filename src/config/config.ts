@@ -53,8 +53,8 @@ export namespace customConfig {
 	class MintEvent {
 		enable: boolean
 		maxBlockRange?: number
-		responseCode?: string | number
-		callback?: string
+		pushJobIntervals?: number
+		executeJobConcurrency?: number
 	}
 
 	class Events {

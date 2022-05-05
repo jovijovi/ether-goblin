@@ -4,4 +4,5 @@ export type Options = {
 	fromBlock: number
 	toBlock?: number
 	maxBlockRange?: number
+	pushJobIntervals?: number
 }

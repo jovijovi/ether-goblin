@@ -96,11 +96,11 @@ custom:
       # eth_getLogs block range
       maxBlockRange: 3500
 
-      # Succeed response code
-      responseCode: 'YOUR RESPONSE CODE'
+      # Push job intervals (unit: ms)
+      pushJobIntervals: 200
 
-      # Callback URL
-      callback: 'YOUR CALLBACK URL'
+      # Execute job concurrency
+      executeJobConcurrency: 20
 
   networks:
     # Ethereum

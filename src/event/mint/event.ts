@@ -4,7 +4,13 @@ import fastq, {queueAsPromised} from 'fastq';
 import * as network from '../../network';
 import {Options} from './options';
 import {Core} from '../../eth';
-import {DefaultMaxBlockRange, EventNameTransfer} from './params';
+import {
+	DefaultExecuteJobConcurrency,
+	DefaultMaxBlockRange,
+	DefaultPushJobIntervals,
+	DefaultQueryIntervals,
+	EventNameTransfer
+} from './params';
 import {EventTransfer} from './types';
 import {customConfig} from '../../config';
 import * as db from './db';
@@ -17,7 +23,7 @@ const eventQueue = new util.Queue<EventTransfer>();
 const queryMintEventsJob: queueAsPromised<Options> = fastq.promise(queryMintEvents, 1);
 
 // Execute query job
-const execQueryJob: queueAsPromised<Options> = fastq.promise(execQuery, 1);    // Job: Check balance
+let execQueryJob: queueAsPromised<Options>;
 
 // Dump job
 const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 1);
@@ -89,7 +95,8 @@ async function execQuery(opts: Options = {
 // Generate query mint events job
 async function queryMintEvents(opts: Options = {
 	fromBlock: 0,
-	maxBlockRange: DefaultMaxBlockRange
+	maxBlockRange: DefaultMaxBlockRange,
+	pushJobIntervals: DefaultPushJobIntervals,
 }): Promise<void> {
 	let nextFrom = opts.fromBlock;
 	let nextTo = 0;
@@ -103,7 +110,7 @@ async function queryMintEvents(opts: Options = {
 	do {
 		leftBlocks = blockNumber - nextFrom;
 		if (leftBlocks <= 0) {
-			await util.time.SleepSeconds(3);
+			await util.time.SleepSeconds(DefaultQueryIntervals);
 			blockNumber = await Core.GetBlockNumber();
 			continue;
 		}
@@ -119,7 +126,7 @@ async function queryMintEvents(opts: Options = {
 
 		nextFrom = nextTo + 1;
 
-		await util.time.SleepMilliseconds(500);
+		await util.time.SleepMilliseconds(opts.pushJobIntervals);
 	} while (nextFrom > 0);
 
 	return;
@@ -136,12 +143,19 @@ export function Run() {
 		return;
 	}
 
+	log.RequestId().info("Querying mint events job config=", conf.mint);
+
+	auditor.Check(conf.mint.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
+
+	execQueryJob = fastq.promise(execQuery, conf.mint.executeJobConcurrency ? conf.mint.executeJobConcurrency : DefaultExecuteJobConcurrency);
+
 	log.RequestId().info("Querying mint events job is running...");
 
 	// Push query mint events job to scheduler
 	queryMintEventsJob.push({
 		fromBlock: 0,
 		maxBlockRange: conf.mint.maxBlockRange,
+		pushJobIntervals: conf.mint.pushJobIntervals,
 	}).catch((err) => log.RequestId().error(err));
 
 	// Schedule processing job

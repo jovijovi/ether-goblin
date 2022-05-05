@@ -134,7 +134,6 @@ custom:
       mumbai:
         chainId: 80001
         provider:
-          - https://rpc-mumbai.maticvigil.com
           - https://rpc-mumbai.matic.today
           - https://matic-mumbai.chainstacklabs.com
         browser: https://mumbai.polygonscan.com

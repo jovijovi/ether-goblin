@@ -18,7 +18,7 @@ const callbackJob: queueAsPromised<EventTransfer> = fastq.promise(callback, Defa
 function checkTx(tx: any): boolean {
 	if (!tx || !tx.topics) {
 		return false;
-	} else if (tx.topics.length == 4
+	} else if (tx.topics.length === 4
 		&& tx.topics[0]
 		&& tx.topics[1]
 		&& tx.topics[2]
@@ -57,13 +57,13 @@ export function Run() {
 			}
 
 			// Check from
-			if (tx.topics[1] == constants.HashZero && !conf.transfer.type.includes(EventTypeMint)) {
+			if (tx.topics[1] === constants.HashZero && !conf.transfer.type.includes(EventTypeMint)) {
 				log.RequestId().trace("Mint event, skipped");
 				return;
 			}
 
 			// Check to
-			else if (tx.topics[2] == constants.HashZero && !conf.transfer.type.includes(EventTypeBurn)) {
+			else if (tx.topics[2] === constants.HashZero && !conf.transfer.type.includes(EventTypeBurn)) {
 				log.RequestId().trace("Burn event, skipped");
 				return;
 			}

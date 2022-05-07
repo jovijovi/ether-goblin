@@ -30,7 +30,7 @@
   "dependencies": {
     "@jovijovi/pedrojs-common": "1.0.24",
     "@jovijovi/pedrojs-network-http": "1.0.25",
-    "@jovijovi/pedrojs-sqlite": "1.0.24",
+    "@jovijovi/pedrojs-sqlite": "1.0.26",
     "@openzeppelin/contracts": "^4.6.0",
     "@types/lru-cache": "^7.6.1",
     "@types/node-schedule": "^2.1.0",
@@ -55,7 +55,7 @@
     "@typescript-eslint/parser": "^5.22.0",
     "chai": "4.3.6",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^8.14.0",
+    "eslint": "^8.15.0",
     "hardhat": "2.9.3",
     "mocha": "^10.0.0",
     "ts-generator": "^0.1.1",

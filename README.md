@@ -12,6 +12,7 @@ A microservice for calling ethereum APIs.
 - NFT APIs (under development)
 - A simple balance Watchdog
 - NFT transfer tx listener
+- NFT archaeologist, excavating NFT mint events from block history
 
 ## Supported Chains
 
@@ -21,7 +22,7 @@ A microservice for calling ethereum APIs.
 
 ## Development Environment
 
-- typescript `4.6.3`
+- typescript `4.6.4`
 - node `v16.15.0`
 - ts-node `v10.7.0`
 - yarn `v1.22.18`

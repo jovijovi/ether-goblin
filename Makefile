@@ -64,6 +64,6 @@ clean:
 	@echo "[MAKEFILE] Cleaned"
 
 help:
-	@echo "make build" -- Compile code
+	@echo "make build -- Compile code"
 	@echo "make docker -- Build docker image"
-	@echo "make push  -- Push docker image to registry"
+	@echo "make push -- Push docker image to registry"

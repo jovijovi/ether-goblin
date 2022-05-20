@@ -28,9 +28,10 @@
     "dist-run": "node ./dist/src/main/index.js"
   },
   "dependencies": {
-    "@jovijovi/ether-network": "^0.1.0",
-    "@jovijovi/pedrojs-common": "1.0.26",
-    "@jovijovi/pedrojs-network-http": "1.0.26",
+    "@jovijovi/ether-core": "0.1.0",
+    "@jovijovi/ether-network": "0.1.0",
+    "@jovijovi/pedrojs-common": "1.0.27",
+    "@jovijovi/pedrojs-network-http": "1.0.27",
     "@jovijovi/pedrojs-sqlite": "1.0.26",
     "@openzeppelin/contracts": "^4.6.0",
     "@types/lru-cache": "^7.10.10",

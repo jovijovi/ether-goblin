@@ -457,7 +457,16 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@jovijovi/ether-network@^0.1.0":
+"@jovijovi/ether-core@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@jovijovi/ether-core/-/ether-core-0.1.0.tgz#8cb4488eac0453559b331c1fe1513c110bbe9d7c"
+  integrity sha512-4JC9fJ+Ku/09i22db9QF27QIX+tgbGsGYlLW1GHL1rP6Iubs1Ilcupcec//gBkhGIjAnE1L4dNyUtrfN81PXgg==
+  dependencies:
+    "@jovijovi/ether-network" "^0.1.0"
+    "@jovijovi/pedrojs-common" "^1.0.27"
+    ethers "5.6.6"
+
+"@jovijovi/ether-network@0.1.0", "@jovijovi/ether-network@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@jovijovi/ether-network/-/ether-network-0.1.0.tgz#64c97c8862f0e20b1a43f78a50d45e851a034b9e"
   integrity sha512-26XfEGKkVwUjuKalNdk99Q1KIR7DyaWFV1A4EZ6kDf19GRV+d/OGayjHd/etwwWDiUjYop/p6w/MoyMhBo/kkQ==
@@ -465,20 +474,20 @@
     "@jovijovi/pedrojs-log" "^1.0.22"
     ethers "5.6.6"
 
-"@jovijovi/pedrojs-common@1.0.26":
-  version "1.0.26"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-common/-/pedrojs-common-1.0.26.tgz#7a720bc37ae51acda28ee3d22121e8137184df89"
-  integrity sha512-q54Ig2WTkN7Xo/AaKFYrLkDqBADv3yVDGK0oCBZiWHje+HT7x1ju/J4Euuqpp9QHpMhAv53HV11XPGDHop5P2A==
+"@jovijovi/pedrojs-common@1.0.27", "@jovijovi/pedrojs-common@^1.0.27":
+  version "1.0.27"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-common/-/pedrojs-common-1.0.27.tgz#4c81f7bc04005d731f4b3d9bdb8e06d5a278747c"
+  integrity sha512-MVsOZWphXK+hcDEvIX+Y4jMwKgzxXg96GEhWqBN5kJc4mGTMwsQc+3+3sIte1C4DRo9Bh/g8SeAF69YAGWyQVA==
   dependencies:
     "@jovijovi/pedrojs-version" "^1.0.12"
     commander "9.2.0"
     dayjs "1.11.2"
-    log4js "6.4.6"
+    log4js "6.4.7"
     lru-cache "7.10.1"
     nanoid "3.3.4"
-    yaml "2.0.1"
+    yaml "2.1.0"
 
-"@jovijovi/pedrojs-log@1.0.22", "@jovijovi/pedrojs-log@^1.0.22":
+"@jovijovi/pedrojs-log@1.0.22":
   version "1.0.22"
   resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-log/-/pedrojs-log-1.0.22.tgz#1015f8e7357a798206b3c1faccdb9eff69086f5b"
   integrity sha512-iAG0u/1jbZg6DXQGinxTQ67P7oI++MwXyG3cWRVAUxBUI04Ww2XxolOnwMZ++U/D4vgnMGVFqMdVllYzkYeJhw==
@@ -486,12 +495,20 @@
     "@jovijovi/pedrojs-version" "^1.0.12"
     log4js "6.4.6"
 
-"@jovijovi/pedrojs-network-http@1.0.26":
-  version "1.0.26"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-network-http/-/pedrojs-network-http-1.0.26.tgz#d422d1f856fe1c5ae86b08fbf2cf418c296d7f83"
-  integrity sha512-pMlwsLqVJ9YwBmYqfu8xBHWW3UA9P1c0fttwErYZACg/xQOJzrRYa1SQZyk96IwWbaZSOFcEPJpBzUSEDRw2lQ==
+"@jovijovi/pedrojs-log@^1.0.22":
+  version "1.0.27"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-log/-/pedrojs-log-1.0.27.tgz#fdb4504c6a49ac14511fdb7c27f1b3c45513b674"
+  integrity sha512-cmP6ApJglGkWpXyawzS72Ak3LSDzRNwUboH/lc4uHeFOKFLt2DA6MPe49MmD1h5Z3N1xw8UTfGvvn2j6psCXiw==
   dependencies:
-    "@jovijovi/pedrojs-common" "1.0.26"
+    "@jovijovi/pedrojs-version" "^1.0.12"
+    log4js "6.4.7"
+
+"@jovijovi/pedrojs-network-http@1.0.27":
+  version "1.0.27"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-network-http/-/pedrojs-network-http-1.0.27.tgz#bb9152b2f3e685fa73b074bfb1f0463d7ef869e2"
+  integrity sha512-thfqUaPPkjwLNAmAOTUbyllNlg4sriAc6wsYjQwa4l4YZ4SfxcOURJQrJodxIpZfnFvX1Sp4XSz1nDdEhS+LmQ==
+  dependencies:
+    "@jovijovi/pedrojs-common" "^1.0.27"
     "@jovijovi/pedrojs-tracing" "^1.0.23"
     "@types/body-parser" "1.19.2"
     "@types/express" "4.17.13"
@@ -1048,12 +1065,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*":
-  version "17.0.34"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.34.tgz#3b0b6a50ff797280b8d000c6281d229f9c538cef"
-  integrity sha512-XImEz7XwTvDBtzlTnm8YvMqGW/ErMWBsKZ+hMTvnDIjGCKxwK5Xpc+c/oQjOauwq8M4OS11hEkpjX8rrI/eEgA==
-
-"@types/node@17.0.35":
+"@types/node@*", "@types/node@17.0.35":
   version "17.0.35"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.35.tgz#635b7586086d51fb40de0a2ec9d1014a5283ba4a"
   integrity sha512-vu1SrqBjbbZ3J6vwY17jBs8Sr/BKA+/a/WtjRG+whKg1iuLFOosq872EXS0eXWILdO36DHQQeku/ZcL6hz2fpg==
@@ -3221,9 +3233,9 @@ keccak@^3.0.0:
     readable-stream "^3.6.0"
 
 keyv@^4.0.0:
-  version "4.2.8"
-  resolved "https://registry.yarnpkg.com/keyv/-/keyv-4.2.8.tgz#6c91189fe6134d8a526cb360566693c095fcfb60"
-  integrity sha512-IZZo6krhHWPhgsP5mBkEdPopVPN/stgCnBVuqi6dda/Nm5mDTOSVTrFMkWqlJsDum+B0YSe887tNxdjDWkO7aQ==
+  version "4.2.9"
+  resolved "https://registry.yarnpkg.com/keyv/-/keyv-4.2.9.tgz#b8f25d4968b583ed7f07fceadab646d4baadad6b"
+  integrity sha512-vqRBrN4xQHud7UMAGzGGFbt96MtGB9pb0OOg8Dhtq5RtiswCb1pCFq878iqC4hdeOP6eDPnCoFxA+2TXx427Ow==
   dependencies:
     compress-brotli "^1.3.8"
     json-buffer "3.0.1"
@@ -3362,6 +3374,17 @@ log4js@6.4.6:
     flatted "^3.2.5"
     rfdc "^1.3.0"
     streamroller "^3.0.8"
+
+log4js@6.4.7:
+  version "6.4.7"
+  resolved "https://registry.yarnpkg.com/log4js/-/log4js-6.4.7.tgz#adba3797606664e83567d2fbf38fa14b9d809167"
+  integrity sha512-q/9Eyw/hkvQ4e9DNHLbK2AfuDDm5QnNnmF022aamyw4nUnVLQRhvGoryccN5aEI4J/UcA4W36xttBCrlrdzt2g==
+  dependencies:
+    date-format "^4.0.10"
+    debug "^4.3.4"
+    flatted "^3.2.5"
+    rfdc "^1.3.0"
+    streamroller "^3.0.9"
 
 long-timeout@0.1.1:
   version "0.1.1"
@@ -4541,7 +4564,7 @@ statuses@2.0.1:
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-2.0.1.tgz#55cb000ccf1d48728bd23c685a063998cf1a1b63"
   integrity sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==
 
-streamroller@^3.0.8:
+streamroller@^3.0.8, streamroller@^3.0.9:
   version "3.0.9"
   resolved "https://registry.yarnpkg.com/streamroller/-/streamroller-3.0.9.tgz#23b956f2f6e3d679c95a519b0680b8b70fb84040"
   integrity sha512-Y46Aq/ftqFP6Wb6sK79hgnZeRfEVz2F0nquBy4lMftUuJoTiwKa6Y96AWAUGV1F3CjhFark9sQmzL9eDpltkRw==
@@ -5020,10 +5043,10 @@ yallist@^4.0.0:
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-4.0.0.tgz#9bb92790d9c0effec63be73519e11a35019a3a72"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 
-yaml@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.0.1.tgz#71886d6021f3da28169dbefde78d4dd0f8d83650"
-  integrity sha512-1NpAYQ3wjzIlMs0mgdBmYzLkFgWBIWrzYVDYfrixhoFNNgJ444/jT2kUT2sicRbJES3oQYRZugjB6Ro8SjKeFg==
+yaml@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.1.0.tgz#96ba62ff4dd990c0eb16bd96c6254a085d288b80"
+  integrity sha512-OuAINfTsoJrY5H7CBWnKZhX6nZciXBydrMtTHr1dC4nP40X5jyTIVlogZHxSlVZM8zSgXRfgZGsaHF4+pV+JRw==
 
 yargs-parser@20.2.4:
   version "20.2.4"

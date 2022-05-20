@@ -3,7 +3,7 @@ import {auditor, log, util} from '@jovijovi/pedrojs-common';
 import fastq, {queueAsPromised} from 'fastq';
 import {network} from '@jovijovi/ether-network';
 import {Options} from './options';
-import {Core} from '../../eth';
+import {core} from '@jovijovi/ether-core';
 import {
 	DefaultExecuteJobConcurrency,
 	DefaultMaxBlockRange,
@@ -102,7 +102,7 @@ async function queryMintEvents(opts: Options = {
 	let nextTo = 0;
 	let blockRange = opts.maxBlockRange;
 	let leftBlocks = 0;
-	let blockNumber = await Core.GetBlockNumber();
+	let blockNumber = await core.GetBlockNumber();
 
 	// Connect to database
 	await db.Connect();
@@ -111,7 +111,7 @@ async function queryMintEvents(opts: Options = {
 		leftBlocks = blockNumber - nextFrom;
 		if (leftBlocks <= 0) {
 			await util.time.SleepSeconds(DefaultQueryIntervals);
-			blockNumber = await Core.GetBlockNumber();
+			blockNumber = await core.GetBlockNumber();
 			continue;
 		}
 

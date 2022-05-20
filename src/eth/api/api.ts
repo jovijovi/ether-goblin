@@ -1,12 +1,12 @@
 import {log} from '@jovijovi/pedrojs-common';
 import {response as MyResponse} from '@jovijovi/pedrojs-network-http';
-import {Core} from '../core';
+import {core} from '@jovijovi/ether-core';
 import {Cache} from '../../common/cache';
 
 // Get gas price
 export async function getGasPrice(req, res) {
 	try {
-		const result = await Core.GetGasPrice();
+		const result = await core.GetGasPrice();
 
 		res.send(result);
 
@@ -29,13 +29,13 @@ export async function getTxReceipt(req, res) {
 	log.RequestId().debug("New request query=", req.query);
 
 	try {
-		const receipt: any = await Core.GetTxReceipt(req.query.txHash);
+		const receipt: any = await core.GetTxReceipt(req.query.txHash);
 
 		if (!receipt) {
 			return MyResponse.NotFound(res);
 		}
 		// Set value in response
-		const tx = await Core.GetTxResponse(req.query.txHash);
+		const tx = await core.GetTxResponse(req.query.txHash);
 		receipt.value = tx.value.toString();
 		res.send(receipt);
 
@@ -58,7 +58,7 @@ export async function getTxResponse(req, res) {
 	log.RequestId().debug("New request query=", req.query);
 
 	try {
-		const tx = await Core.GetTxResponse(req.query.txHash);
+		const tx = await core.GetTxResponse(req.query.txHash);
 
 		if (!tx) {
 			return MyResponse.NotFound(res);
@@ -76,7 +76,7 @@ export async function getTxResponse(req, res) {
 // Get block number
 export async function getBlockNumber(req, res) {
 	try {
-		const blockNumber = await Core.GetBlockNumber();
+		const blockNumber = await core.GetBlockNumber();
 
 		res.send({
 			"blockNumber": blockNumber,
@@ -99,7 +99,7 @@ export async function getBlock(req, res) {
 	}
 
 	try {
-		const block = await Core.GetBlock(req.query.blockHash);
+		const block = await core.GetBlock(req.query.blockHash);
 
 		res.send(block);
 
@@ -122,7 +122,7 @@ export async function getBalanceOf(req, res) {
 	log.RequestId().debug("New request query=", req.query);
 
 	try {
-		const balanceResult = await Core.GetBalanceOf(req.query.address);
+		const balanceResult = await core.GetBalanceOf(req.query.address);
 
 		res.send(balanceResult);
 
@@ -149,7 +149,7 @@ export async function observer(req, res) {
 			return;
 		}
 
-		const balanceResult = await Core.Observer(req.params.address);
+		const balanceResult = await core.Observer(req.params.address);
 
 		res.send(balanceResult);
 
@@ -175,7 +175,7 @@ export async function transfer(req, res) {
 	log.RequestId().debug("New request body=", req.body);
 
 	try {
-		const receipt = await Core.Transfer(req.body.from, req.body.to, req.body.amount, req.body.pk);
+		const receipt = await core.Transfer(req.body.from, req.body.to, req.body.amount, req.body.pk);
 
 		res.send({
 			"txHash": receipt.transactionHash,
@@ -215,7 +215,7 @@ export async function verifySignature(req, res) {
 			return;
 		}
 
-		const result = await Core.VerifySig(req.body.address, req.body.msg, req.body.sig);
+		const result = await core.VerifySig(req.body.address, req.body.msg, req.body.sig);
 
 		res.send({
 			"verified": result,
@@ -251,7 +251,7 @@ export async function verifyAddress(req, res) {
 			return;
 		}
 
-		const result = await Core.VerifyAddress(req.params.address);
+		const result = core.VerifyAddress(req.params.address);
 
 		res.send({
 			"verified": result,
@@ -269,7 +269,7 @@ export async function verifyAddress(req, res) {
 // New wallet
 export async function newWallet(req, res) {
 	try {
-		const wallet = await Core.NewWallet(req.body.entropy);
+		const wallet = await core.NewWallet(req.body.entropy);
 		res.send(wallet);
 	} catch (e) {
 		return MyResponse.Error(res, e);
@@ -285,7 +285,7 @@ export async function newJsonWallet(req, res) {
 	}
 
 	try {
-		const jsonWallet = await Core.NewJsonWallet(req.body.password, req.body.entropy);
+		const jsonWallet = await core.NewJsonWallet(req.body.password, req.body.entropy);
 		res.send(jsonWallet);
 	} catch (e) {
 		return MyResponse.Error(res, e);
@@ -302,7 +302,7 @@ export async function retrieveJsonWalletFromMnemonic(req, res) {
 	}
 
 	try {
-		const jsonWallet = await Core.RetrieveJsonWalletFromMnemonic(req.body.password, req.body.mnemonic);
+		const jsonWallet = await core.RetrieveJsonWalletFromMnemonic(req.body.password, req.body.mnemonic);
 		res.send(jsonWallet);
 	} catch (e) {
 		return MyResponse.Error(res, e);
@@ -319,7 +319,7 @@ export async function retrieveJsonWalletFromPK(req, res) {
 	}
 
 	try {
-		const jsonWallet = await Core.RetrieveJsonWalletFromPK(req.body.password, req.body.pk);
+		const jsonWallet = await core.RetrieveJsonWalletFromPK(req.body.password, req.body.pk);
 		res.send(jsonWallet);
 	} catch (e) {
 		return MyResponse.Error(res, e);
@@ -336,7 +336,7 @@ export async function inspectJsonWallet(req, res) {
 	}
 
 	try {
-		const jsonWallet = await Core.InspectJsonWallet(req.body.password, req.body.jsonWallet);
+		const jsonWallet = await core.InspectJsonWallet(req.body.password, req.body.jsonWallet);
 		res.send(jsonWallet);
 	} catch (e) {
 		return MyResponse.Error(res, e);

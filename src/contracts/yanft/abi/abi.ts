@@ -1,5 +1,5 @@
 import {log} from '@jovijovi/pedrojs-common';
-import * as network from '../../../network';
+import {network} from '@jovijovi/ether-network';
 import {GetYaNFTContract} from './common';
 import {utils} from 'ethers';
 

@@ -8,7 +8,7 @@ import {MailContent} from '../mailer/mailer';
 import {IsAlert} from './rules';
 import {customConfig} from '../config';
 import {mailer, Template} from '../mailer';
-import * as network from '../network';
+import {network} from '@jovijovi/ether-network';
 import cron = require('node-schedule');
 
 const blockQueue = new Queue<number>();     // Block queue (ASC, FIFO)
@@ -83,7 +83,7 @@ async function checkAddressBalance(watchedAddress: customConfig.WatchedAddress, 
 	if (IsAlert(watchedAddress, balanceNow)) {
 		const alertMsg = util.format("Address(%s) balance (%s) reaches limit (%s) at blockNumber(%d) [Chain:%s Network:%s ChainId:%s]",
 			watchedAddress.address, utils.formatEther(balanceNow), utils.formatEther(watchedAddress.limit), blockNumber,
-			customConfig.GetDefaultNetwork().chain, customConfig.GetDefaultNetwork().network, customConfig.GetChainId());
+			network.GetDefaultNetwork().chain, network.GetDefaultNetwork().network, network.GetChainId());
 
 		log.RequestId().info("***** ALERT ***** %s", alertMsg);
 
@@ -95,11 +95,11 @@ async function checkAddressBalance(watchedAddress: customConfig.WatchedAddress, 
 				rule: watchedAddress.rule,
 				balanceNow: utils.formatEther(balanceNow),
 				limit: utils.formatEther(watchedAddress.limit),
-				addressUrl: util.format("%s/address/%s", customConfig.GetBrowser(), watchedAddress.address),
+				addressUrl: util.format("%s/address/%s", network.GetBrowser(), watchedAddress.address),
 				blockNumber: blockNumber.toString(),
-				chain: customConfig.GetDefaultNetwork().chain,
-				network: customConfig.GetDefaultNetwork().network,
-				chainId: customConfig.GetChainId(),
+				chain: network.GetDefaultNetwork().chain,
+				network: network.GetDefaultNetwork().network,
+				chainId: network.GetChainId(),
 			}),
 		}));
 	}

@@ -1,5 +1,5 @@
 import {YaNFT, YaNFT__factory} from '../../../../typechain-types';
-import * as network from '../../../network';
+import {network} from '@jovijovi/ether-network';
 import {Common} from '../../../eth/core';
 
 // Get contract class

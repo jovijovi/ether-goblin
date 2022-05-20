@@ -1,8 +1,8 @@
 import {http} from '@jovijovi/pedrojs-network-http';
 import {config, log, sys} from '@jovijovi/pedrojs-common';
+import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../config';
 import {logo} from './logo';
-import * as network from '../network';
 import {RestfulHandlers} from '../handler';
 import {watchdog} from '../watchdog';
 import {queryMintEvents, transferListener} from '../event';
@@ -14,6 +14,7 @@ function main() {
 	customConfig.LoadCustomConfig();
 	http.server.Run(RestfulHandlers);
 
+	network.LoadConfig(customConfig.Get());
 	network.isConnected().then(r => {
 		if (!r) {
 			sys.Shutdown();

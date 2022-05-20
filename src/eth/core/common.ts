@@ -1,5 +1,5 @@
 import {Wallet} from 'ethers';
-import * as network from '../../network';
+import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../../config';
 
 // Transfer confirmations by default

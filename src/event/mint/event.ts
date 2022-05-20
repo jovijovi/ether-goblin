@@ -1,7 +1,7 @@
 import {constants, utils} from 'ethers';
 import {auditor, log, util} from '@jovijovi/pedrojs-common';
 import fastq, {queueAsPromised} from 'fastq';
-import * as network from '../../network';
+import {network} from '@jovijovi/ether-network';
 import {Options} from './options';
 import {Core} from '../../eth';
 import {

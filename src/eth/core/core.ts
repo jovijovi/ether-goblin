@@ -2,7 +2,7 @@ import {randomFillSync} from 'crypto';
 import {BigNumber, utils, Wallet} from 'ethers';
 import {Block, TransactionReceipt, TransactionResponse} from '@ethersproject/abstract-provider';
 import {auditor, log} from '@jovijovi/pedrojs-common';
-import * as network from '../../network';
+import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../../config';
 import {GetConfirmations} from './common';
 import {MaxEntropyLength, StatusSuccessful} from './params';
@@ -109,8 +109,8 @@ export async function Transfer(from: string, to: string, amount: string, pk: str
 		return;
 	}
 
-	log.RequestId().info("Transfer completed. TxHash=%s, ChainId=%s, From=%s, To=%s, GasPrice=%d, GasLimit=%d",
-		txRsp.hash, customConfig.GetChainId(), tx.from, tx.to, tx.gasPrice, tx.gasLimit);
+	log.RequestId().info("Transfer completed. TxHash=%s, From=%s, To=%s, GasPrice=%d, GasLimit=%d, GasUsed=%d",
+		txRsp.hash, tx.from, tx.to, tx.gasPrice, tx.gasLimit, receipt.gasUsed);
 
 	return receipt;
 }
@@ -134,8 +134,8 @@ export async function NewWallet(entropy?: string): Promise<any> {
 	log.RequestId().debug("New wallet address=", wallet.address);
 
 	return {
-		chain: customConfig.GetDefaultNetwork().chain,
-		network: customConfig.GetDefaultNetwork().network,
+		chain: network.GetDefaultNetwork().chain,
+		network: network.GetDefaultNetwork().network,
 		address: wallet.address,
 		pk: wallet.privateKey,
 		mnemonic: wallet.mnemonic.phrase,
@@ -183,8 +183,8 @@ export async function InspectJsonWallet(password: string, jsonWallet: string): P
 	log.RequestId().debug("InspectJsonWallet address=", wallet.address);
 
 	return {
-		chain: customConfig.GetDefaultNetwork().chain,
-		network: customConfig.GetDefaultNetwork().network,
+		chain: network.GetDefaultNetwork().chain,
+		network: network.GetDefaultNetwork().network,
 		address: wallet.address,
 		pk: wallet.privateKey,
 		mnemonic: wallet.mnemonic ? wallet.mnemonic.phrase : undefined,

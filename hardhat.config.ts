@@ -4,6 +4,7 @@ import {env} from 'process';
 import {HardhatUserConfig, NetworkUserConfig} from 'hardhat/types';
 import {customConfig as AppCustomConfig} from './src/config';
 import {config as AppConfig, log} from '@jovijovi/pedrojs-common';
+import {network} from '@jovijovi/ether-network';
 
 // Default app config file
 const defaultAppConfig = './conf/app.config.yaml'
@@ -15,13 +16,14 @@ function getDeveloperPK(): string {
 function getNetworkConfig(): NetworkUserConfig {
   AppConfig.LoadConfig(defaultAppConfig);
   AppCustomConfig.LoadCustomConfig();
+  network.LoadConfig(AppCustomConfig.Get());
 
-  log.RequestId().info("ChainId=", AppCustomConfig.GetChainId());
-  log.RequestId().info("Provider URL=", AppCustomConfig.GetProvider())
+  log.RequestId().info("ChainId=", network.GetChainId());
+  log.RequestId().info("Provider URL=", network.GetProvider())
 
   return {
-    chainId: AppCustomConfig.GetChainId(),
-    url: AppCustomConfig.GetProvider(),
+    chainId: network.GetChainId(),
+    url: network.GetProvider(),
     accounts: [`0x${getDeveloperPK()}`]
   }
 }

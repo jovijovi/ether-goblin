@@ -24,7 +24,7 @@ A microservice for calling ethereum APIs.
 
 - typescript `4.6.4`
 - node `v16.15.0`
-- ts-node `v10.7.0`
+- ts-node `v10.8.0`
 - yarn `v1.22.18`
 
 ## Quick Guide

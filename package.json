@@ -1,6 +1,6 @@
 {
   "name": "ether-goblin",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "A microservice for calling ethereum APIs",
   "author": "jovijovi <mageyul@hotmail.com>",
   "license": "MIT",
@@ -28,15 +28,15 @@
     "dist-run": "node ./dist/src/main/index.js"
   },
   "dependencies": {
-    "@jovijovi/ether-core": "0.1.0",
-    "@jovijovi/ether-network": "0.1.0",
+    "@jovijovi/ether-core": "0.1.2",
+    "@jovijovi/ether-network": "0.1.2",
     "@jovijovi/pedrojs-common": "1.0.27",
     "@jovijovi/pedrojs-network-http": "1.0.27",
     "@jovijovi/pedrojs-sqlite": "1.0.26",
     "@openzeppelin/contracts": "^4.6.0",
     "@types/lru-cache": "^7.10.10",
     "@types/node-schedule": "^2.1.0",
-    "ethers": "5.6.6",
+    "ethers": "5.6.7",
     "fastq": "^1.13.0",
     "got": "11.8.3",
     "node-schedule": "^2.1.0",
@@ -57,11 +57,11 @@
     "@typescript-eslint/parser": "^5.25.0",
     "chai": "4.3.6",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^8.15.0",
+    "eslint": "^8.16.0",
     "hardhat": "2.9.6",
     "mocha": "^10.0.0",
     "ts-generator": "^0.1.1",
-    "ts-node": "10.7.0",
+    "ts-node": "10.8.0",
     "typechain": "8.0.0",
     "typescript": "4.6.4"
   }

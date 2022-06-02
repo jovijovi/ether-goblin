@@ -13,7 +13,7 @@ import {
 } from './params';
 import {EventTransfer} from './types';
 import {customConfig} from '../../config';
-import * as db from './db';
+import {DB} from './db';
 import cron = require('node-schedule');
 
 // Event queue (ASC, FIFO)
@@ -105,7 +105,7 @@ async function queryMintEvents(opts: Options = {
 	let blockNumber = await core.GetBlockNumber();
 
 	// Connect to database
-	await db.Connect();
+	await DB.Connect();
 
 	do {
 		leftBlocks = blockNumber - nextFrom;
@@ -186,7 +186,7 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 		for (let i = 0; i < len; i++) {
 			const evt = queue.Shift();
 			// Dump event to database
-			await db.Save(evt);
+			await DB.Client().Save(evt);
 			log.RequestId().info("Count=%d, evt=%o", i + 1, evt);
 		}
 	} catch (e) {

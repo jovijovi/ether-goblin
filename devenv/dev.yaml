@@ -1,0 +1,19 @@
+version: '3.1'
+
+networks:
+  devenv-network-ether-goblin:
+
+services:
+  postgres:
+    container_name: devenv_postgres_pedrojs
+    image: postgres:13.6
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+      - ../database/postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - devenv-network-ether-goblin
+

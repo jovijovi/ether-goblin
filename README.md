@@ -2,17 +2,16 @@
 
 [![GitHub Actions](https://github.com/jovijovi/ether-goblin/workflows/Test/badge.svg)](https://github.com/jovijovi/ether-goblin)
 
-A microservice for calling ethereum APIs.
+A microservice for the Ethereum ecosystem.
 
 ## Features
 
-- RESTFul APIs for the Ethereum Blockchain and its ecosystem
-- Microservice
-- Run in Docker
-- NFT APIs (under development)
+- RESTFul APIs for the Ethereum ecosystem
 - A simple balance Watchdog
 - NFT transfer tx listener
 - NFT archaeologist, excavating NFT mint events from block history
+- More out-of-the-box NFT APIs (under development)
+- Microservice run in Docker
 
 ## Supported Chains
 
@@ -22,7 +21,7 @@ A microservice for calling ethereum APIs.
 
 ## Development Environment
 
-- typescript `4.6.4`
+- typescript `4.7.2`
 - node `v16.15.0`
 - ts-node `v10.8.0`
 - yarn `v1.22.18`

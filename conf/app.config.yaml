@@ -39,6 +39,11 @@ custom:
     # Use provider pool
     providerPool: true
 
+  # Database
+  database:
+    postgres:
+      uri: 'postgresql://postgres:example@localhost:5432'
+
   tx:
     # GasLimit coefficient (%)
     # Example: 110 means gasLimit * 110%
@@ -101,6 +106,9 @@ custom:
 
       # Execute job concurrency
       executeJobConcurrency: 20
+
+      # Supported Database: postgres or sqlite
+      db: postgres
 
   networks:
     # Ethereum

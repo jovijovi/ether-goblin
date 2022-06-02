@@ -1,4 +1,5 @@
 import {config} from '@jovijovi/pedrojs-common';
+import {Postgresql} from '@jovijovi/pedrojs-pg';
 
 export namespace customConfig {
 	class TxConfig {
@@ -41,6 +42,7 @@ export namespace customConfig {
 		maxBlockRange?: number
 		pushJobIntervals?: number
 		executeJobConcurrency?: number
+		db: string
 	}
 
 	class Events {
@@ -48,10 +50,15 @@ export namespace customConfig {
 		mint: MintEvent
 	}
 
+	class Database {
+		postgres: Postgresql.Config
+	}
+
 	export class CustomConfig {
 		tx: TxConfig
 		watchdog?: Watchdog
 		events?: Events
+		database?: Database
 	}
 
 	let customConfig: CustomConfig;
@@ -85,5 +92,10 @@ export namespace customConfig {
 		}
 
 		throw new Error(`GetEvents Failed, invalid config`);
+	}
+
+	// GetPostgresConfig returns postgres database config
+	export function GetPostgresConfig(): Postgresql.Config {
+		return customConfig.database.postgres;
 	}
 }

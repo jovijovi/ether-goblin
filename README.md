@@ -11,6 +11,7 @@ A microservice for the Ethereum ecosystem.
 - NFT transfer tx listener
 - NFT archaeologist, excavating NFT mint events from block history
 - More out-of-the-box NFT APIs (under development)
+- API authorization via 2FA token
 - Microservice run in Docker
 
 ## Supported Chains
@@ -24,7 +25,7 @@ A microservice for the Ethereum ecosystem.
 - typescript `4.7.3`
 - node `v16.15.1`
 - ts-node `v10.8.1`
-- yarn `v1.22.18`
+- yarn `v1.22.19`
 
 ## Quick Guide
 

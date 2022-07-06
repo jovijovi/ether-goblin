@@ -7,5 +7,6 @@ services:
     restart: always
     volumes:
       - ../conf:/opt/app/conf
+      - ../database:/opt/app/database
     ports:
       - "56550:56550"

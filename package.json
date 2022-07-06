@@ -34,7 +34,7 @@
     "@jovijovi/pedrojs-common": "1.1.5",
     "@jovijovi/pedrojs-network-http": "1.1.5",
     "@jovijovi/pedrojs-pg": "^1.1.6",
-    "@jovijovi/pedrojs-sqlite": "1.1.6",
+    "@jovijovi/pedrojs-sqlite": "1.1.8",
     "@openzeppelin/contracts": "^4.7.0",
     "@types/lru-cache": "^7.10.10",
     "@types/node-schedule": "^2.1.0",

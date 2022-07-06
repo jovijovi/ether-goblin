@@ -522,10 +522,10 @@
     pg-hstore "^2.3.4"
     sequelize "^6.21.2"
 
-"@jovijovi/pedrojs-sqlite@1.1.6":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-sqlite/-/pedrojs-sqlite-1.1.6.tgz#2274f8101bfbd0b16a577cfd2d3a6d6b183a90b8"
-  integrity sha512-Dcf40wcq+600aPV/GV5a1pwCpTvHV6gDTThgwhoA90CDm0QovzrG+rm4W41xyZowQJeTGjtWXEUS+ghmwfdbHw==
+"@jovijovi/pedrojs-sqlite@1.1.8":
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-sqlite/-/pedrojs-sqlite-1.1.8.tgz#1a052c26b5b90871b0ba8471afff4b097694a927"
+  integrity sha512-indZXrtJgy4rbqIDu1A6aczUW7ZS5FtSxTULHjlb0ITPHkWqkMI0zfQGk2j9DdQ3hc6e0TSrPcrU+UW8lbPjJw==
   dependencies:
     "@jovijovi/pedrojs-log" "^1.1.0"
     sequelize "^6.21.2"

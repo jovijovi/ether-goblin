@@ -35,6 +35,7 @@ export namespace customConfig {
 		type: string[]
 		responseCode?: string | number
 		callback: string
+		contractOwners: string[]
 	}
 
 	class MintEvent {
@@ -43,6 +44,7 @@ export namespace customConfig {
 		pushJobIntervals?: number
 		executeJobConcurrency?: number
 		db: string
+		contractOwners: string[]
 	}
 
 	class Events {

@@ -6,6 +6,7 @@ import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../../config';
 import {DefaultCallbackJobConcurrency, EventNameTransfer, EventTypeBurn, EventTypeMint} from './params';
 import {EventTransfer, Response} from './types';
+import {GetNFTContractOwner} from './abi';
 import cron = require('node-schedule');
 
 // Event queue (ASC, FIFO)
@@ -86,7 +87,7 @@ export function Run() {
 		}
 	});
 
-	cron.scheduleJob('*/3 * * * * *', function () {
+	cron.scheduleJob('*/7 * * * * *', function () {
 		try {
 			auditor.Check(eventQueue, "Event queue is nil");
 			const len = eventQueue.Length();
@@ -126,6 +127,13 @@ async function callback(evt: EventTransfer): Promise<void> {
 		// Check URL
 		if (!conf.transfer.callback) {
 			log.RequestId().warn("Callback URL is empty");
+			return;
+		}
+
+		// Filters contract address by owner
+		const contractOwner = await GetNFTContractOwner(evt.address);
+		if (conf.transfer.contractOwners && !conf.transfer.contractOwners.includes(contractOwner)) {
+			log.RequestId().trace("Not contract owner, skipped");
 			return;
 		}
 

@@ -132,7 +132,8 @@ async function callback(evt: EventTransfer): Promise<void> {
 
 		// Filters contract address by owner
 		const contractOwner = await GetNFTContractOwner(evt.address);
-		if (conf.transfer.contractOwners && !conf.transfer.contractOwners.includes(contractOwner)) {
+		if (conf.transfer.contractOwners
+			&& !conf.transfer.contractOwners.map(x => utils.getAddress(x)).includes(utils.getAddress(contractOwner))) {
 			log.RequestId().trace("Not contract owner, skipped");
 			return;
 		}

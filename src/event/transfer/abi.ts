@@ -1,4 +1,5 @@
 import {ethers, utils} from 'ethers';
+import {network} from '@jovijovi/ether-network';
 import {Cache} from '../../common/cache';
 
 const ownerABI = `
@@ -27,8 +28,9 @@ export async function GetNFTContractOwner(address: string): Promise<string> {
 		return Cache.CacheContractOwner.get(key);
 	}
 
+	const provider = network.MyProvider.Get();
 	const contractInterface = new utils.Interface(ownerABI);
-	const contract = new ethers.Contract(address, contractInterface);
+	const contract = new ethers.Contract(address, contractInterface, provider);
 	const owner = await contract.owner();
 
 	// Set cache

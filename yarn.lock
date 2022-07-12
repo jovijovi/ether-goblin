@@ -470,13 +470,12 @@
     "@jovijovi/pedrojs-log" "^1.1.9"
     ethers "^5.6.9"
 
-"@jovijovi/express-2fa-token@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@jovijovi/express-2fa-token/-/express-2fa-token-1.0.2.tgz#82c4b889b5dd2daf629e6f4651f8470da1028dba"
-  integrity sha512-nXVQYrs+Yie/jTRvuIaAZu6EXgYKWrGleXoeVhSV8nXIS3ReV6LIbkIH0FThLeRf68603LF0dScV2njEAR2OKQ==
+"@jovijovi/express-2fa-token@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@jovijovi/express-2fa-token/-/express-2fa-token-1.1.0.tgz#9bf9c10bb6a6c7544d0767a824bc7f305c6663cb"
+  integrity sha512-NxY33Tkauu/iY8ebm9tUdXqob/LSjbAeCPWlr9mOoocygz6uQCTpRZcowF5M2PtqpA9QRfoc8+oBVVcZPuqTmA==
   dependencies:
     "@jovijovi/two-fa.js" "^0.2.5"
-    node-schedule "^2.1.0"
 
 "@jovijovi/pedrojs-common@1.1.9", "@jovijovi/pedrojs-common@^1.1.9":
   version "1.1.9"
@@ -512,23 +511,23 @@
     express "4.18.1"
     nanoid "3.3.4"
 
-"@jovijovi/pedrojs-pg@^1.1.9":
-  version "1.1.9"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-pg/-/pedrojs-pg-1.1.9.tgz#2f0b21fbf7097531c01071347d0eb9c34d10ecfa"
-  integrity sha512-nIzR8E/R2AQc+J9c5Ji/52Bvpzi9sm+8jZc462+CyV5DkK4eM5TOhubORdWkqx+qmgWTzEb4fv3q179tvDtSOw==
+"@jovijovi/pedrojs-pg@^1.1.10":
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-pg/-/pedrojs-pg-1.1.10.tgz#6ace69d376562de3520322eada374460e7010eb4"
+  integrity sha512-Kj9KDmS/ks/N0FIx9odGVY1DIzFj5RSHvxp24latEKup8UGSRZ6YpWrimV8aFA69y2qbRUfF2U9L6+H0VdlTMQ==
   dependencies:
     "@jovijovi/pedrojs-log" "^1.1.9"
     pg "^8.7.3"
     pg-hstore "^2.3.4"
-    sequelize "^6.21.2"
+    sequelize "^6.21.3"
 
-"@jovijovi/pedrojs-sqlite@1.1.9":
-  version "1.1.9"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-sqlite/-/pedrojs-sqlite-1.1.9.tgz#c3e60277d0f116ae81acc2a74b3e38ad7d1d9165"
-  integrity sha512-nOlrpNLI4H+WCAS7c/wbKchg8En6rzlFiALGxEQFkJEqKQ38vTMxyFdmldHDgqcy8uYBygjfm2IxVm1aRTLLjA==
+"@jovijovi/pedrojs-sqlite@1.1.10":
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-sqlite/-/pedrojs-sqlite-1.1.10.tgz#e1dd60c5134f6cbf9a6ef3824915cfc0e2c4148c"
+  integrity sha512-W6qKe5Vvqf36yHteAYJozc+N8W/t8TBblyxhbCqUwydNZokjqYDPTqL1xVzYeYwzmGd8SZG5qK6br1cCzfHVxw==
   dependencies:
     "@jovijovi/pedrojs-log" "^1.1.9"
-    sequelize "^6.21.2"
+    sequelize "^6.21.3"
     sqlite3 "5.0.8"
 
 "@jovijovi/pedrojs-tracing@1.1.9":
@@ -1217,14 +1216,14 @@
     "@types/bn.js" "*"
     "@types/underscore" "*"
 
-"@typescript-eslint/eslint-plugin@^5.30.5":
-  version "5.30.5"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-5.30.5.tgz#e9a0afd6eb3b1d663db91cf1e7bc7584d394503d"
-  integrity sha512-lftkqRoBvc28VFXEoRgyZuztyVUQ04JvUnATSPtIRFAccbXTWL6DEtXGYMcbg998kXw1NLUJm7rTQ9eUt+q6Ig==
+"@typescript-eslint/eslint-plugin@^5.30.6":
+  version "5.30.6"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-5.30.6.tgz#9c6017b6c1d04894141b4a87816388967f64c359"
+  integrity sha512-J4zYMIhgrx4MgnZrSDD7sEnQp7FmhKNOaqaOpaoQ/SfdMfRB/0yvK74hTnvH+VQxndZynqs5/Hn4t+2/j9bADg==
   dependencies:
-    "@typescript-eslint/scope-manager" "5.30.5"
-    "@typescript-eslint/type-utils" "5.30.5"
-    "@typescript-eslint/utils" "5.30.5"
+    "@typescript-eslint/scope-manager" "5.30.6"
+    "@typescript-eslint/type-utils" "5.30.6"
+    "@typescript-eslint/utils" "5.30.6"
     debug "^4.3.4"
     functional-red-black-tree "^1.0.1"
     ignore "^5.2.0"
@@ -1232,69 +1231,69 @@
     semver "^7.3.7"
     tsutils "^3.21.0"
 
-"@typescript-eslint/parser@^5.30.5":
-  version "5.30.5"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-5.30.5.tgz#f667c34e4e4c299d98281246c9b1e68c03a92522"
-  integrity sha512-zj251pcPXI8GO9NDKWWmygP6+UjwWmrdf9qMW/L/uQJBM/0XbU2inxe5io/234y/RCvwpKEYjZ6c1YrXERkK4Q==
+"@typescript-eslint/parser@^5.30.6":
+  version "5.30.6"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-5.30.6.tgz#add440db038fa9d777e4ebdaf66da9e7fb7abe92"
+  integrity sha512-gfF9lZjT0p2ZSdxO70Xbw8w9sPPJGfAdjK7WikEjB3fcUI/yr9maUVEdqigBjKincUYNKOmf7QBMiTf719kbrA==
   dependencies:
-    "@typescript-eslint/scope-manager" "5.30.5"
-    "@typescript-eslint/types" "5.30.5"
-    "@typescript-eslint/typescript-estree" "5.30.5"
+    "@typescript-eslint/scope-manager" "5.30.6"
+    "@typescript-eslint/types" "5.30.6"
+    "@typescript-eslint/typescript-estree" "5.30.6"
     debug "^4.3.4"
 
-"@typescript-eslint/scope-manager@5.30.5":
-  version "5.30.5"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/scope-manager/-/scope-manager-5.30.5.tgz#7f90b9d6800552c856a5f3644f5e55dd1469d964"
-  integrity sha512-NJ6F+YHHFT/30isRe2UTmIGGAiXKckCyMnIV58cE3JkHmaD6e5zyEYm5hBDv0Wbin+IC0T1FWJpD3YqHUG/Ydg==
+"@typescript-eslint/scope-manager@5.30.6":
+  version "5.30.6"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/scope-manager/-/scope-manager-5.30.6.tgz#ce1b49ff5ce47f55518d63dbe8fc9181ddbd1a33"
+  integrity sha512-Hkq5PhLgtVoW1obkqYH0i4iELctEKixkhWLPTYs55doGUKCASvkjOXOd/pisVeLdO24ZX9D6yymJ/twqpJiG3g==
   dependencies:
-    "@typescript-eslint/types" "5.30.5"
-    "@typescript-eslint/visitor-keys" "5.30.5"
+    "@typescript-eslint/types" "5.30.6"
+    "@typescript-eslint/visitor-keys" "5.30.6"
 
-"@typescript-eslint/type-utils@5.30.5":
-  version "5.30.5"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/type-utils/-/type-utils-5.30.5.tgz#7a9656f360b4b1daea635c4621dab053d08bf8a9"
-  integrity sha512-k9+ejlv1GgwN1nN7XjVtyCgE0BTzhzT1YsQF0rv4Vfj2U9xnslBgMYYvcEYAFVdvhuEscELJsB7lDkN7WusErw==
+"@typescript-eslint/type-utils@5.30.6":
+  version "5.30.6"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/type-utils/-/type-utils-5.30.6.tgz#a64aa9acbe609ab77f09f53434a6af2b9685f3af"
+  integrity sha512-GFVVzs2j0QPpM+NTDMXtNmJKlF842lkZKDSanIxf+ArJsGeZUIaeT4jGg+gAgHt7AcQSFwW7htzF/rbAh2jaVA==
   dependencies:
-    "@typescript-eslint/utils" "5.30.5"
+    "@typescript-eslint/utils" "5.30.6"
     debug "^4.3.4"
     tsutils "^3.21.0"
 
-"@typescript-eslint/types@5.30.5":
-  version "5.30.5"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-5.30.5.tgz#36a0c05a72af3623cdf9ee8b81ea743b7de75a98"
-  integrity sha512-kZ80w/M2AvsbRvOr3PjaNh6qEW1LFqs2pLdo2s5R38B2HYXG8Z0PP48/4+j1QHJFL3ssHIbJ4odPRS8PlHrFfw==
+"@typescript-eslint/types@5.30.6":
+  version "5.30.6"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-5.30.6.tgz#86369d0a7af8c67024115ac1da3e8fb2d38907e1"
+  integrity sha512-HdnP8HioL1F7CwVmT4RaaMX57RrfqsOMclZc08wGMiDYJBsLGBM7JwXM4cZJmbWLzIR/pXg1kkrBBVpxTOwfUg==
 
-"@typescript-eslint/typescript-estree@5.30.5":
-  version "5.30.5"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/typescript-estree/-/typescript-estree-5.30.5.tgz#c520e4eba20551c4ec76af8d344a42eb6c9767bb"
-  integrity sha512-qGTc7QZC801kbYjAr4AgdOfnokpwStqyhSbiQvqGBLixniAKyH+ib2qXIVo4P9NgGzwyfD9I0nlJN7D91E1VpQ==
+"@typescript-eslint/typescript-estree@5.30.6":
+  version "5.30.6"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/typescript-estree/-/typescript-estree-5.30.6.tgz#a84a0d6a486f9b54042da1de3d671a2c9f14484e"
+  integrity sha512-Z7TgPoeYUm06smfEfYF0RBkpF8csMyVnqQbLYiGgmUSTaSXTP57bt8f0UFXstbGxKIreTwQCujtaH0LY9w9B+A==
   dependencies:
-    "@typescript-eslint/types" "5.30.5"
-    "@typescript-eslint/visitor-keys" "5.30.5"
+    "@typescript-eslint/types" "5.30.6"
+    "@typescript-eslint/visitor-keys" "5.30.6"
     debug "^4.3.4"
     globby "^11.1.0"
     is-glob "^4.0.3"
     semver "^7.3.7"
     tsutils "^3.21.0"
 
-"@typescript-eslint/utils@5.30.5":
-  version "5.30.5"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-5.30.5.tgz#3999cbd06baad31b9e60d084f20714d1b2776765"
-  integrity sha512-o4SSUH9IkuA7AYIfAvatldovurqTAHrfzPApOZvdUq01hHojZojCFXx06D/aFpKCgWbMPRdJBWAC3sWp3itwTA==
+"@typescript-eslint/utils@5.30.6":
+  version "5.30.6"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-5.30.6.tgz#1de2da14f678e7d187daa6f2e4cdb558ed0609dc"
+  integrity sha512-xFBLc/esUbLOJLk9jKv0E9gD/OH966M40aY9jJ8GiqpSkP2xOV908cokJqqhVd85WoIvHVHYXxSFE4cCSDzVvA==
   dependencies:
     "@types/json-schema" "^7.0.9"
-    "@typescript-eslint/scope-manager" "5.30.5"
-    "@typescript-eslint/types" "5.30.5"
-    "@typescript-eslint/typescript-estree" "5.30.5"
+    "@typescript-eslint/scope-manager" "5.30.6"
+    "@typescript-eslint/types" "5.30.6"
+    "@typescript-eslint/typescript-estree" "5.30.6"
     eslint-scope "^5.1.1"
     eslint-utils "^3.0.0"
 
-"@typescript-eslint/visitor-keys@5.30.5":
-  version "5.30.5"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/visitor-keys/-/visitor-keys-5.30.5.tgz#d4bb969202019d5d5d849a0aaedc7370cc044b14"
-  integrity sha512-D+xtGo9HUMELzWIUqcQc0p2PO4NyvTrgIOK/VnSH083+8sq0tiLozNRKuLarwHYGRuA6TVBQSuuLwJUDWd3aaA==
+"@typescript-eslint/visitor-keys@5.30.6":
+  version "5.30.6"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/visitor-keys/-/visitor-keys-5.30.6.tgz#94dd10bb481c8083378d24de1742a14b38a2678c"
+  integrity sha512-41OiCjdL2mCaSDi2SvYbzFLlqqlm5v1ZW9Ym55wXKL/Rx6OOB1IbuFGo71Fj6Xy90gJDFTlgOS+vbmtGHPTQQA==
   dependencies:
-    "@typescript-eslint/types" "5.30.5"
+    "@typescript-eslint/types" "5.30.6"
     eslint-visitor-keys "^3.3.0"
 
 "@ungap/promise-all-settled@1.1.2":
@@ -4513,10 +4512,10 @@ sequelize-pool@^7.1.0:
   resolved "https://registry.yarnpkg.com/sequelize-pool/-/sequelize-pool-7.1.0.tgz#210b391af4002762f823188fd6ecfc7413020768"
   integrity sha512-G9c0qlIWQSK29pR/5U2JF5dDQeqqHRragoyahj/Nx4KOOQ3CPPfzxnfqFPCSB7x5UgjOgnZ61nSxz+fjDpRlJg==
 
-sequelize@^6.21.2:
-  version "6.21.2"
-  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-6.21.2.tgz#28d3c9c376471670c651e0345ea42e0017b6f112"
-  integrity sha512-K0c6j/Y6yfucBL9XYHMVWqYGFShPsj6ZzMrQcOAjqzyE+a1XMBOoTXXjRvJS+fz6cKeh2D3ZqhYDRwN8nfvOMQ==
+sequelize@^6.21.3:
+  version "6.21.3"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-6.21.3.tgz#6026b088b5327f8cc0501b0e7e5a8de1bf0346ce"
+  integrity sha512-cJPrTTVCofUxaaNKoIETiXCYh2xJ+OFq5jMHJQqftp34M4kNoLpTfUMPSwYtRUeTcSh1/5HodfJXIBi7troIFA==
   dependencies:
     "@types/debug" "^4.1.7"
     "@types/validator" "^13.7.1"

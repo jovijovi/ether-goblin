@@ -35,6 +35,7 @@ export namespace customConfig {
 		type: string[]
 		responseCode?: string | number
 		callback: string
+		ownerFilter: boolean
 		contractOwners: string[]
 	}
 

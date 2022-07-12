@@ -102,7 +102,7 @@ export function Run() {
 					return;
 				}
 
-				log.RequestId().debug("Processing event:", evt);
+				log.RequestId().trace("Processing event:", evt);
 				callbackJob.push(evt).catch((err) => log.RequestId().error(err));
 			}
 		} catch (e) {
@@ -131,14 +131,20 @@ async function callback(evt: EventTransfer): Promise<void> {
 		}
 
 		// Filters contract address by owner
-		const contractOwner = await GetNFTContractOwner(evt.address);
-		if (conf.transfer.contractOwners
-			&& !conf.transfer.contractOwners.map(x => utils.getAddress(x)).includes(utils.getAddress(contractOwner))) {
-			log.RequestId().trace("Not contract owner, skipped");
-			return;
+		if (conf.transfer.ownerFilter && conf.transfer.contractOwners) {
+			const contractOwner = await GetNFTContractOwner(evt.address);
+			if (!contractOwner) {
+				return;
+			}
+
+			if (!conf.transfer.contractOwners.map(x => utils.getAddress(x)).includes(utils.getAddress(contractOwner))) {
+				log.RequestId().trace("Not contract(%s) owner, skipped", evt.address);
+				return;
+			}
 		}
 
 		// Callback
+		log.RequestId().debug("Calling back(%s)... event:", conf.transfer.callback, evt);
 		const rsp: Response = await got.post(conf.transfer.callback, {
 			json: evt
 		}).json();
@@ -149,6 +155,7 @@ async function callback(evt: EventTransfer): Promise<void> {
 			log.RequestId().error("Callback failed, code=%s, msg=%s", rsp.code, rsp.msg);
 			return;
 		}
+		log.RequestId().info("Processed event:", evt);
 	} catch (e) {
 		log.RequestId().error("Callback failed, error=", e);
 		return;

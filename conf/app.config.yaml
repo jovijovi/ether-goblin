@@ -95,6 +95,9 @@ custom:
       # Callback URL
       callback: 'YOUR CALLBACK URL'
 
+      # Enable contract owner filter
+      ownerFilter: false
+
       # NFT contract owners
       contractOwners:
         - 'CONTRACT_OWNER_ADDRESS_1'

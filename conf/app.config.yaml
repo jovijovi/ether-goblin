@@ -95,6 +95,11 @@ custom:
       # Callback URL
       callback: 'YOUR CALLBACK URL'
 
+      # NFT contract owners
+      contractOwners:
+        - 'CONTRACT_OWNER_ADDRESS_1'
+        - 'CONTRACT_OWNER_ADDRESS_2'
+
     mint:
       enable: false
 
@@ -109,6 +114,11 @@ custom:
 
       # Supported Database: postgres or sqlite
       db: postgres
+
+      # NFT contract owners
+      contractOwners:
+        - 'CONTRACT_OWNER_ADDRESS_1'
+        - 'CONTRACT_OWNER_ADDRESS_2'
 
   networks:
     # Ethereum

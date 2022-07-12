@@ -1,12 +1,14 @@
 import {constants, utils} from 'ethers';
-import {auditor, log, util} from '@jovijovi/pedrojs-common';
+import {log, util} from '@jovijovi/pedrojs-common';
 import fastq, {queueAsPromised} from 'fastq';
 import got from 'got';
 import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../../config';
 import {DefaultCallbackJobConcurrency, EventNameTransfer, EventTypeBurn, EventTypeMint} from './params';
 import {EventTransfer, Response} from './types';
-import cron = require('node-schedule');
+import {GetNFTContractOwner} from './abi';
+
+const interval = 3000; // loop interval. Unit: ms
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -86,9 +88,8 @@ export function Run() {
 		}
 	});
 
-	cron.scheduleJob('*/3 * * * * *', function () {
+	setInterval(() => {
 		try {
-			auditor.Check(eventQueue, "Event queue is nil");
 			const len = eventQueue.Length();
 			if (len === 0) {
 				return;
@@ -108,7 +109,7 @@ export function Run() {
 			log.RequestId().error("Push callback job failed, error=", e);
 			return;
 		}
-	});
+	}, interval);
 
 	return;
 }
@@ -126,6 +127,14 @@ async function callback(evt: EventTransfer): Promise<void> {
 		// Check URL
 		if (!conf.transfer.callback) {
 			log.RequestId().warn("Callback URL is empty");
+			return;
+		}
+
+		// Filters contract address by owner
+		const contractOwner = await GetNFTContractOwner(evt.address);
+		if (conf.transfer.contractOwners
+			&& !conf.transfer.contractOwners.map(x => utils.getAddress(x)).includes(utils.getAddress(contractOwner))) {
+			log.RequestId().trace("Not contract owner, skipped");
 			return;
 		}
 

@@ -13,14 +13,17 @@
 /git.json
 
 # builders
+/keystore
 /artifacts
 /cache
 /typechain-types
 /dist
 /*.tar
 /*.tar.gz
-/conf_dev
 /flattened
+/_dev
+.deps
+artifacts
 
 # db
 /database

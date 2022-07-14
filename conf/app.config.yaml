@@ -42,7 +42,7 @@ custom:
   # Database
   database:
     postgres:
-      uri: 'postgresql://postgres:example@localhost:5432'
+      uri: 'postgresql://postgres:example@localhost:5432/mock_goblin'
 
   tx:
     # GasLimit coefficient (%)
@@ -118,7 +118,7 @@ custom:
       # Execute job concurrency
       executeJobConcurrency: 20
 
-      # Supported Database: postgres or sqlite
+      # Supported Database: postgres, mysql or sqlite
       db: postgres
 
       # NFT contract owners

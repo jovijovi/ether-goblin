@@ -40,9 +40,11 @@ export async function Send(mailConf: customConfig.Mailer, mailContent: MailConte
 
 			// only needed when using pooled connections
 			transporter.close();
+
+			log.RequestId().info("Send mail successfully");
 		});
 
-		log.RequestId().info("Send mail successfully");
+		log.RequestId().debug("Sending mail...");
 	} catch (e) {
 		log.RequestId().error(e);
 		return;

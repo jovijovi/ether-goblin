@@ -3,7 +3,7 @@ import {network} from '@jovijovi/ether-network';
 import {log} from '@jovijovi/pedrojs-common';
 import {Cache} from '../../common/cache';
 
-const ownerABI = `
+const owner = `
 [
     {
       "inputs": [],
@@ -21,6 +21,15 @@ const ownerABI = `
 ]
 `
 
+export const enum ABI {
+	owner = 'owner',
+}
+
+// ABI Mapper
+export const ABIMapper = new Map([
+	[ABI.owner, owner],
+]);
+
 async function getNFTContractOwner(address: string): Promise<string> {
 	const key = Cache.CombinationKey([address])
 
@@ -30,7 +39,7 @@ async function getNFTContractOwner(address: string): Promise<string> {
 	}
 
 	const provider = network.MyProvider.Get();
-	const contractInterface = new utils.Interface(ownerABI);
+	const contractInterface = new utils.Interface(ABIMapper.get(ABI.owner));
 	const contract = new ethers.Contract(address, contractInterface, provider);
 	const owner = await contract.owner();
 

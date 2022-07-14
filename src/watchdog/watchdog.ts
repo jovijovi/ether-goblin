@@ -2,6 +2,7 @@ import {auditor, log} from '@jovijovi/pedrojs-common';
 import {BigNumber, utils} from 'ethers';
 import * as util from 'util';
 import fastq, {queueAsPromised} from 'fastq';
+import got from 'got';
 import {Queue, retry} from '@jovijovi/pedrojs-common/util';
 import fs from 'fs';
 import {MailContent} from '../mailer/mailer';
@@ -9,7 +10,7 @@ import {IsAlert} from './rules';
 import {customConfig} from '../config';
 import {mailer, Template} from '../mailer';
 import {network} from '@jovijovi/ether-network';
-import cron = require('node-schedule');
+import {DefaultLoopInterval} from './params';
 
 const blockQueue = new Queue<number>();     // Block queue (ASC, FIFO)
 const checkBalanceJob: queueAsPromised<number> = fastq.promise(checkAddressList, 1);    // Job: Check balance
@@ -36,7 +37,7 @@ export function Run() {
 		}
 	})
 
-	cron.scheduleJob('*/3 * * * * *', function () {
+	setInterval(() => {
 		if (blockQueue.Length() == 0) {
 			return;
 		}
@@ -47,7 +48,7 @@ export function Run() {
 		}
 
 		checkBalanceJob.push(blockNumber).catch((err) => log.RequestId().error(err));
-	});
+	}, DefaultLoopInterval);
 }
 
 async function checkAddressList(blockNumber: number): Promise<void> {
@@ -87,21 +88,26 @@ async function checkAddressBalance(watchedAddress: customConfig.WatchedAddress, 
 
 		log.RequestId().info("***** ALERT ***** %s", alertMsg);
 
+		const msg = {
+			address: watchedAddress.address,
+			rule: watchedAddress.rule,
+			balanceNow: utils.formatEther(balanceNow),
+			limit: utils.formatEther(watchedAddress.limit),
+			addressUrl: util.format("%s/address/%s", network.GetBrowser(), watchedAddress.address),
+			blockNumber: blockNumber.toString(),
+			chain: network.GetDefaultNetwork().chain,
+			network: network.GetDefaultNetwork().network,
+			chainId: network.GetChainId(),
+		}
+
 		// Send alert
 		await sendAlert(Template.BalanceAlertMailContent({
 			subject: util.format("%s reaches limit (%s) @%d", watchedAddress.address, utils.formatEther(watchedAddress.limit), blockNumber),
-			html: genHtmlMail({
-				address: watchedAddress.address,
-				rule: watchedAddress.rule,
-				balanceNow: utils.formatEther(balanceNow),
-				limit: utils.formatEther(watchedAddress.limit),
-				addressUrl: util.format("%s/address/%s", network.GetBrowser(), watchedAddress.address),
-				blockNumber: blockNumber.toString(),
-				chain: network.GetDefaultNetwork().chain,
-				network: network.GetDefaultNetwork().network,
-				chainId: network.GetChainId(),
-			}),
+			html: genHtmlMail(msg),
 		}));
+
+		// Callback (optional)
+		await callback(msg);
 	}
 }
 
@@ -121,9 +127,31 @@ function genHtmlMail(arg: any): string {
 
 // sendAlert send alert by mail
 async function sendAlert(mailContent: MailContent) {
-	if (!customConfig.GetWatchdog().mailer) {
-		return;
-	}
+	try {
+		if (!customConfig.GetWatchdog().mailer) {
+			return;
+		}
 
-	await mailer.Send(customConfig.GetWatchdog().mailer, mailContent);
+		await mailer.Send(customConfig.GetWatchdog().mailer, mailContent);
+	} catch (e) {
+		log.RequestId().error("SendAlert failed, error=", e);
+	}
+}
+
+// callback
+async function callback(msg: any) {
+	try {
+		const callback = customConfig.GetWatchdog().callback;
+		if (!callback || !msg) {
+			return;
+		}
+
+		// Send a POST request with JSON body
+		const rsp = await got.post(callback, {
+			json: msg
+		}).json();
+		log.RequestId().trace("Callback response=", rsp);
+	} catch (e) {
+		log.RequestId().error("Callback failed, error=", e);
+	}
 }

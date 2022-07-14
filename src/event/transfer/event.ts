@@ -4,11 +4,15 @@ import fastq, {queueAsPromised} from 'fastq';
 import got from 'got';
 import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../../config';
-import {DefaultCallbackJobConcurrency, EventNameTransfer, EventTypeBurn, EventTypeMint} from './params';
+import {
+	DefaultCallbackJobConcurrency,
+	DefaultLoopInterval,
+	EventNameTransfer,
+	EventTypeBurn,
+	EventTypeMint
+} from './params';
 import {EventTransfer, Response} from './types';
 import {GetNFTContractOwner} from './abi';
-
-const interval = 3000; // loop interval. Unit: ms
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -109,7 +113,7 @@ export function Run() {
 			log.RequestId().error("Push callback job failed, error=", e);
 			return;
 		}
-	}, interval);
+	}, DefaultLoopInterval);
 
 	return;
 }

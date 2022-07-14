@@ -83,11 +83,15 @@ const mintForCreator = [
 	}
 ];
 
-// ABI Maps
-export const ABIMaps = new Map([
-	['mint', mint],
-	['mintWithURI', mintWithURI],
-	['mintForCreator', mintForCreator],
+export const enum ABI {
+	mint = 'mint',
+	mintWithURI = 'mintWithURI',
+	mintForCreator = 'mintForCreator',
+}
+
+// ABI Mapper
+export const ABIMapper = new Map([
+	[ABI.mint, mint],
+	[ABI.mintWithURI, mintWithURI],
+	[ABI.mintForCreator, mintForCreator],
 ]);
-
-

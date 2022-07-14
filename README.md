@@ -24,7 +24,7 @@ A microservice for the Ethereum ecosystem.
 
 - typescript `4.7.4`
 - node `v16.16.0`
-- ts-node `v10.8.2`
+- ts-node `v10.9.1`
 - yarn `v1.22.19`
 
 ## Quick Guide

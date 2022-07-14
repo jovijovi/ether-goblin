@@ -12,8 +12,23 @@ services:
       POSTGRES_PASSWORD: example
     volumes:
       - ../database/postgres_data:/var/lib/postgresql/data
+      - ./init/postgres/database.sql:/docker-entrypoint-initdb.d/1_database.sql
     ports:
       - "5432:5432"
     networks:
       - devenv-network-ether-goblin
 
+  mysql:
+    container_name: devenv_mysql_pedrojs
+    image: mysql:8.0.26
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - ../database/mysql_data:/var/lib/mysql
+      - ./init/mysql/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - devenv-network-ether-goblin

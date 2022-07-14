@@ -6,6 +6,7 @@ import {Options} from './options';
 import {core} from '@jovijovi/ether-core';
 import {
 	DefaultExecuteJobConcurrency,
+	DefaultLoopInterval,
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
 	DefaultQueryIntervals,
@@ -14,7 +15,6 @@ import {
 import {EventTransfer} from './types';
 import {customConfig} from '../../config';
 import {DB} from './db';
-import cron = require('node-schedule');
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -163,14 +163,14 @@ export function Run() {
 	}).catch((err) => log.RequestId().error(err));
 
 	// Schedule processing job
-	cron.scheduleJob('*/3 * * * * *', function () {
+	setInterval(() => {
 		auditor.Check(eventQueue, "Event queue is nil");
 		if (eventQueue.Length() == 0) {
 			return;
 		}
 
 		dumpJob.push(eventQueue).catch((err) => log.RequestId().error(err));
-	});
+	}, DefaultLoopInterval);
 
 	return;
 }

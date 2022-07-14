@@ -10,5 +10,8 @@ export const DefaultPushJobIntervals = 200;
 // Default execute job concurrency
 export const DefaultExecuteJobConcurrency = 10;
 
+// Default loop interval
+export const DefaultLoopInterval = 3;
+
 // ERC721 Mint event name
 export const EventNameTransfer = 'Transfer(address,address,uint256)';

@@ -1,5 +1,6 @@
 import {config} from '@jovijovi/pedrojs-common';
 import {Postgresql} from '@jovijovi/pedrojs-pg';
+import {Mysql} from '@jovijovi/pedrojs-mysql';
 
 export namespace customConfig {
 	class TxConfig {
@@ -56,6 +57,7 @@ export namespace customConfig {
 
 	class Database {
 		postgres: Postgresql.Config
+		mysql: Mysql.Config
 	}
 
 	export class CustomConfig {
@@ -101,5 +103,10 @@ export namespace customConfig {
 	// GetPostgresConfig returns postgres database config
 	export function GetPostgresConfig(): Postgresql.Config {
 		return customConfig.database.postgres;
+	}
+
+	// GetMysqlConfig returns mysql database config
+	export function GetMysqlConfig(): Mysql.Config {
+		return customConfig.database.mysql;
 	}
 }

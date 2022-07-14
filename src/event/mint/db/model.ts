@@ -20,7 +20,7 @@ export const ModelAttrs = {
 	},
 	transactionHash: {
 		type: DataTypes.TEXT,
-		primaryKey: true,
+		allowNull: false,
 	},
 	from: {
 		type: DataTypes.TEXT,

@@ -9,7 +9,7 @@ import {IsAlert} from './rules';
 import {customConfig} from '../config';
 import {mailer, Template} from '../mailer';
 import {network} from '@jovijovi/ether-network';
-import cron = require('node-schedule');
+import {DefaultLoopInterval} from './params';
 
 const blockQueue = new Queue<number>();     // Block queue (ASC, FIFO)
 const checkBalanceJob: queueAsPromised<number> = fastq.promise(checkAddressList, 1);    // Job: Check balance
@@ -36,7 +36,7 @@ export function Run() {
 		}
 	})
 
-	cron.scheduleJob('*/3 * * * * *', function () {
+	setInterval(() => {
 		if (blockQueue.Length() == 0) {
 			return;
 		}
@@ -47,7 +47,7 @@ export function Run() {
 		}
 
 		checkBalanceJob.push(blockNumber).catch((err) => log.RequestId().error(err));
-	});
+	}, DefaultLoopInterval);
 }
 
 async function checkAddressList(blockNumber: number): Promise<void> {

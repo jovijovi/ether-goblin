@@ -64,6 +64,9 @@ custom:
       receivers:
         - 'RECEIVER EMAIL ADDRESS'
 
+    # Callback URL (Optional)
+    callback: ''
+
     # Check balance every 200 blocks
     period: 200
 

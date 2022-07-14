@@ -26,6 +26,7 @@ export namespace customConfig {
 	class Watchdog {
 		enable: boolean
 		mailer: Mailer
+		callback: string
 		period: number
 		addressList: WatchedAddress[]
 	}

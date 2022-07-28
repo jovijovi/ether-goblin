@@ -29,7 +29,7 @@ A microservice for the Ethereum ecosystem.
 
 ## Contract Dependencies
 
-- @openzeppelin/contracts: [`4.7.1`](https://www.npmjs.com/package/@openzeppelin/contracts/v/4.7.1)
+- @openzeppelin/contracts: [`4.7.2`](https://www.npmjs.com/package/@openzeppelin/contracts/v/4.7.2)
 
 ## Quick Guide
 

@@ -27,6 +27,10 @@ A microservice for the Ethereum ecosystem.
 - ts-node `v10.9.1`
 - yarn `v1.22.19`
 
+## Contract Dependencies
+
+- @openzeppelin/contracts: [`4.7.2`](https://www.npmjs.com/package/@openzeppelin/contracts/v/4.7.2)
+
 ## Quick Guide
 
 - Install dependency

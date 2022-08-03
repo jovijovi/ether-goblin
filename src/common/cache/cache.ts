@@ -22,10 +22,10 @@ export namespace Cache {
 		ttl: 1000 * 3,
 	});
 
-	// CacheContractOwner cache of NFT contract owner, ttl is 1 hour
+	// CacheContractOwner cache of NFT contract owner, ttl is 24 hour
 	export const CacheContractOwner = cacheSet.New("contractOwner", {
-		max: 10000,
-		ttl: 1000 * 60 * 60,
+		max: 20000,
+		ttl: 1000 * 60 * 60 * 24,
 	});
 
 	export function MemCache(name: string, ttl: number = 1000 * 60, max = 10): LRUCache<any, any> {

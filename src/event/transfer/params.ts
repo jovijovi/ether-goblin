@@ -10,3 +10,9 @@ export const EventNameTransfer = 'Transfer(address,address,uint256)';
 export const EventTypeMint = 'mint';
 // const EventTypeTransfer = 'transfer';
 export const EventTypeBurn = 'burn';
+
+// Retry times
+export const DefaultRetryTimes = 3;
+
+// Retry interval (second)
+export const DefaultRetryInterval = 3;

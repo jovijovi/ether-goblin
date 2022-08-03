@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.4.2](https://github.com/jovijovi/ether-goblin/releases/tag/v0.4.2)
+
+Improve:
+- refactor(event/transfer): improve performance of getting contract owner
+
 ## [v0.4.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.4.0)
 
 Features:

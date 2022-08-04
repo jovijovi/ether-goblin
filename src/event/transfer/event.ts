@@ -6,6 +6,7 @@ import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../../config';
 import {
 	DefaultCallbackJobConcurrency,
+	DefaultDumpCacheInterval,
 	DefaultLoopInterval,
 	EventNameTransfer,
 	EventTypeBurn,
@@ -13,6 +14,7 @@ import {
 } from './params';
 import {EventTransfer, Response} from './types';
 import {GetContractOwner} from './abi';
+import {DumpCacheToFile, LoadCacheFromFile} from './cache';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -44,6 +46,14 @@ export function Run() {
 	} else if (!conf.transfer.enable) {
 		log.RequestId().info('Transfer event listener disabled.');
 		return;
+	}
+
+	// Load contract owner cache from dump file (Optional)
+	try {
+		const size = LoadCacheFromFile();
+		log.RequestId().info("Cache(ContractOwner) loaded. Size=", size);
+	} catch (e) {
+		log.RequestId().warn("Load cache(ContractOwner) failed, error=", e);
 	}
 
 	log.RequestId().info("Transfer event listener is running...");
@@ -114,6 +124,17 @@ export function Run() {
 			return;
 		}
 	}, DefaultLoopInterval);
+
+	// Dump contract owner cache (Optional)
+	setInterval(async () => {
+		try {
+			const size = await DumpCacheToFile();
+			log.RequestId().debug("Cache(ContractOwner) dumped. Size=", size);
+		} catch (e) {
+			log.RequestId().warn("Dump cache(ContractOwner) failed, error=", e);
+			return;
+		}
+	}, conf.transfer.dumpCacheInterval ? 1000 * conf.transfer.dumpCacheInterval : DefaultDumpCacheInterval);
 
 	return;
 }

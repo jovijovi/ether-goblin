@@ -103,6 +103,9 @@ custom:
       # Enable contract owner filter
       ownerFilter: false
 
+      # Dump contract owner cache interval (unit: second)
+      dumpCacheInterval: 60
+
       # NFT contract owners
       contractOwners:
         - 'CONTRACT_OWNER_ADDRESS_1'

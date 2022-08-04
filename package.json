@@ -1,6 +1,6 @@
 {
   "name": "ether-goblin",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "A microservice for the Ethereum ecosystem.",
   "author": "jovijovi <mageyul@hotmail.com>",
   "license": "MIT",
@@ -31,9 +31,9 @@
     "@jovijovi/ether-core": "0.4.0",
     "@jovijovi/ether-network": "0.2.2",
     "@jovijovi/express-2fa-token": "^1.1.0",
-    "@jovijovi/pedrojs-common": "1.1.12",
+    "@jovijovi/pedrojs-common": "1.1.13",
     "@jovijovi/pedrojs-mysql": "^1.1.12",
-    "@jovijovi/pedrojs-network-http": "1.1.12",
+    "@jovijovi/pedrojs-network-http": "1.1.13",
     "@jovijovi/pedrojs-pg": "^1.1.12",
     "@jovijovi/pedrojs-sqlite": "1.1.12",
     "@openzeppelin/contracts": "4.7.2",
@@ -41,7 +41,8 @@
     "fastq": "^1.13.0",
     "got": "11.8.5",
     "lru-cache": "^7.13.2",
-    "nodemailer": "^6.7.7"
+    "nodemailer": "^6.7.7",
+    "write-file-atomic": "^4.0.1"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "2.1.0",

@@ -33,7 +33,7 @@ export const ABIMapper = new Map([
 	[ABI.owner, owner],
 ]);
 
-async function getNFTContractOwner(address: string): Promise<string> {
+async function getContractOwner(address: string): Promise<string> {
 	const key = Cache.CombinationKey([address])
 
 	// Get cache
@@ -52,7 +52,7 @@ async function getNFTContractOwner(address: string): Promise<string> {
 	return owner;
 }
 
-export async function GetNFTContractOwner(address: string): Promise<string> {
+export async function GetContractOwner(address: string): Promise<string> {
 	return await util.retry.Run(async (): Promise<string> => {
 		try {
 			if (await core.IsProxyContract(address)) {
@@ -60,7 +60,7 @@ export async function GetNFTContractOwner(address: string): Promise<string> {
 				log.RequestId().trace("Ignore proxy contract(%s), skipped", address);
 				return undefined;
 			}
-			return await getNFTContractOwner(address);
+			return await getContractOwner(address);
 		} catch (e) {
 			// Get cache
 			if (Cache.CacheContractOwner.has(address)) {
@@ -70,13 +70,13 @@ export async function GetNFTContractOwner(address: string): Promise<string> {
 			// Set cache value 'undefined' if call contract failed
 			if (e.reason && e.reason.includes(ErrorReasonMissingRevertData) && e.code === ErrorCodeCallException) {
 				Cache.CacheContractOwner.set(address, undefined);
-				log.RequestId().trace("GetNFTContractOwner(%s) failed, cacheSize=%d, reason=%s",
+				log.RequestId().trace("GetContractOwner(%s) failed, cacheSize=%d, reason=%s",
 					address, Cache.CacheContractOwner.size, e.reason);
 				return undefined;
 			}
 
 			// Throw other errors
-			log.RequestId().error("GetNFTContractOwner(%s) failed, reason=%s", address, e.reason);
+			log.RequestId().error("GetContractOwner(%s) failed, reason=%s", address, e.reason);
 			throw e;
 		}
 	}, DefaultRetryTimes, DefaultRetryInterval);

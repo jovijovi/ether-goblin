@@ -4,6 +4,15 @@ export const DefaultCallbackJobConcurrency = 10;
 // Default loop interval (unit: ms)
 export const DefaultLoopInterval = 3000;
 
+// Default dump cache interval (unit: ms)
+export const DefaultDumpCacheInterval = 1000 * 60;
+
+// Default dump cache dir
+export const DefaultDumpCacheDir = "database/cache"
+
+// Default dump cache file
+export const DefaultDumpCacheFile = "contract_owner.json"
+
 // ERC721 Transfer event name
 export const EventNameTransfer = 'Transfer(address,address,uint256)';
 

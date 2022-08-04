@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.5.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.5.0)
+
+Features:
+- (event/transfer): load/dump cache of contract owner
+
+Refactor:
+- (event/transfer): checkContract
+
+Build:
+- Bump packages
+
 ## [v0.4.2](https://github.com/jovijovi/ether-goblin/releases/tag/v0.4.2)
 
 Improve:
@@ -8,28 +19,28 @@ Improve:
 ## [v0.4.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.4.0)
 
 Features:
-- feat(event/mint): replace "node-schedule" with "setInterval"
-- feat(event/mint): support mysql for NFT archaeologist
-- feat(watchdog): replace "node-schedule" with "setInterval"
-- feat(watchdog): execute callback if the alert is triggered
+- (event/mint): replace "node-schedule" with "setInterval"
+- (event/mint): support mysql for NFT archaeologist
+- (watchdog): replace "node-schedule" with "setInterval"
+- (watchdog): execute callback if the alert is triggered
 
 Fixes:
-- fix(event/mint): remove primary key to support batch minting NFTs in one tx
+- (event/mint): remove primary key to support batch minting NFTs in one tx
 
 ## [v0.3.7](https://github.com/jovijovi/ether-goblin/releases/tag/v0.3.7)
 
 Features:
-- feat(event/transfer): enable contract owner filter by config
+- (event/transfer): enable contract owner filter by config
 
 ## [v0.3.6](https://github.com/jovijovi/ether-goblin/releases/tag/v0.3.6)
 
 Features:
-- feat(event/transfer): filters contract address by owner
-- feat(event/transfer): use "setInterval" instead of "node-scheduler"
+- (event/transfer): filters contract address by owner
+- (event/transfer): use "setInterval" instead of "node-scheduler"
 
 Fixes:
-- fix(event/transfer): call contract ABI with provider
-- fix(event/transfer): check address in checksum
+- (event/transfer): call contract ABI with provider
+- (event/transfer): check address in checksum
 
 ## [v0.3.4](https://github.com/jovijovi/ether-goblin/releases/tag/v0.3.4)
 
@@ -37,7 +48,7 @@ Features:
 - API authorization via 2FA token (optional)
 
 Fixes:
-- fix(build): compile sqlite3(napi-v6-linux-musl-x64) in alpine
+- (build): compile sqlite3(napi-v6-linux-musl-x64) in alpine
 
 Build:
 - Bump packages
@@ -94,8 +105,8 @@ Fixes:
 ## [v0.1.9](https://github.com/jovijovi/ether-goblin/releases/tag/v0.1.9)
 
 Features:
-- (event) A NFT transfer event listener
-- (eth/api) Set value in response
+- (event): A NFT transfer event listener
+- (eth/api): Set value in response
 
 ## [v0.1.7](https://github.com/jovijovi/ether-goblin/releases/tag/v0.1.7)
 

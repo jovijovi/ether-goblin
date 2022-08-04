@@ -38,6 +38,7 @@ export namespace customConfig {
 		responseCode?: string | number
 		callback: string
 		ownerFilter: boolean
+		dumpCacheInterval: number
 		contractOwners: string[]
 	}
 

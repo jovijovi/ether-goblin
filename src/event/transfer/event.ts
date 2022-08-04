@@ -12,7 +12,7 @@ import {
 	EventTypeMint
 } from './params';
 import {EventTransfer, Response} from './types';
-import {GetNFTContractOwner} from './abi';
+import {GetContractOwner} from './abi';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -118,6 +118,31 @@ export function Run() {
 	return;
 }
 
+// checkContract check contract owner
+async function checkContract(address: string): Promise<boolean> {
+	try {
+		const conf = customConfig.GetEvents();
+
+		// Filters contract address by owner
+		if (conf.transfer.ownerFilter && conf.transfer.contractOwners) {
+			const contractOwner = await GetContractOwner(address);
+			if (!contractOwner) {
+				return false;
+			}
+
+			if (!conf.transfer.contractOwners.map(x => utils.getAddress(x)).includes(utils.getAddress(contractOwner))) {
+				log.RequestId().trace("Not contract(%s) owner, skipped", address);
+				return false;
+			}
+		}
+	} catch (e) {
+		log.RequestId().error("CheckContract failed, error=", e);
+		return false;
+	}
+
+	return true;
+}
+
 // checkRspCode check response code (NOT HTTP status code)
 function checkRspCode(code: string | number, ok: string | number): boolean {
 	return code === ok;
@@ -134,17 +159,9 @@ async function callback(evt: EventTransfer): Promise<void> {
 			return;
 		}
 
-		// Filters contract address by owner
-		if (conf.transfer.ownerFilter && conf.transfer.contractOwners) {
-			const contractOwner = await GetNFTContractOwner(evt.address);
-			if (!contractOwner) {
-				return;
-			}
-
-			if (!conf.transfer.contractOwners.map(x => utils.getAddress(x)).includes(utils.getAddress(contractOwner))) {
-				log.RequestId().trace("Not contract(%s) owner, skipped", evt.address);
-				return;
-			}
+		// Check contract owner
+		if (!await checkContract(evt.address)) {
+			return;
 		}
 
 		// Callback

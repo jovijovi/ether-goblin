@@ -8,7 +8,7 @@ import {DefaultDumpCacheDir, DefaultDumpCacheFile} from './params';
 export function LoadCacheFromFile(): number {
 	const filePath = path.resolve(DefaultDumpCacheDir, DefaultDumpCacheFile);
 	if (!fs.existsSync(filePath)) {
-		return;
+		return 0;
 	}
 
 	const data = fs.readFileSync(filePath, 'utf8');

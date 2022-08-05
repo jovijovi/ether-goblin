@@ -32,13 +32,20 @@ export namespace customConfig {
 		addressList: WatchedAddress[]
 	}
 
+	export class CacheOptions {
+		name: string
+		dumpCacheInterval: number
+		cacheTTL: number
+		max: number
+	}
+
 	class TransferEvent {
 		enable: boolean
 		type: string[]
 		responseCode?: string | number
 		callback: string
 		ownerFilter: boolean
-		dumpCacheInterval: number
+		cache: CacheOptions[]
 		contractOwners: string[]
 	}
 

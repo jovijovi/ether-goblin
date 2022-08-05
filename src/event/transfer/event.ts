@@ -1,7 +1,7 @@
 import {constants, utils} from 'ethers';
-import {log, util} from '@jovijovi/pedrojs-common';
-import fastq, {queueAsPromised} from 'fastq';
 import got from 'got';
+import fastq, {queueAsPromised} from 'fastq';
+import {log, util} from '@jovijovi/pedrojs-common';
 import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../../config';
 import {
@@ -10,11 +10,12 @@ import {
 	DefaultLoopInterval,
 	EventNameTransfer,
 	EventTypeBurn,
-	EventTypeMint
+	EventTypeMint,
+	TimeSecondInMs
 } from './params';
 import {EventTransfer, Response} from './types';
 import {GetContractOwner} from './abi';
-import {DumpCacheToFile, LoadCacheFromFile} from './cache';
+import {DumpCacheToFile, GetContractOwnerCacheConfig, InitCache, LoadCacheFromFile} from './cache';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -47,6 +48,11 @@ export function Run() {
 		log.RequestId().info('Transfer event listener disabled.');
 		return;
 	}
+
+	log.RequestId().info("TransferEventListener Config=", conf.transfer);
+
+	// Initialize cache
+	InitCache();
 
 	// Load contract owner cache from dump file (Optional)
 	try {
@@ -126,6 +132,7 @@ export function Run() {
 	}, DefaultLoopInterval);
 
 	// Dump contract owner cache (Optional)
+	const contractOwnerCacheConf = GetContractOwnerCacheConfig();
 	setInterval(async () => {
 		try {
 			const size = await DumpCacheToFile();
@@ -134,7 +141,7 @@ export function Run() {
 			log.RequestId().warn("Dump cache(ContractOwner) failed, error=", e);
 			return;
 		}
-	}, conf.transfer.dumpCacheInterval ? 1000 * conf.transfer.dumpCacheInterval : DefaultDumpCacheInterval);
+	}, contractOwnerCacheConf.dumpCacheInterval ? TimeSecondInMs * contractOwnerCacheConf.dumpCacheInterval : DefaultDumpCacheInterval);
 
 	return;
 }

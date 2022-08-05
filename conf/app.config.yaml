@@ -103,8 +103,18 @@ custom:
       # Enable contract owner filter
       ownerFilter: false
 
-      # Dump contract owner cache interval (unit: second)
-      dumpCacheInterval: 60
+      # Cache options
+      cache:
+        - name: 'contractOwner'
+
+          # Dump contract owner cache interval (unit: second)
+          dumpCacheInterval: 60
+
+          # Contract owner cache TTL (unit: hour)
+          cacheTTL: 168
+
+          # The maximum size of items that remain in the cache
+          max: 20000
 
       # NFT contract owners
       contractOwners:

@@ -6,13 +6,15 @@ A microservice for the Ethereum ecosystem.
 
 ## Features
 
-- RESTFul APIs for the Ethereum ecosystem
-- A simple balance Watchdog
-- NFT transfer tx listener
-- NFT archaeologist, excavating NFT mint events from block history
-- More out-of-the-box NFT APIs (under development)
-- API authorization via 2FA token
-- Microservice run in Docker
+- `APIs` RESTFul APIs for the Ethereum ecosystem
+- `Watchdog` A simple balance Watchdog
+- `Event` ERC721 event
+  - Event Listener
+  - Event Fetcher
+  - Support Mint/Transfer/Burn event
+- `Out-of-the-box` NFT APIs (under development)
+- API authorization via `2FA` token
+- `Microservice` run in Docker
 
 ## Supported Chains
 

@@ -15,6 +15,7 @@ import {
 import {EventTransfer} from './types';
 import {customConfig} from '../../config';
 import {DB} from './db';
+import {CheckEventType, CheckTopics} from '../utils';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -27,21 +28,6 @@ let execQueryJob: queueAsPromised<Options>;
 
 // Dump job
 const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 1);
-
-// Check if event topics is ERC721 transfer
-function checkEvent(evt: any): boolean {
-	if (!evt || !evt.topics) {
-		return false;
-	} else if (evt.topics.length === 4
-		&& evt.topics[0]
-		&& evt.topics[1]
-		&& evt.topics[2]
-		&& evt.topics[3]) {
-		return true;
-	}
-
-	return false;
-}
 
 // Execute query mint events job
 async function execQuery(opts: Options = {
@@ -63,14 +49,12 @@ async function execQuery(opts: Options = {
 	const events = await provider.getLogs(evtFilter);
 
 	for (const event of events) {
-		// Check event
-		if (!checkEvent(event)) {
-			return;
+		// Check event topics
+		if (!CheckTopics(event.topics)) {
+			continue;
 		}
 
-		// Check from
-		if (event.topics[1] !== constants.HashZero) {
-			log.RequestId().trace("NOT Mint event");
+		if (!CheckEventType(event.topics, opts.eventType)) {
 			continue;
 		}
 

@@ -16,27 +16,13 @@ import {
 import {EventTransfer, Response} from './types';
 import {GetContractOwner} from './abi';
 import {DumpCacheToFile, GetContractOwnerCacheConfig, InitCache, LoadCacheFromFile} from './cache';
+import {CheckEventType, CheckTopics} from '../utils';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
 
 // Callback job
 const callbackJob: queueAsPromised<EventTransfer> = fastq.promise(callback, DefaultCallbackJobConcurrency);
-
-// Check if tx is ERC721 transfer
-function checkTx(tx: any): boolean {
-	if (!tx || !tx.topics) {
-		return false;
-	} else if (tx.topics.length === 4
-		&& tx.topics[0]
-		&& tx.topics[1]
-		&& tx.topics[2]
-		&& tx.topics[3]) {
-		return true;
-	}
-
-	return false;
-}
 
 export function Run() {
 	// Check config
@@ -73,20 +59,11 @@ export function Run() {
 
 	provider.on(evtFilter, (tx) => {
 		try {
-			// Check Tx
-			if (!checkTx(tx)) {
+			if (!CheckTopics(tx.topics)) {
 				return;
 			}
 
-			// Check from
-			if (tx.topics[1] === constants.HashZero && !conf.listener.type.includes(EventTypeMint)) {
-				log.RequestId().trace("Mint event, skipped");
-				return;
-			}
-
-			// Check to
-			else if (tx.topics[2] === constants.HashZero && !conf.listener.type.includes(EventTypeBurn)) {
-				log.RequestId().trace("Burn event, skipped");
+			if (!CheckEventType(tx.topics, conf.listener.eventType)) {
 				return;
 			}
 

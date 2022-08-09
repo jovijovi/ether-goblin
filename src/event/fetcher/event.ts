@@ -10,7 +10,8 @@ import {
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
 	DefaultQueryIntervals,
-	EventNameTransfer
+	DefaultRetryInterval,
+	DefaultRetryTimes,
 } from './params';
 import {EventTransfer} from './types';
 import {customConfig} from '../../config';
@@ -46,7 +47,9 @@ async function execQuery(opts: Options = {
 		]
 	};
 
-	const events = await provider.getLogs(evtFilter);
+	const events = await util.retry.Run(async (): Promise<Array<Log>> => {
+		return await provider.getLogs(evtFilter);
+	}, DefaultRetryTimes, DefaultRetryInterval);
 
 	for (const event of events) {
 		// Check event topics

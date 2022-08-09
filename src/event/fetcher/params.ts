@@ -13,5 +13,8 @@ export const DefaultExecuteJobConcurrency = 10;
 // Default loop interval (unit: ms)
 export const DefaultLoopInterval = 3000;
 
-// ERC721 Mint event name
-export const EventNameTransfer = 'Transfer(address,address,uint256)';
+// Retry times
+export const DefaultRetryTimes = 5;
+
+// Retry interval (second)
+export const DefaultRetryInterval = 5;

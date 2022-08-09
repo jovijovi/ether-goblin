@@ -94,9 +94,11 @@ custom:
       enable: false
 
       # Enabled event type
-      type:
+      eventType:
         # 'mint' means transfer token from zero address to another address
         - mint
+        # 'transfer' means transfer token from an address to another address
+        - transfer
         # 'burn' means transfer token to zero address
         - burn
 
@@ -130,6 +132,15 @@ custom:
     # Event fetcher config
     fetcher:
       enable: false
+
+      # Enabled event type
+      eventType:
+        # 'mint' means transfer token from zero address to another address
+        - mint
+        # 'transfer' means transfer token from an address to another address
+        - transfer
+        # 'burn' means transfer token to zero address
+        - burn
 
       # eth_getLogs block range
       maxBlockRange: 3500

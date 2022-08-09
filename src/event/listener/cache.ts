@@ -4,13 +4,8 @@ import writeFileAtomic from 'write-file-atomic';
 import {log} from '@jovijovi/pedrojs-common';
 import {Cache} from '../../common/cache';
 import {customConfig} from '../../config';
-import {
-	DefaultDumpCacheDir,
-	DefaultDumpCacheFile,
-	DefaultNameOfContractOwnerCache,
-	TimeDayInMs,
-	TimeHourInMs
-} from './params';
+import {DefaultDumpCacheDir, DefaultDumpCacheFile, DefaultNameOfContractOwnerCache,} from './params';
+import {TimeDayInMs, TimeHourInMs} from '../common';
 
 // LoadCacheFromFile load cache from file
 export function LoadCacheFromFile(): number {

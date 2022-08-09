@@ -1,4 +1,5 @@
-import {constants, utils} from 'ethers';
+import {utils} from 'ethers';
+import {Log} from '@ethersproject/abstract-provider';
 import {auditor, log, util} from '@jovijovi/pedrojs-common';
 import fastq, {queueAsPromised} from 'fastq';
 import {network} from '@jovijovi/ether-network';
@@ -16,25 +17,27 @@ import {
 import {EventTransfer} from './types';
 import {customConfig} from '../../config';
 import {DB} from './db';
+import {EventNameTransfer, EventTypeMint} from '../common';
 import {CheckEventType, CheckTopics} from '../utils';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
 
-// Query mint events job
-const queryMintEventsJob: queueAsPromised<Options> = fastq.promise(queryMintEvents, 1);
+// Fetch events jobs
+const fetchEventsJobs: queueAsPromised<Options> = fastq.promise(fetchEvents, 1);
 
-// Execute query job
-let execQueryJob: queueAsPromised<Options>;
+// Query logs jobs
+let queryLogsJobs: queueAsPromised<Options>;
 
 // Dump job
 const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 1);
 
 // Execute query mint events job
-async function execQuery(opts: Options = {
+async function queryLogs(opts: Options = {
+	eventType: [EventTypeMint],
 	fromBlock: 0
 }): Promise<void> {
-	log.RequestId().info("EXEC JOB, blocks[%d,%d], execQueryJob=%d", opts.fromBlock, opts.toBlock, execQueryJob.length());
+	log.RequestId().info("EXEC JOB, blocks[%d,%d], queryLogsJobs=%d", opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
 	const provider = network.MyProvider.Get();
 	const evtFilter = {
@@ -80,7 +83,8 @@ async function execQuery(opts: Options = {
 }
 
 // Generate query mint events job
-async function queryMintEvents(opts: Options = {
+async function fetchEvents(opts: Options = {
+	eventType: [EventTypeMint],
 	fromBlock: 0,
 	maxBlockRange: DefaultMaxBlockRange,
 	pushJobIntervals: DefaultPushJobIntervals,
@@ -108,9 +112,10 @@ async function queryMintEvents(opts: Options = {
 		if (blockRange >= 0 && blockRange <= 1) {
 			log.RequestId().info("Catch up the latest block(%d)", blockNumber);
 		}
-		log.RequestId().info("PUSH JOB, blocks[%d,%d](range=%d), execQueryJob=%d", nextFrom, nextTo, blockRange, execQueryJob.length());
+		log.RequestId().info("PUSH JOB, blocks[%d,%d](range=%d), queryLogsJobs=%d", nextFrom, nextTo, blockRange, queryLogsJobs.length());
 
-		execQueryJob.push({
+		queryLogsJobs.push({
+			eventType: opts.eventType,
 			fromBlock: nextFrom,
 			toBlock: nextTo,
 		}).catch((err) => log.RequestId().error(err));
@@ -138,12 +143,13 @@ export function Run() {
 
 	auditor.Check(conf.fetcher.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
 
-	execQueryJob = fastq.promise(execQuery, conf.fetcher.executeJobConcurrency ? conf.fetcher.executeJobConcurrency : DefaultExecuteJobConcurrency);
+	queryLogsJobs = fastq.promise(queryLogs, conf.fetcher.executeJobConcurrency ? conf.fetcher.executeJobConcurrency : DefaultExecuteJobConcurrency);
 
 	log.RequestId().info("Event fetcher is running...");
 
 	// Push query mint events job to scheduler
-	queryMintEventsJob.push({
+	fetchEventsJobs.push({
+		eventType: conf.fetcher.eventType,
 		fromBlock: 0,
 		maxBlockRange: conf.fetcher.maxBlockRange,
 		pushJobIntervals: conf.fetcher.pushJobIntervals,

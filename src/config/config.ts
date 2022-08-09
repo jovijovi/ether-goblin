@@ -42,7 +42,7 @@ export namespace customConfig {
 
 	class EventListener {
 		enable: boolean
-		type: string[]
+		eventType: string[]
 		responseCode?: string | number
 		callback: string
 		ownerFilter: boolean
@@ -52,6 +52,7 @@ export namespace customConfig {
 
 	class EventFetcher {
 		enable: boolean
+		eventType: string[]
 		maxBlockRange?: number
 		pushJobIntervals?: number
 		executeJobConcurrency?: number

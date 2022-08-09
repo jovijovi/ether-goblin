@@ -1,18 +1,11 @@
-import {constants, utils} from 'ethers';
+import {utils} from 'ethers';
 import got from 'got';
 import fastq, {queueAsPromised} from 'fastq';
 import {log, util} from '@jovijovi/pedrojs-common';
 import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../../config';
-import {
-	DefaultCallbackJobConcurrency,
-	DefaultDumpCacheInterval,
-	DefaultLoopInterval,
-	EventNameTransfer,
-	EventTypeBurn,
-	EventTypeMint,
-	TimeSecondInMs
-} from './params';
+import {DefaultCallbackJobConcurrency, DefaultDumpCacheInterval, DefaultLoopInterval} from './params';
+import {EventNameTransfer, TimeSecondInMs} from '../common';
 import {EventTransfer, Response} from './types';
 import {GetContractOwner} from './abi';
 import {DumpCacheToFile, GetContractOwnerCacheConfig, InitCache, LoadCacheFromFile} from './cache';

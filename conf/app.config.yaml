@@ -43,8 +43,13 @@ custom:
   database:
     postgres:
       uri: 'postgresql://postgres:example@localhost:5432/mock_goblin'
+      table: 'events'
     mysql:
       uri: 'mysql://root:example@localhost:3306/mock_goblin'
+      table: 'events'
+    sqlite:
+      uri: 'sqlite://./database/events.db'
+      table: 'events'
 
   tx:
     # GasLimit coefficient (%)

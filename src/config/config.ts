@@ -1,6 +1,7 @@
 import {config} from '@jovijovi/pedrojs-common';
 import {Postgresql} from '@jovijovi/pedrojs-pg';
 import {Mysql} from '@jovijovi/pedrojs-mysql';
+import {Sqlite} from '@jovijovi/pedrojs-sqlite';
 
 export namespace customConfig {
 	class TxConfig {
@@ -63,9 +64,22 @@ export namespace customConfig {
 		fetcher: EventFetcher
 	}
 
+	interface PostgresqlConfig extends Postgresql.Config {
+		table: string
+	}
+
+	interface MysqlConfig extends Mysql.Config {
+		table: string
+	}
+
+	interface SqliteConfig extends Sqlite.Config {
+		table: string
+	}
+
 	class Database {
-		postgres: Postgresql.Config
-		mysql: Mysql.Config
+		postgres: PostgresqlConfig
+		mysql: MysqlConfig
+		sqlite: SqliteConfig
 	}
 
 	export class CustomConfig {
@@ -109,12 +123,17 @@ export namespace customConfig {
 	}
 
 	// GetPostgresConfig returns postgres database config
-	export function GetPostgresConfig(): Postgresql.Config {
+	export function GetPostgresConfig(): PostgresqlConfig {
 		return customConfig.database.postgres;
 	}
 
 	// GetMysqlConfig returns mysql database config
-	export function GetMysqlConfig(): Mysql.Config {
+	export function GetMysqlConfig(): MysqlConfig {
 		return customConfig.database.mysql;
+	}
+
+	// GetSqliteConfig returns sqlite database config
+	export function GetSqliteConfig(): SqliteConfig {
+		return customConfig.database.sqlite;
 	}
 }

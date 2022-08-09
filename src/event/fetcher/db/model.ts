@@ -4,6 +4,9 @@ import {EventTransfer} from '../types';
 export interface IMintEvents extends Model, EventTransfer {
 }
 
+// Model name
+export const ModelName = 'ERC721Events';
+
 // Model attributes
 export const ModelAttrs = {
 	address: {
@@ -36,4 +39,4 @@ export const ModelAttrs = {
 	},
 };
 
-export const TableName = 'mint_events';
+export const TableName = 'events';

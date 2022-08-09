@@ -1,7 +1,7 @@
 import {Sequelize} from 'sequelize';
 import {Postgresql} from '@jovijovi/pedrojs-pg';
 import {customConfig} from '../../../config';
-import {IMintEvents, ModelAttrs, TableName} from './model';
+import {IMintEvents, ModelAttrs, ModelName, TableName} from './model';
 import {Database} from './interface';
 
 export class PostgresDB extends Database {
@@ -23,12 +23,12 @@ export class PostgresDB extends Database {
 
 		// Model options
 		const opts = {
-			tableName: TableName,
+			tableName: customConfig.GetPostgresConfig().table ? customConfig.GetPostgresConfig().table : TableName,
 			timestamps: false,
 		};
 
 		// Define model
-		this.ModelEvent = e.define<IMintEvents>('MintEvents', ModelAttrs, opts);
+		this.ModelEvent = e.define<IMintEvents>(ModelName, ModelAttrs, opts);
 
 		// Creates the table if it doesn't exist (and does nothing if it already exists)
 		await this.ModelEvent.sync();

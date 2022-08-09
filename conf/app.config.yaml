@@ -84,7 +84,8 @@ custom:
 
   # Events
   events:
-    transfer:
+    # Event listener config
+    listener:
       enable: false
 
       # Enabled event type
@@ -121,7 +122,8 @@ custom:
         - 'CONTRACT_OWNER_ADDRESS_1'
         - 'CONTRACT_OWNER_ADDRESS_2'
 
-    mint:
+    # Event fetcher config
+    fetcher:
       enable: false
 
       # eth_getLogs block range

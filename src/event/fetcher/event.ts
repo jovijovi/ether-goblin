@@ -142,24 +142,24 @@ export function Run() {
 	if (!conf) {
 		log.RequestId().info('No events configuration, skipped.');
 		return;
-	} else if (!conf.mint.enable) {
-		log.RequestId().info('Query mint events job disabled.');
+	} else if (!conf.fetcher.enable) {
+		log.RequestId().info('Event fetcher disabled.');
 		return;
 	}
 
-	log.RequestId().info("Querying mint events job config=", conf.mint);
+	log.RequestId().info("Event fetcher config=", conf.fetcher);
 
-	auditor.Check(conf.mint.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
+	auditor.Check(conf.fetcher.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
 
-	execQueryJob = fastq.promise(execQuery, conf.mint.executeJobConcurrency ? conf.mint.executeJobConcurrency : DefaultExecuteJobConcurrency);
+	execQueryJob = fastq.promise(execQuery, conf.fetcher.executeJobConcurrency ? conf.fetcher.executeJobConcurrency : DefaultExecuteJobConcurrency);
 
-	log.RequestId().info("Querying mint events job is running...");
+	log.RequestId().info("Event fetcher is running...");
 
 	// Push query mint events job to scheduler
 	queryMintEventsJob.push({
 		fromBlock: 0,
-		maxBlockRange: conf.mint.maxBlockRange,
-		pushJobIntervals: conf.mint.pushJobIntervals,
+		maxBlockRange: conf.fetcher.maxBlockRange,
+		pushJobIntervals: conf.fetcher.pushJobIntervals,
 	}).catch((err) => log.RequestId().error(err));
 
 	// Schedule processing job

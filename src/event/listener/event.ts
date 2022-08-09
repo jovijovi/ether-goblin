@@ -44,12 +44,12 @@ export function Run() {
 	if (!conf) {
 		log.RequestId().info('No events configuration, skipped.');
 		return;
-	} else if (!conf.transfer.enable) {
-		log.RequestId().info('Transfer event listener disabled.');
+	} else if (!conf.listener.enable) {
+		log.RequestId().info('Event listener disabled.');
 		return;
 	}
 
-	log.RequestId().info("TransferEventListener Config=", conf.transfer);
+	log.RequestId().info("Event listener Config=", conf.listener);
 
 	// Initialize cache
 	InitCache();
@@ -62,7 +62,7 @@ export function Run() {
 		log.RequestId().warn("Load cache(ContractOwner) failed, error=", e);
 	}
 
-	log.RequestId().info("Transfer event listener is running...");
+	log.RequestId().info("Event listener is running...");
 
 	const provider = network.MyProvider.Get();
 	const evtFilter = {
@@ -79,13 +79,13 @@ export function Run() {
 			}
 
 			// Check from
-			if (tx.topics[1] === constants.HashZero && !conf.transfer.type.includes(EventTypeMint)) {
+			if (tx.topics[1] === constants.HashZero && !conf.listener.type.includes(EventTypeMint)) {
 				log.RequestId().trace("Mint event, skipped");
 				return;
 			}
 
 			// Check to
-			else if (tx.topics[2] === constants.HashZero && !conf.transfer.type.includes(EventTypeBurn)) {
+			else if (tx.topics[2] === constants.HashZero && !conf.listener.type.includes(EventTypeBurn)) {
 				log.RequestId().trace("Burn event, skipped");
 				return;
 			}
@@ -152,13 +152,13 @@ async function checkContract(address: string): Promise<boolean> {
 		const conf = customConfig.GetEvents();
 
 		// Filters contract address by owner
-		if (conf.transfer.ownerFilter && conf.transfer.contractOwners) {
+		if (conf.listener.ownerFilter && conf.listener.contractOwners) {
 			const contractOwner = await GetContractOwner(address);
 			if (!contractOwner) {
 				return false;
 			}
 
-			if (!conf.transfer.contractOwners.map(x => utils.getAddress(x)).includes(utils.getAddress(contractOwner))) {
+			if (!conf.listener.contractOwners.map(x => utils.getAddress(x)).includes(utils.getAddress(contractOwner))) {
 				log.RequestId().trace("Not contract(%s) owner, skipped", address);
 				return false;
 			}
@@ -182,7 +182,7 @@ async function callback(evt: EventTransfer): Promise<void> {
 		const conf = customConfig.GetEvents();
 
 		// Check URL
-		if (!conf.transfer.callback) {
+		if (!conf.listener.callback) {
 			log.RequestId().warn("Callback URL is empty");
 			return;
 		}
@@ -193,14 +193,14 @@ async function callback(evt: EventTransfer): Promise<void> {
 		}
 
 		// Callback
-		log.RequestId().debug("Calling back(%s)... event:", conf.transfer.callback, evt);
-		const rsp: Response = await got.post(conf.transfer.callback, {
+		log.RequestId().debug("Calling back(%s)... event:", conf.listener.callback, evt);
+		const rsp: Response = await got.post(conf.listener.callback, {
 			json: evt
 		}).json();
 		log.RequestId().trace("Callback response=", rsp);
 
 		// Check response
-		if (!checkRspCode(rsp.code, conf.transfer.responseCode)) {
+		if (!checkRspCode(rsp.code, conf.listener.responseCode)) {
 			log.RequestId().error("Callback failed, code=%s, msg=%s", rsp.code, rsp.msg);
 			return;
 		}

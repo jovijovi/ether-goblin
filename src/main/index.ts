@@ -5,7 +5,7 @@ import {customConfig} from '../config';
 import {logo} from './logo';
 import {RestfulHandlers} from '../handler';
 import {watchdog} from '../watchdog';
-import {queryMintEvents, transferListener} from '../event';
+import * as event from '../event';
 
 function main() {
 	log.logo(logo);
@@ -22,8 +22,8 @@ function main() {
 	});
 
 	watchdog.Run();
-	transferListener.Run();
-	queryMintEvents.Run();
+	event.listener.Run();
+	event.fetcher.Run();
 }
 
 main();

@@ -41,11 +41,11 @@ export async function DumpCacheToFile(): Promise<number> {
 
 // GetCacheConfig returns cache config by name
 export function GetCacheConfig(name: string): customConfig.CacheOptions {
-	if (!customConfig.GetEvents() || !customConfig.GetEvents().transfer || !customConfig.GetEvents().transfer.cache) {
+	if (!customConfig.GetEvents() || !customConfig.GetEvents().listener || !customConfig.GetEvents().listener.cache) {
 		throw new Error("Invalid config");
 	}
 
-	const cacheList = customConfig.GetEvents().transfer.cache;
+	const cacheList = customConfig.GetEvents().listener.cache;
 
 	try {
 		for (let i = 0; i < cacheList.length; i++) {

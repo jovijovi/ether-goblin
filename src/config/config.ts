@@ -39,7 +39,7 @@ export namespace customConfig {
 		max: number
 	}
 
-	class TransferEvent {
+	class EventListener {
 		enable: boolean
 		type: string[]
 		responseCode?: string | number
@@ -49,7 +49,7 @@ export namespace customConfig {
 		contractOwners: string[]
 	}
 
-	class MintEvent {
+	class EventFetcher {
 		enable: boolean
 		maxBlockRange?: number
 		pushJobIntervals?: number
@@ -59,8 +59,8 @@ export namespace customConfig {
 	}
 
 	class Events {
-		transfer: TransferEvent
-		mint: MintEvent
+		listener: EventListener
+		fetcher: EventFetcher
 	}
 
 	class Database {

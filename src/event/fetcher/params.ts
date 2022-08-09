@@ -1,3 +1,6 @@
+// Default Fetch from block number
+export const DefaultFromBlock = 0;
+
 // Default max block range
 export const DefaultMaxBlockRange = 10000;
 

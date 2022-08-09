@@ -142,6 +142,9 @@ custom:
         # 'burn' means transfer token to zero address
         - burn
 
+      # Fetch from block number (history or future block)
+      fromBlock: 0
+
       # eth_getLogs block range
       maxBlockRange: 3500
 
@@ -154,7 +157,7 @@ custom:
       # Supported Database: postgres, mysql or sqlite
       db: postgres
 
-      # NFT contract owners
+      # NFT contract owners (TODO)
       contractOwners:
         - 'CONTRACT_OWNER_ADDRESS_1'
         - 'CONTRACT_OWNER_ADDRESS_2'

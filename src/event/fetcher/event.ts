@@ -7,6 +7,7 @@ import {Options} from './options';
 import {core} from '@jovijovi/ether-core';
 import {
 	DefaultExecuteJobConcurrency,
+	DefaultFromBlock,
 	DefaultLoopInterval,
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
@@ -35,7 +36,7 @@ const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 
 // Execute query mint events job
 async function queryLogs(opts: Options = {
 	eventType: [EventTypeMint],
-	fromBlock: 0
+	fromBlock: DefaultFromBlock
 }): Promise<void> {
 	log.RequestId().info("EXEC JOB, blocks[%d,%d], queryLogsJobs=%d", opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
@@ -85,7 +86,7 @@ async function queryLogs(opts: Options = {
 // Generate query mint events job
 async function fetchEvents(opts: Options = {
 	eventType: [EventTypeMint],
-	fromBlock: 0,
+	fromBlock: DefaultFromBlock,
 	maxBlockRange: DefaultMaxBlockRange,
 	pushJobIntervals: DefaultPushJobIntervals,
 }): Promise<void> {
@@ -142,6 +143,7 @@ export function Run() {
 	log.RequestId().info("Event fetcher config=", conf.fetcher);
 
 	auditor.Check(conf.fetcher.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
+	auditor.Check(conf.fetcher.fromBlock >= 0, "Invalid fromBlock");
 
 	queryLogsJobs = fastq.promise(queryLogs, conf.fetcher.executeJobConcurrency ? conf.fetcher.executeJobConcurrency : DefaultExecuteJobConcurrency);
 
@@ -150,7 +152,7 @@ export function Run() {
 	// Push query mint events job to scheduler
 	fetchEventsJobs.push({
 		eventType: conf.fetcher.eventType,
-		fromBlock: 0,
+		fromBlock: conf.fetcher.fromBlock,
 		maxBlockRange: conf.fetcher.maxBlockRange,
 		pushJobIntervals: conf.fetcher.pushJobIntervals,
 	}).catch((err) => log.RequestId().error(err));

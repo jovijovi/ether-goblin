@@ -25,6 +25,14 @@ export namespace Cache {
 	// CacheContractOwner cache of NFT contract owner
 	export let CacheContractOwner;
 
+	// CachePGPSecretKey cache of PGP secret key, ttl is 1 day
+	export const CachePGPSecretKey = CacheSet.New("PGPSecretKey", {
+		max: 1,
+		ttl: 1000 * 60 * 60 * 24,
+		updateAgeOnGet: true,   // Update age(ttl) by 'get'
+		updateAgeOnHas: true,   // Update age(ttl) by 'has'
+	});
+
 	export function MemCache(name: string, ttl: number = 1000 * 60, max = 10): LRUCache<any, any> {
 		return CacheSet.New(name, {
 			max: max,   // 10 by default

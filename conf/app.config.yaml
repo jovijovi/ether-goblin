@@ -62,6 +62,10 @@ custom:
   watchdog:
     enable: false
     mailer:
+      pgp:
+        enable: false
+        signingKey: 'keystore/pgp/YOUR_KEY'
+        passphrase: ''
       smtp: 'SMTP SERVER'
       port: 465
       secure: true

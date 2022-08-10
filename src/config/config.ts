@@ -9,7 +9,14 @@ export namespace customConfig {
 		confirmations: number
 	}
 
+	class PGP {
+		enable: boolean
+		signingKey: string
+		passphrase: string
+	}
+
 	export class Mailer {
+		pgp: PGP
 		smtp: string
 		port: number
 		secure: boolean

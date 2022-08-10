@@ -42,6 +42,7 @@
     "got": "11.8.5",
     "lru-cache": "^7.13.2",
     "nodemailer": "^6.7.7",
+    "nodemailer-openpgp": "^2.1.0",
     "write-file-atomic": "^4.0.1"
   },
   "devDependencies": {

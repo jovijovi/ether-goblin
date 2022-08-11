@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.6.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.6.0)
+
+Features:
+- (event): listener and fetcher support mint/transfer/burn events
+- (event/transfer): custom cache options by config file
+- (event/fetcher): retry getLogs
+- (event/fetcher): custom fromBlock
+- (event/fetcher/db): custom uri and table name
+- (mailer): support PGP
+- (mailer/template): add more details
+
+Fixes:
+- (event/transfer): returns 0 if no dump file was found when loading the cache
+
 ## [v0.5.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.5.0)
 
 Features:

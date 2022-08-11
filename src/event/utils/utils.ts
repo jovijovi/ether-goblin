@@ -7,15 +7,11 @@ export function CheckTopics(topics: Array<string>): boolean {
 		return false;
 	}
 
-	if (topics.length === 4
+	return !!(topics.length === 4
 		&& topics[0]
 		&& topics[1]
 		&& topics[2]
-		&& topics[3]) {
-		return true;
-	}
-
-	return false;
+		&& topics[3]);
 }
 
 // Check event type

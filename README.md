@@ -8,6 +8,8 @@ A microservice for the Ethereum ecosystem.
 
 - `APIs` RESTFul APIs for the Ethereum ecosystem
 - `Watchdog` A simple balance Watchdog
+  - Alert mail with PGP
+  - Callback
 - `Event` ERC721 event
   - Event Listener
   - Event Fetcher
@@ -31,7 +33,7 @@ A microservice for the Ethereum ecosystem.
 
 ## Contract Dependencies
 
-- @openzeppelin/contracts: [`4.7.2`](https://www.npmjs.com/package/@openzeppelin/contracts/v/4.7.2)
+- @openzeppelin/contracts: [`4.7.3`](https://www.npmjs.com/package/@openzeppelin/contracts/v/4.7.3)
 
 ## Quick Guide
 

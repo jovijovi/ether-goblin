@@ -11,9 +11,9 @@ A microservice for the Ethereum ecosystem.
   - Alert mail with PGP
   - Callback
 - `Event` ERC721 event
-  - Event Listener
-  - Event Fetcher
-  - Support Mint/Transfer/Burn event
+  - `Event Listener` A listener to be triggered for each ERC721 event
+  - `Event Fetcher` Fetching ERC721 events from block history
+  - Support `Mint`/`Transfer`/`Burn` event
 - `Out-of-the-box` NFT APIs (under development)
 - API authorization via `2FA` token
 - `Microservice` run in Docker
@@ -90,6 +90,7 @@ A microservice for the Ethereum ecosystem.
 - Documents
 - NFT APIs
 - ERC20 APIs
+- WebSite
 
 ## License
 

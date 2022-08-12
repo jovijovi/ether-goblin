@@ -15,10 +15,10 @@ import {
 	DefaultRetryInterval,
 	DefaultRetryTimes,
 } from './params';
-import {EventTransfer} from './types';
+import {EventTransfer} from '../common/types';
 import {customConfig} from '../../config';
 import {DB} from './db';
-import {EventNameTransfer, EventTypeMint} from '../common';
+import {EventNameTransfer, EventTypeMint} from '../common/constants';
 import {CheckEventType, CheckTopics} from '../utils';
 
 // Event queue (ASC, FIFO)

@@ -8,3 +8,10 @@ export type EventTransfer = {
 	to: string              // To
 	tokenId: number         // NFT Token ID
 }
+
+// Response of Restful API
+export type Response = {
+	code: string
+	msg: string
+	data?: object
+}

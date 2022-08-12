@@ -1,5 +1,5 @@
 import {constants} from 'ethers';
-import {EventTypeBurn, EventTypeMint, EventTypeTransfer} from '../common';
+import {EventTypeBurn, EventTypeMint, EventTypeTransfer} from '../common/constants';
 
 // Check if the event topics is ERC721 compliant.
 export function CheckTopics(topics: Array<string>): boolean {

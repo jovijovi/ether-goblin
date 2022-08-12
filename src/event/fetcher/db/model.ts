@@ -1,5 +1,5 @@
 import {DataTypes, Model} from 'sequelize';
-import {EventTransfer} from '../types';
+import {EventTransfer} from '../../common/types';
 
 export interface IMintEvents extends Model, EventTransfer {
 }

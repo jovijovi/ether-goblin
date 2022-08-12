@@ -1,4 +1,5 @@
 export type Options = {
+	eventType: string[]
 	abi?: any
 	address?: string
 	fromBlock: number

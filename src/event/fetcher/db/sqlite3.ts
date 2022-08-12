@@ -1,12 +1,13 @@
 import {Sqlite} from '@jovijovi/pedrojs-sqlite';
-import {IMintEvents, ModelAttrs, TableName} from './model';
+import {customConfig} from '../../../config';
+import {IMintEvents, ModelAttrs, ModelName, TableName} from './model';
 import {Database} from './interface';
 
 export class SqliteDB extends Database {
 	async Connect(): Promise<Sqlite.Engine> {
 		// Connect
 		const engine = Sqlite.Connect({
-			uri: 'sqlite://./database/mint_events.db',
+			uri: customConfig.GetSqliteConfig().uri,
 		});
 
 		// Ping
@@ -14,12 +15,12 @@ export class SqliteDB extends Database {
 
 		// Model options
 		const opts = {
-			tableName: TableName,
+			tableName: customConfig.GetSqliteConfig().table ? customConfig.GetSqliteConfig().table : TableName,
 			timestamps: false,
 		};
 
 		// Define model
-		this.ModelEvent = engine.client.define<IMintEvents>('mintEvents', ModelAttrs, opts);
+		this.ModelEvent = engine.client.define<IMintEvents>(ModelName, ModelAttrs, opts);
 
 		// Creates the table if it doesn't exist (and does nothing if it already exists)
 		await this.ModelEvent.sync();

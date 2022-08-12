@@ -1,6 +1,7 @@
 import {config} from '@jovijovi/pedrojs-common';
 import {Postgresql} from '@jovijovi/pedrojs-pg';
 import {Mysql} from '@jovijovi/pedrojs-mysql';
+import {Sqlite} from '@jovijovi/pedrojs-sqlite';
 
 export namespace customConfig {
 	class TxConfig {
@@ -8,7 +9,14 @@ export namespace customConfig {
 		confirmations: number
 	}
 
+	class PGP {
+		enable: boolean
+		signingKey: string
+		passphrase: string
+	}
+
 	export class Mailer {
+		pgp: PGP
 		smtp: string
 		port: number
 		secure: boolean
@@ -32,18 +40,27 @@ export namespace customConfig {
 		addressList: WatchedAddress[]
 	}
 
-	class TransferEvent {
+	export class CacheOptions {
+		name: string
+		dumpCacheInterval: number
+		cacheTTL: number
+		max: number
+	}
+
+	class EventListener {
 		enable: boolean
-		type: string[]
+		eventType: string[]
 		responseCode?: string | number
 		callback: string
 		ownerFilter: boolean
-		dumpCacheInterval: number
+		cache: CacheOptions[]
 		contractOwners: string[]
 	}
 
-	class MintEvent {
+	class EventFetcher {
 		enable: boolean
+		eventType: string[]
+		fromBlock: number
 		maxBlockRange?: number
 		pushJobIntervals?: number
 		executeJobConcurrency?: number
@@ -52,13 +69,26 @@ export namespace customConfig {
 	}
 
 	class Events {
-		transfer: TransferEvent
-		mint: MintEvent
+		listener: EventListener
+		fetcher: EventFetcher
+	}
+
+	interface PostgresqlConfig extends Postgresql.Config {
+		table: string
+	}
+
+	interface MysqlConfig extends Mysql.Config {
+		table: string
+	}
+
+	interface SqliteConfig extends Sqlite.Config {
+		table: string
 	}
 
 	class Database {
-		postgres: Postgresql.Config
-		mysql: Mysql.Config
+		postgres: PostgresqlConfig
+		mysql: MysqlConfig
+		sqlite: SqliteConfig
 	}
 
 	export class CustomConfig {
@@ -102,12 +132,17 @@ export namespace customConfig {
 	}
 
 	// GetPostgresConfig returns postgres database config
-	export function GetPostgresConfig(): Postgresql.Config {
+	export function GetPostgresConfig(): PostgresqlConfig {
 		return customConfig.database.postgres;
 	}
 
 	// GetMysqlConfig returns mysql database config
-	export function GetMysqlConfig(): Mysql.Config {
+	export function GetMysqlConfig(): MysqlConfig {
 		return customConfig.database.mysql;
+	}
+
+	// GetSqliteConfig returns sqlite database config
+	export function GetSqliteConfig(): SqliteConfig {
+		return customConfig.database.sqlite;
 	}
 }

@@ -14,8 +14,8 @@ class DBClient {
 	private _client: PostgresDB | MysqlDB | SqliteDB;
 
 	async Connect() {
-		auditor.Check(customConfig.GetEvents().mint.db, "Database config is empty");
-		switch (customConfig.GetEvents().mint.db) {
+		auditor.Check(customConfig.GetEvents().fetcher.db, "Database config is empty");
+		switch (customConfig.GetEvents().fetcher.db) {
 			case DatabaseType.Postgres:
 				await PostgresClient.Connect();
 				this._client = PostgresClient;

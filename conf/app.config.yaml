@@ -43,8 +43,13 @@ custom:
   database:
     postgres:
       uri: 'postgresql://postgres:example@localhost:5432/mock_goblin'
+      table: 'events'
     mysql:
       uri: 'mysql://root:example@localhost:3306/mock_goblin'
+      table: 'events'
+    sqlite:
+      uri: 'sqlite://./database/events.db'
+      table: 'events'
 
   tx:
     # GasLimit coefficient (%)
@@ -57,6 +62,10 @@ custom:
   watchdog:
     enable: false
     mailer:
+      pgp:
+        enable: false
+        signingKey: 'keystore/pgp/YOUR_KEY'
+        passphrase: ''
       smtp: 'SMTP SERVER'
       port: 465
       secure: true
@@ -84,13 +93,16 @@ custom:
 
   # Events
   events:
-    transfer:
+    # Event listener config
+    listener:
       enable: false
 
       # Enabled event type
-      type:
+      eventType:
         # 'mint' means transfer token from zero address to another address
         - mint
+        # 'transfer' means transfer token from an address to another address
+        - transfer
         # 'burn' means transfer token to zero address
         - burn
 
@@ -103,16 +115,39 @@ custom:
       # Enable contract owner filter
       ownerFilter: false
 
-      # Dump contract owner cache interval (unit: second)
-      dumpCacheInterval: 60
+      # Cache options
+      cache:
+        - name: 'contractOwner'
+
+          # Dump contract owner cache interval (unit: second)
+          dumpCacheInterval: 60
+
+          # Contract owner cache TTL (unit: hour)
+          cacheTTL: 168
+
+          # The maximum size of items that remain in the cache
+          max: 20000
 
       # NFT contract owners
       contractOwners:
         - 'CONTRACT_OWNER_ADDRESS_1'
         - 'CONTRACT_OWNER_ADDRESS_2'
 
-    mint:
+    # Event fetcher config
+    fetcher:
       enable: false
+
+      # Enabled event type
+      eventType:
+        # 'mint' means transfer token from zero address to another address
+        - mint
+        # 'transfer' means transfer token from an address to another address
+        - transfer
+        # 'burn' means transfer token to zero address
+        - burn
+
+      # Fetch from block number (history or future block)
+      fromBlock: 0
 
       # eth_getLogs block range
       maxBlockRange: 3500
@@ -126,7 +161,7 @@ custom:
       # Supported Database: postgres, mysql or sqlite
       db: postgres
 
-      # NFT contract owners
+      # NFT contract owners (TODO)
       contractOwners:
         - 'CONTRACT_OWNER_ADDRESS_1'
         - 'CONTRACT_OWNER_ADDRESS_2'

@@ -1,8 +1,11 @@
 import {DataTypes, Model} from 'sequelize';
-import {EventTransfer} from '../types';
+import {EventTransfer} from '../../common/types';
 
 export interface IMintEvents extends Model, EventTransfer {
 }
+
+// Model name
+export const ModelName = 'ERC721Events';
 
 // Model attributes
 export const ModelAttrs = {
@@ -36,4 +39,4 @@ export const ModelAttrs = {
 	},
 };
 
-export const TableName = 'mint_events';
+export const TableName = 'events';

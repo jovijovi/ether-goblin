@@ -7,18 +7,14 @@ export const DefaultLoopInterval = 3000;
 // Default dump cache interval (unit: ms)
 export const DefaultDumpCacheInterval = 1000 * 60;
 
+// Default name of contract owner cache
+export const DefaultNameOfContractOwnerCache = 'contractOwner';
+
 // Default dump cache dir
-export const DefaultDumpCacheDir = "database/cache"
+export const DefaultDumpCacheDir = 'database/cache';
 
 // Default dump cache file
-export const DefaultDumpCacheFile = "contract_owner.json"
-
-// ERC721 Transfer event name
-export const EventNameTransfer = 'Transfer(address,address,uint256)';
-
-export const EventTypeMint = 'mint';
-// const EventTypeTransfer = 'transfer';
-export const EventTypeBurn = 'burn';
+export const DefaultDumpCacheFile = 'contract_owner.json';
 
 // Retry times
 export const DefaultRetryTimes = 3;

@@ -1,6 +1,6 @@
 import {ModelCtor} from 'sequelize';
 import {log} from '@jovijovi/pedrojs-common';
-import {EventTransfer} from '../types';
+import {EventTransfer} from '../../common/types';
 import {IMintEvents} from './model';
 
 interface IDatabase {

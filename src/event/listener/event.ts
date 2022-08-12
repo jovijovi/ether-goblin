@@ -1,20 +1,15 @@
-import {constants, utils} from 'ethers';
-import {log, util} from '@jovijovi/pedrojs-common';
-import fastq, {queueAsPromised} from 'fastq';
+import {utils} from 'ethers';
 import got from 'got';
+import fastq, {queueAsPromised} from 'fastq';
+import {log, util} from '@jovijovi/pedrojs-common';
 import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../../config';
-import {
-	DefaultCallbackJobConcurrency,
-	DefaultDumpCacheInterval,
-	DefaultLoopInterval,
-	EventNameTransfer,
-	EventTypeBurn,
-	EventTypeMint
-} from './params';
-import {EventTransfer, Response} from './types';
+import {DefaultCallbackJobConcurrency, DefaultDumpCacheInterval, DefaultLoopInterval} from './params';
+import {EventNameTransfer, TimeSecondInMs} from '../common/constants';
+import {EventTransfer, Response} from '../common/types';
 import {GetContractOwner} from './abi';
-import {DumpCacheToFile, LoadCacheFromFile} from './cache';
+import {DumpCacheToFile, GetContractOwnerCacheConfig, InitCache, LoadCacheFromFile} from './cache';
+import {CheckEventType, CheckTopics} from '../utils';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -22,31 +17,21 @@ const eventQueue = new util.Queue<EventTransfer>();
 // Callback job
 const callbackJob: queueAsPromised<EventTransfer> = fastq.promise(callback, DefaultCallbackJobConcurrency);
 
-// Check if tx is ERC721 transfer
-function checkTx(tx: any): boolean {
-	if (!tx || !tx.topics) {
-		return false;
-	} else if (tx.topics.length === 4
-		&& tx.topics[0]
-		&& tx.topics[1]
-		&& tx.topics[2]
-		&& tx.topics[3]) {
-		return true;
-	}
-
-	return false;
-}
-
 export function Run() {
 	// Check config
 	const conf = customConfig.GetEvents();
 	if (!conf) {
 		log.RequestId().info('No events configuration, skipped.');
 		return;
-	} else if (!conf.transfer.enable) {
-		log.RequestId().info('Transfer event listener disabled.');
+	} else if (!conf.listener.enable) {
+		log.RequestId().info('Event listener disabled.');
 		return;
 	}
+
+	log.RequestId().info("Event listener Config=", conf.listener);
+
+	// Initialize cache
+	InitCache();
 
 	// Load contract owner cache from dump file (Optional)
 	try {
@@ -56,7 +41,7 @@ export function Run() {
 		log.RequestId().warn("Load cache(ContractOwner) failed, error=", e);
 	}
 
-	log.RequestId().info("Transfer event listener is running...");
+	log.RequestId().info("Event listener is running...");
 
 	const provider = network.MyProvider.Get();
 	const evtFilter = {
@@ -67,20 +52,11 @@ export function Run() {
 
 	provider.on(evtFilter, (tx) => {
 		try {
-			// Check Tx
-			if (!checkTx(tx)) {
+			if (!CheckTopics(tx.topics)) {
 				return;
 			}
 
-			// Check from
-			if (tx.topics[1] === constants.HashZero && !conf.transfer.type.includes(EventTypeMint)) {
-				log.RequestId().trace("Mint event, skipped");
-				return;
-			}
-
-			// Check to
-			else if (tx.topics[2] === constants.HashZero && !conf.transfer.type.includes(EventTypeBurn)) {
-				log.RequestId().trace("Burn event, skipped");
+			if (!CheckEventType(tx.topics, conf.listener.eventType)) {
 				return;
 			}
 
@@ -126,6 +102,7 @@ export function Run() {
 	}, DefaultLoopInterval);
 
 	// Dump contract owner cache (Optional)
+	const contractOwnerCacheConf = GetContractOwnerCacheConfig();
 	setInterval(async () => {
 		try {
 			const size = await DumpCacheToFile();
@@ -134,7 +111,7 @@ export function Run() {
 			log.RequestId().warn("Dump cache(ContractOwner) failed, error=", e);
 			return;
 		}
-	}, conf.transfer.dumpCacheInterval ? 1000 * conf.transfer.dumpCacheInterval : DefaultDumpCacheInterval);
+	}, contractOwnerCacheConf.dumpCacheInterval ? TimeSecondInMs * contractOwnerCacheConf.dumpCacheInterval : DefaultDumpCacheInterval);
 
 	return;
 }
@@ -145,13 +122,13 @@ async function checkContract(address: string): Promise<boolean> {
 		const conf = customConfig.GetEvents();
 
 		// Filters contract address by owner
-		if (conf.transfer.ownerFilter && conf.transfer.contractOwners) {
+		if (conf.listener.ownerFilter && conf.listener.contractOwners) {
 			const contractOwner = await GetContractOwner(address);
 			if (!contractOwner) {
 				return false;
 			}
 
-			if (!conf.transfer.contractOwners.map(x => utils.getAddress(x)).includes(utils.getAddress(contractOwner))) {
+			if (!conf.listener.contractOwners.map(x => utils.getAddress(x)).includes(utils.getAddress(contractOwner))) {
 				log.RequestId().trace("Not contract(%s) owner, skipped", address);
 				return false;
 			}
@@ -175,7 +152,7 @@ async function callback(evt: EventTransfer): Promise<void> {
 		const conf = customConfig.GetEvents();
 
 		// Check URL
-		if (!conf.transfer.callback) {
+		if (!conf.listener.callback) {
 			log.RequestId().warn("Callback URL is empty");
 			return;
 		}
@@ -186,14 +163,14 @@ async function callback(evt: EventTransfer): Promise<void> {
 		}
 
 		// Callback
-		log.RequestId().debug("Calling back(%s)... event:", conf.transfer.callback, evt);
-		const rsp: Response = await got.post(conf.transfer.callback, {
+		log.RequestId().debug("Calling back(%s)... event:", conf.listener.callback, evt);
+		const rsp: Response = await got.post(conf.listener.callback, {
 			json: evt
 		}).json();
 		log.RequestId().trace("Callback response=", rsp);
 
 		// Check response
-		if (!checkRspCode(rsp.code, conf.transfer.responseCode)) {
+		if (!checkRspCode(rsp.code, conf.listener.responseCode)) {
 			log.RequestId().error("Callback failed, code=%s, msg=%s", rsp.code, rsp.msg);
 			return;
 		}

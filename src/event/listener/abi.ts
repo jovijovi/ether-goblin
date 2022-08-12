@@ -3,7 +3,7 @@ import {network} from '@jovijovi/ether-network';
 import {log, util} from '@jovijovi/pedrojs-common';
 import {core} from '@jovijovi/ether-core';
 import {Cache} from '../../common/cache';
-import {ErrorCodeCallException, ErrorReasonMissingRevertData} from './errors';
+import {ErrorCodeCallException, ErrorReasonMissingRevertData} from '../common/errors';
 import {DefaultRetryInterval, DefaultRetryTimes} from './params';
 
 const owner = `

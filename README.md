@@ -6,13 +6,17 @@ A microservice for the Ethereum ecosystem.
 
 ## Features
 
-- RESTFul APIs for the Ethereum ecosystem
-- A simple balance Watchdog
-- NFT transfer tx listener
-- NFT archaeologist, excavating NFT mint events from block history
-- More out-of-the-box NFT APIs (under development)
-- API authorization via 2FA token
-- Microservice run in Docker
+- `APIs` RESTFul APIs for the Ethereum ecosystem
+- `Watchdog` A simple balance Watchdog
+  - Alert mail with PGP
+  - Callback
+- `Event` ERC721 event
+  - `Event Listener` A listener to be triggered for each ERC721 event
+  - `Event Fetcher` Fetching ERC721 events from block history
+  - Support `Mint`/`Transfer`/`Burn` event
+- `Out-of-the-box` NFT APIs (under development)
+- API authorization via `2FA` token
+- `Microservice` run in Docker
 
 ## Supported Chains
 
@@ -29,7 +33,7 @@ A microservice for the Ethereum ecosystem.
 
 ## Contract Dependencies
 
-- @openzeppelin/contracts: [`4.7.2`](https://www.npmjs.com/package/@openzeppelin/contracts/v/4.7.2)
+- @openzeppelin/contracts: [`4.7.3`](https://www.npmjs.com/package/@openzeppelin/contracts/v/4.7.3)
 
 ## Quick Guide
 
@@ -86,6 +90,7 @@ A microservice for the Ethereum ecosystem.
 - Documents
 - NFT APIs
 - ERC20 APIs
+- WebSite
 
 ## License
 

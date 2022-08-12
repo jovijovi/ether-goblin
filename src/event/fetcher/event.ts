@@ -1,4 +1,5 @@
-import {constants, utils} from 'ethers';
+import {utils} from 'ethers';
+import {Log} from '@ethersproject/abstract-provider';
 import {auditor, log, util} from '@jovijovi/pedrojs-common';
 import fastq, {queueAsPromised} from 'fastq';
 import {network} from '@jovijovi/ether-network';
@@ -6,48 +7,38 @@ import {Options} from './options';
 import {core} from '@jovijovi/ether-core';
 import {
 	DefaultExecuteJobConcurrency,
+	DefaultFromBlock,
 	DefaultLoopInterval,
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
 	DefaultQueryIntervals,
-	EventNameTransfer
+	DefaultRetryInterval,
+	DefaultRetryTimes,
 } from './params';
-import {EventTransfer} from './types';
+import {EventTransfer} from '../common/types';
 import {customConfig} from '../../config';
 import {DB} from './db';
+import {EventNameTransfer, EventTypeMint} from '../common/constants';
+import {CheckEventType, CheckTopics} from '../utils';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
 
-// Query mint events job
-const queryMintEventsJob: queueAsPromised<Options> = fastq.promise(queryMintEvents, 1);
+// Fetch events jobs
+const fetchEventsJobs: queueAsPromised<Options> = fastq.promise(fetchEvents, 1);
 
-// Execute query job
-let execQueryJob: queueAsPromised<Options>;
+// Query logs jobs
+let queryLogsJobs: queueAsPromised<Options>;
 
 // Dump job
 const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 1);
 
-// Check if event topics is ERC721 transfer
-function checkEvent(evt: any): boolean {
-	if (!evt || !evt.topics) {
-		return false;
-	} else if (evt.topics.length === 4
-		&& evt.topics[0]
-		&& evt.topics[1]
-		&& evt.topics[2]
-		&& evt.topics[3]) {
-		return true;
-	}
-
-	return false;
-}
-
 // Execute query mint events job
-async function execQuery(opts: Options = {
-	fromBlock: 0
+async function queryLogs(opts: Options = {
+	eventType: [EventTypeMint],
+	fromBlock: DefaultFromBlock
 }): Promise<void> {
-	log.RequestId().info("EXEC JOB, blocks[%d,%d], execQueryJob=%d", opts.fromBlock, opts.toBlock, execQueryJob.length());
+	log.RequestId().info("EXEC JOB, blocks[%d,%d], queryLogsJobs=%d", opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
 	const provider = network.MyProvider.Get();
 	const evtFilter = {
@@ -60,17 +51,17 @@ async function execQuery(opts: Options = {
 		]
 	};
 
-	const events = await provider.getLogs(evtFilter);
+	const events = await util.retry.Run(async (): Promise<Array<Log>> => {
+		return await provider.getLogs(evtFilter);
+	}, DefaultRetryTimes, DefaultRetryInterval);
 
 	for (const event of events) {
-		// Check event
-		if (!checkEvent(event)) {
-			return;
+		// Check event topics
+		if (!CheckTopics(event.topics)) {
+			continue;
 		}
 
-		// Check from
-		if (event.topics[1] !== constants.HashZero) {
-			log.RequestId().trace("NOT Mint event");
+		if (!CheckEventType(event.topics, opts.eventType)) {
 			continue;
 		}
 
@@ -93,8 +84,9 @@ async function execQuery(opts: Options = {
 }
 
 // Generate query mint events job
-async function queryMintEvents(opts: Options = {
-	fromBlock: 0,
+async function fetchEvents(opts: Options = {
+	eventType: [EventTypeMint],
+	fromBlock: DefaultFromBlock,
 	maxBlockRange: DefaultMaxBlockRange,
 	pushJobIntervals: DefaultPushJobIntervals,
 }): Promise<void> {
@@ -121,9 +113,10 @@ async function queryMintEvents(opts: Options = {
 		if (blockRange >= 0 && blockRange <= 1) {
 			log.RequestId().info("Catch up the latest block(%d)", blockNumber);
 		}
-		log.RequestId().info("PUSH JOB, blocks[%d,%d](range=%d), execQueryJob=%d", nextFrom, nextTo, blockRange, execQueryJob.length());
+		log.RequestId().info("PUSH JOB, blocks[%d,%d](range=%d), queryLogsJobs=%d", nextFrom, nextTo, blockRange, queryLogsJobs.length());
 
-		execQueryJob.push({
+		queryLogsJobs.push({
+			eventType: opts.eventType,
 			fromBlock: nextFrom,
 			toBlock: nextTo,
 		}).catch((err) => log.RequestId().error(err));
@@ -142,24 +135,26 @@ export function Run() {
 	if (!conf) {
 		log.RequestId().info('No events configuration, skipped.');
 		return;
-	} else if (!conf.mint.enable) {
-		log.RequestId().info('Query mint events job disabled.');
+	} else if (!conf.fetcher.enable) {
+		log.RequestId().info('Event fetcher disabled.');
 		return;
 	}
 
-	log.RequestId().info("Querying mint events job config=", conf.mint);
+	log.RequestId().info("Event fetcher config=", conf.fetcher);
 
-	auditor.Check(conf.mint.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
+	auditor.Check(conf.fetcher.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
+	auditor.Check(conf.fetcher.fromBlock >= 0, "Invalid fromBlock");
 
-	execQueryJob = fastq.promise(execQuery, conf.mint.executeJobConcurrency ? conf.mint.executeJobConcurrency : DefaultExecuteJobConcurrency);
+	queryLogsJobs = fastq.promise(queryLogs, conf.fetcher.executeJobConcurrency ? conf.fetcher.executeJobConcurrency : DefaultExecuteJobConcurrency);
 
-	log.RequestId().info("Querying mint events job is running...");
+	log.RequestId().info("Event fetcher is running...");
 
 	// Push query mint events job to scheduler
-	queryMintEventsJob.push({
-		fromBlock: 0,
-		maxBlockRange: conf.mint.maxBlockRange,
-		pushJobIntervals: conf.mint.pushJobIntervals,
+	fetchEventsJobs.push({
+		eventType: conf.fetcher.eventType,
+		fromBlock: conf.fetcher.fromBlock,
+		maxBlockRange: conf.fetcher.maxBlockRange,
+		pushJobIntervals: conf.fetcher.pushJobIntervals,
 	}).catch((err) => log.RequestId().error(err));
 
 	// Schedule processing job

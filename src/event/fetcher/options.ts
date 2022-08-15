@@ -6,4 +6,5 @@ export type Options = {
 	toBlock?: number
 	maxBlockRange?: number
 	pushJobIntervals?: number
+	keepRunning?: boolean
 }

@@ -51,6 +51,11 @@ custom:
       uri: 'sqlite://./database/events.db'
       table: 'events'
 
+  # RESTFul API response code
+  apiResponseCode:
+    OK: 'YOUR_RESPONSE_CODE'
+    ERROR: 'YOUR_RESPONSE_CODE'
+
   tx:
     # GasLimit coefficient (%)
     # Example: 110 means gasLimit * 110%

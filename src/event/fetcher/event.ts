@@ -8,6 +8,7 @@ import {core} from '@jovijovi/ether-core';
 import {
 	DefaultExecuteJobConcurrency,
 	DefaultFromBlock,
+	DefaultKeepRunning,
 	DefaultLoopInterval,
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
@@ -38,7 +39,7 @@ async function queryLogs(opts: Options = {
 	eventType: [EventTypeMint],
 	fromBlock: DefaultFromBlock
 }): Promise<void> {
-	log.RequestId().info("EXEC JOB, blocks[%d,%d], queryLogsJobs=%d", opts.fromBlock, opts.toBlock, queryLogsJobs.length());
+	log.RequestId().info("EXEC JOB, QueryLogs(blocks[%d,%d]) running... QueryLogsJobsCount=%d", opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
 	const provider = network.MyProvider.Get();
 	const evtFilter = {
@@ -80,6 +81,9 @@ async function queryLogs(opts: Options = {
 		eventQueue.Push(evt);
 	}
 
+	log.RequestId().info("JOB FINISHED, QueryLogs(blocks[%d,%d]), QueryLogsJobsCount=%d",
+		opts.fromBlock, opts.toBlock, queryLogsJobs.length());
+
 	return;
 }
 
@@ -89,12 +93,15 @@ async function fetchEvents(opts: Options = {
 	fromBlock: DefaultFromBlock,
 	maxBlockRange: DefaultMaxBlockRange,
 	pushJobIntervals: DefaultPushJobIntervals,
+	keepRunning: DefaultKeepRunning,
 }): Promise<void> {
 	let nextFrom = opts.fromBlock;
 	let nextTo = 0;
 	let blockRange = opts.maxBlockRange;
 	let leftBlocks = 0;
-	let blockNumber = await core.GetBlockNumber();
+	let blockNumber = opts.toBlock ? opts.toBlock : await core.GetBlockNumber();
+
+	auditor.Check(blockNumber >= nextFrom, "Invalid fromBlock/toBlock");
 
 	// Connect to database
 	await DB.Connect();
@@ -102,6 +109,9 @@ async function fetchEvents(opts: Options = {
 	do {
 		leftBlocks = blockNumber - nextFrom;
 		if (leftBlocks <= 0) {
+			if (!opts.keepRunning) {
+				break;
+			}
 			await util.time.SleepSeconds(DefaultQueryIntervals);
 			blockNumber = await core.GetBlockNumber();
 			continue;
@@ -116,15 +126,18 @@ async function fetchEvents(opts: Options = {
 		log.RequestId().info("PUSH JOB, blocks[%d,%d](range=%d), queryLogsJobs=%d", nextFrom, nextTo, blockRange, queryLogsJobs.length());
 
 		queryLogsJobs.push({
-			eventType: opts.eventType,
-			fromBlock: nextFrom,
-			toBlock: nextTo,
+			address: opts.address,      // The address to filter by, or null to match any address
+			eventType: opts.eventType,  // ERC721 event type: mint/transfer/burn
+			fromBlock: nextFrom,        // Fetch from block number
+			toBlock: nextTo,            // Fetch to block number
 		}).catch((err) => log.RequestId().error(err));
 
 		nextFrom = nextTo + 1;
 
 		await util.time.SleepMilliseconds(opts.pushJobIntervals);
 	} while (nextFrom > 0);
+
+	log.RequestId().info("FetchEvents finished, options=%o", opts);
 
 	return;
 }
@@ -148,14 +161,6 @@ export function Run() {
 	queryLogsJobs = fastq.promise(queryLogs, conf.fetcher.executeJobConcurrency ? conf.fetcher.executeJobConcurrency : DefaultExecuteJobConcurrency);
 
 	log.RequestId().info("Event fetcher is running...");
-
-	// Push query mint events job to scheduler
-	fetchEventsJobs.push({
-		eventType: conf.fetcher.eventType,
-		fromBlock: conf.fetcher.fromBlock,
-		maxBlockRange: conf.fetcher.maxBlockRange,
-		pushJobIntervals: conf.fetcher.pushJobIntervals,
-	}).catch((err) => log.RequestId().error(err));
 
 	// Schedule processing job
 	setInterval(() => {
@@ -182,12 +187,25 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 			const evt = queue.Shift();
 			// Dump event to database
 			await DB.Client().Save(evt);
-			log.RequestId().info("Count=%d, evt=%o", i + 1, evt);
+
+			log.RequestId().info("Dumped events count=%d, event=%o", i + 1, evt);
 		}
 	} catch (e) {
-		log.RequestId().error("Callback failed, error=", e);
+		log.RequestId().error("Dump failed, error=", e);
 		return;
 	}
 
 	return;
+}
+
+// PushFetchEventsJob push FetchEvents job to scheduler
+export function PushFetchEventsJob(opts: Options) {
+	fetchEventsJobs.push({
+		address: opts.address,
+		eventType: opts.eventType,
+		fromBlock: opts.fromBlock,
+		toBlock: opts.toBlock,
+		maxBlockRange: opts.maxBlockRange ? opts.maxBlockRange : customConfig.GetEvents().fetcher.maxBlockRange,
+		pushJobIntervals: opts.pushJobIntervals ? opts.pushJobIntervals : customConfig.GetEvents().fetcher.pushJobIntervals,
+	}).catch((err) => log.RequestId().error(err));
 }

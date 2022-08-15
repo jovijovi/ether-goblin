@@ -21,3 +21,6 @@ export const DefaultRetryTimes = 5;
 
 // Retry interval (second)
 export const DefaultRetryInterval = 5;
+
+// Keep running or not
+export const DefaultKeepRunning = false;

@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.7.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.7.0)
+
+Features:
+- (event/fetcher): API to push fetch events job to scheduler
+- (event/fetcher): callback for fetching event
+
+Fixes:
+- (event/fetcher/db): create composite primary key
+
 ## [v0.6.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.6.0)
 
 Features:

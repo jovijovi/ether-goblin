@@ -60,6 +60,7 @@ export namespace customConfig {
 	class EventFetcher {
 		enable: boolean
 		eventType: string[]
+		callback: string
 		fromBlock: number
 		maxBlockRange?: number
 		pushJobIntervals?: number
@@ -92,6 +93,7 @@ export namespace customConfig {
 	}
 
 	export class CustomConfig {
+		apiResponseCode: any
 		tx: TxConfig
 		watchdog?: Watchdog
 		events?: Events
@@ -144,5 +146,14 @@ export namespace customConfig {
 	// GetSqliteConfig returns sqlite database config
 	export function GetSqliteConfig(): SqliteConfig {
 		return customConfig.database.sqlite;
+	}
+
+	// GetRestAPIRspCode returns Rest API response code
+	export function GetRestAPIRspCode(): any {
+		if (customConfig.apiResponseCode) {
+			return customConfig.apiResponseCode;
+		}
+
+		throw new Error(`GetRestAPIRspCode Failed, invalid config`);
 	}
 }

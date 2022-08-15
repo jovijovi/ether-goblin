@@ -12,10 +12,12 @@ export const ModelAttrs = {
 	address: {
 		type: DataTypes.TEXT,
 		allowNull: false,
+		primaryKey: true,
 	},
 	blockNumber: {
 		type: DataTypes.TEXT,
 		allowNull: false,
+		primaryKey: true,
 	},
 	blockHash: {
 		type: DataTypes.TEXT,
@@ -24,6 +26,7 @@ export const ModelAttrs = {
 	transactionHash: {
 		type: DataTypes.TEXT,
 		allowNull: false,
+		primaryKey: true,
 	},
 	from: {
 		type: DataTypes.TEXT,
@@ -36,6 +39,7 @@ export const ModelAttrs = {
 	tokenId: {
 		type: DataTypes.TEXT,
 		allowNull: false,
+		primaryKey: true,
 	},
 };
 

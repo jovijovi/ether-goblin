@@ -151,6 +151,9 @@ custom:
         # 'burn' means transfer token to zero address
         - burn
 
+      # Callback URL
+      callback: 'YOUR CALLBACK URL'
+
       # Fetch from block number (history or future block)
       fromBlock: 0
 

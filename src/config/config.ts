@@ -60,6 +60,7 @@ export namespace customConfig {
 	class EventFetcher {
 		enable: boolean
 		eventType: string[]
+		callback: string
 		fromBlock: number
 		maxBlockRange?: number
 		pushJobIntervals?: number

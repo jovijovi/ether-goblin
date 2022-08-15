@@ -2,6 +2,7 @@ import {utils} from 'ethers';
 import {Log} from '@ethersproject/abstract-provider';
 import {auditor, log, util} from '@jovijovi/pedrojs-common';
 import fastq, {queueAsPromised} from 'fastq';
+import got from 'got';
 import {network} from '@jovijovi/ether-network';
 import {Options} from './options';
 import {core} from '@jovijovi/ether-core';
@@ -16,7 +17,7 @@ import {
 	DefaultRetryInterval,
 	DefaultRetryTimes,
 } from './params';
-import {EventTransfer} from '../common/types';
+import {EventTransfer, Response} from '../common/types';
 import {customConfig} from '../../config';
 import {DB} from './db';
 import {EventNameTransfer, EventTypeMint} from '../common/constants';
@@ -175,6 +176,31 @@ export function Run() {
 	return;
 }
 
+// Event callback
+async function callback(evt: EventTransfer): Promise<void> {
+	try {
+		const conf = customConfig.GetEvents().fetcher;
+
+		// Check URL
+		if (!conf.callback) {
+			return;
+		}
+
+		// Callback
+		log.RequestId().debug("Fetcher calling back(%s)... event:", conf.callback, evt);
+		const rsp: Response = await got.post(conf.callback, {
+			json: evt
+		}).json();
+
+		log.RequestId().trace("Fetcher callback response=", rsp);
+	} catch (e) {
+		log.RequestId().error("Fetcher callback failed, error=", e);
+		return;
+	}
+
+	return;
+}
+
 // Dump events
 async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 	try {
@@ -185,6 +211,10 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 
 		for (let i = 0; i < len; i++) {
 			const evt = queue.Shift();
+
+			// Callback (Optional)
+			await callback(evt);
+
 			// Dump event to database
 			await DB.Client().Save(evt);
 

@@ -87,14 +87,19 @@ custom:
     period: 200
 
     # Rules
-    # '<': only monitor the account balance lower than the limit.
-    # '>': only monitor the account balance greater than the limit.
-    # '=': only monitor the account balance equal the limit.
+    # '<': only monitor the account balance lower than the limit
+    # '>': only monitor the account balance greater than the limit
+    # '=': only monitor the account balance equal the limit
+    # '+': only monitor the account balance increase (must set period to 1)
+    # '-': only monitor the account balance decrease (must set period to 1)
+    # '*': monitor all account balance changes (must set period to 1)
     addressList:
       - address: 'YOUR ADDRESS'
         rule: '<'
         # limit unit is Wei
         limit: '5000000000000000000'
+      - address: 'YOUR ADDRESS'
+        rule: '*'
 
   # Events
   events:

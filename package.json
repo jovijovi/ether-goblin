@@ -1,6 +1,6 @@
 {
   "name": "ether-goblin",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "description": "A microservice for the Ethereum ecosystem.",
   "author": "jovijovi <mageyul@hotmail.com>",
   "license": "MIT",
@@ -14,7 +14,11 @@
     "API",
     "NFT",
     "ERC721",
-    "ERC20"
+    "ERC20",
+    "event",
+    "listener",
+    "fetcher",
+    "watchdog"
   ],
   "scripts": {
     "compile": "yarn hardhat compile",
@@ -40,7 +44,7 @@
     "ethers": "5.6.9",
     "fastq": "^1.13.0",
     "got": "11.8.5",
-    "lru-cache": "^7.13.2",
+    "lru-cache": "7.13.2",
     "nodemailer": "^6.7.8",
     "nodemailer-openpgp": "^2.1.0",
     "write-file-atomic": "^4.0.2"

@@ -6,9 +6,7 @@ import {fetcher} from '../fetcher';
 // FetchEvents push FetchEvents job to scheduler
 export async function FetchEvents(req, res) {
 	if (!req.body ||
-		// !req.body.address ||
 		!req.body.eventType ||
-		// !req.body.fromBlock ||
 		!req.body.toBlock
 	) {
 		log.RequestId(req[KEY]).error("Bad request, req=", req.body);

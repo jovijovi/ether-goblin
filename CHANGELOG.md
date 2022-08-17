@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.8.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.8.0)
+
+Features:
+- (watchdog): balance changes alert
+
+Build:
+- Bump packages
+
 ## [v0.7.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.7.0)
 
 Features:

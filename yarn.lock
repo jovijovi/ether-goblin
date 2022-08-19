@@ -512,10 +512,10 @@
     mysql2 "^2.3.3"
     sequelize "^6.21.4"
 
-"@jovijovi/pedrojs-network-http@1.1.14":
-  version "1.1.14"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-network-http/-/pedrojs-network-http-1.1.14.tgz#95609befc825bd631a03ec58bdc73fd5a0b5a842"
-  integrity sha512-ol2p16BqjiEw2SrQ8ZScp2dDsBX57k3EFXg/Glhhldi8g9WLZmj0KYcTRawequudf2ApN7fkDPrKWnDK5FRa0g==
+"@jovijovi/pedrojs-network-http@1.1.15":
+  version "1.1.15"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-network-http/-/pedrojs-network-http-1.1.15.tgz#b1f013fb92df368fa85ccb9f18bd1bf2ecd86fa9"
+  integrity sha512-llLNUz27piVj2C+rL0/ad7yCj8RySu1ozhablkuGr6H5WK1zGbjQZIjN0s40Y/VxxSkFrafCIdNoLSbUaQFOyA==
   dependencies:
     "@jovijovi/pedrojs-common" "1.1.14"
     "@jovijovi/pedrojs-tracing" "1.1.12"

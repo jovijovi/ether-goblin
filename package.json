@@ -37,7 +37,7 @@
     "@jovijovi/express-2fa-token": "^1.1.0",
     "@jovijovi/pedrojs-common": "1.1.14",
     "@jovijovi/pedrojs-mysql": "1.1.14",
-    "@jovijovi/pedrojs-network-http": "1.1.14",
+    "@jovijovi/pedrojs-network-http": "1.1.15",
     "@jovijovi/pedrojs-pg": "1.1.14",
     "@jovijovi/pedrojs-sqlite": "1.1.14",
     "@openzeppelin/contracts": "4.7.3",

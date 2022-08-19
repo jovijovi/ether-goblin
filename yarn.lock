@@ -458,19 +458,19 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@jovijovi/ether-core@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@jovijovi/ether-core/-/ether-core-0.4.0.tgz#b93d240ccc36061cf132bab5ef61aa9d6feb95a4"
-  integrity sha512-8o+oIRswM1iTbQDxEUXkfZjtbPNTWvBbK6CRBbPdsH3gClUUfSKmJLug1JLHHKmPi2BZXIKvc7gVcfNMigeUJQ==
+"@jovijovi/ether-core@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@jovijovi/ether-core/-/ether-core-0.4.1.tgz#b46e9db7434d756fbb35223852144f0f38294f02"
+  integrity sha512-EoM4osj+cGwf7lSDK5H9CSyobkSprc+sbZ+jdrhh5YkRyBNC7ZYe4KWEbbpd6dwOxxMbhnmUZOAvhwKY5Kz5eQ==
   dependencies:
-    "@jovijovi/ether-network" "^0.2.2"
-    "@jovijovi/pedrojs-common" "^1.1.12"
+    "@jovijovi/ether-network" "^0.2.3"
+    "@jovijovi/pedrojs-common" "^1.1.14"
     ethers "5.6.9"
 
-"@jovijovi/ether-network@0.2.2", "@jovijovi/ether-network@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@jovijovi/ether-network/-/ether-network-0.2.2.tgz#4a7ba83528d018ab4430c58f92b568dbcf621796"
-  integrity sha512-c9PsTUibWlvH6QOlwX/fGYirTJM9FN/T1zIzOpvKbNktZMNvTXvE6h+DXeLX8r+Pkbr50JYspYtwW5DIJG17ZA==
+"@jovijovi/ether-network@0.2.3", "@jovijovi/ether-network@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@jovijovi/ether-network/-/ether-network-0.2.3.tgz#07bbbb49a7234bdd14e807191609843e0c3928ec"
+  integrity sha512-ygeHRFqy76mpU05tlEzb8xYv7XTZDgsYMZun1tmLJjsAjqORaTEaN9+E8qqFPl3PWL6QGU7Hkrl09iEmxvkFCQ==
   dependencies:
     "@jovijovi/pedrojs-log" "^1.1.12"
     ethers "^5.6.9"
@@ -482,16 +482,16 @@
   dependencies:
     "@jovijovi/two-fa.js" "^0.2.5"
 
-"@jovijovi/pedrojs-common@1.1.13", "@jovijovi/pedrojs-common@^1.1.12":
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-common/-/pedrojs-common-1.1.13.tgz#adc17de7ea2d30bbbe00cf745a482ef614905938"
-  integrity sha512-Vz4ZVWp+IIAGmDlzS+ypG0V88opEudiuyXYzcK1eGmKBYuLt+rLIXVOHimAeUyt2neEY2HXV2Ym1kDkg5cOPlw==
+"@jovijovi/pedrojs-common@1.1.14", "@jovijovi/pedrojs-common@^1.1.14":
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-common/-/pedrojs-common-1.1.14.tgz#b1b28f6d1d2c38b6f36a697e6b73e280a6acb081"
+  integrity sha512-sD7UxDEb4IMRICdYOybLmvb4Nr3t5GRzfh8gRHFxGrRd4C0c/R9109Z0a0NtVo80UYneZMnAbZbG0fBUqCvbDQ==
   dependencies:
     "@jovijovi/pedrojs-version" "^1.0.12"
     commander "9.4.0"
-    dayjs "1.11.4"
+    dayjs "1.11.5"
     log4js "6.6.1"
-    lru-cache "7.13.2"
+    lru-cache "7.14.0"
     nanoid "3.3.4"
     yaml "2.1.1"
 
@@ -503,21 +503,21 @@
     "@jovijovi/pedrojs-version" "^1.0.12"
     log4js "6.6.1"
 
-"@jovijovi/pedrojs-mysql@1.1.12":
-  version "1.1.12"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-mysql/-/pedrojs-mysql-1.1.12.tgz#66be44e8e446a7eadb5d423737dbb2e20397bfcc"
-  integrity sha512-7jvFMHx1oMvjfLcEnhSrEsIgrdSaWvF9NIpCmkUWIFQnZf9znw0W9194u8bw6n8JoiV9uA/slY2DFhmGnHMFpg==
+"@jovijovi/pedrojs-mysql@1.1.14":
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-mysql/-/pedrojs-mysql-1.1.14.tgz#41dd2d07283e094707d9eabdf073b7b78895393f"
+  integrity sha512-7w7pw818826VBLqkaLxQOo0bvv9kYFIr8n9jlkRteL+/gYj0s2emlsz28ceZU1t4W8nb3eJBCRsogdUiq4Rb0Q==
   dependencies:
     "@jovijovi/pedrojs-log" "^1.1.12"
     mysql2 "^2.3.3"
-    sequelize "^6.21.3"
+    sequelize "^6.21.4"
 
-"@jovijovi/pedrojs-network-http@1.1.13":
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-network-http/-/pedrojs-network-http-1.1.13.tgz#dbe022af8fe124fffdb8ced047bc53abaf35cd40"
-  integrity sha512-1azAEZJhgdvxXpzgiVFdNmxPujQWjesSk0fYjlYLGSjE1H8EmD6LurZlzqinaS+I22yfFLJ/i7XVRpi9XQY60g==
+"@jovijovi/pedrojs-network-http@1.1.14":
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-network-http/-/pedrojs-network-http-1.1.14.tgz#95609befc825bd631a03ec58bdc73fd5a0b5a842"
+  integrity sha512-ol2p16BqjiEw2SrQ8ZScp2dDsBX57k3EFXg/Glhhldi8g9WLZmj0KYcTRawequudf2ApN7fkDPrKWnDK5FRa0g==
   dependencies:
-    "@jovijovi/pedrojs-common" "1.1.13"
+    "@jovijovi/pedrojs-common" "1.1.14"
     "@jovijovi/pedrojs-tracing" "1.1.12"
     "@types/body-parser" "1.19.2"
     "@types/express" "4.17.13"
@@ -525,24 +525,24 @@
     express "4.18.1"
     nanoid "3.3.4"
 
-"@jovijovi/pedrojs-pg@1.1.12":
-  version "1.1.12"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-pg/-/pedrojs-pg-1.1.12.tgz#d93813dfd62c75b1874dd37233faa0520ef4365d"
-  integrity sha512-2m36qrwst6Q/1cyl/yMHnabklIBaPahw/KIC00Gk50n8FzvsvCp+4+1WTdEEsGFv32PS2cpXVUZaPss4XyE+QA==
+"@jovijovi/pedrojs-pg@1.1.14":
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-pg/-/pedrojs-pg-1.1.14.tgz#18e83a8d3a019c107a2aa5f86ef424ba7d402266"
+  integrity sha512-W1QyvsTwztS1cN/3/UnKCHTLwrXd1xcRQq1+XZ0TaFq+dqAnh6EYdlo6ESsEAj1J9XV7MgFwptGXSVPdsE5zqA==
   dependencies:
     "@jovijovi/pedrojs-log" "^1.1.12"
     pg "^8.7.3"
     pg-hstore "^2.3.4"
-    sequelize "^6.21.3"
+    sequelize "^6.21.4"
 
-"@jovijovi/pedrojs-sqlite@1.1.12":
-  version "1.1.12"
-  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-sqlite/-/pedrojs-sqlite-1.1.12.tgz#c8ee219aea47f2f61ada63145f0758e421af0f28"
-  integrity sha512-oIx1/eWIeK7KvRIdLA+bjb5QUS/oxVS1htQz4Wm94+Plo/P9JprbzugBj2+d30LOrrruMDHCX8QH9sMpM9l/eg==
+"@jovijovi/pedrojs-sqlite@1.1.14":
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/@jovijovi/pedrojs-sqlite/-/pedrojs-sqlite-1.1.14.tgz#36534472e8057a8c5e099c3494ffd6b4f8683069"
+  integrity sha512-KUBBIR7j9HicrAu8uZXpW8qI28F5KsgmfIR6aI9K8bCipWX3PR5OixwHxzrcaGfyh7TZflKnt6qcemtSWNG6HA==
   dependencies:
     "@jovijovi/pedrojs-log" "^1.1.12"
-    sequelize "^6.21.3"
-    sqlite3 "5.0.8"
+    sequelize "^6.21.4"
+    sqlite3 "5.0.11"
 
 "@jovijovi/pedrojs-tracing@1.1.12":
   version "1.1.12"
@@ -2070,10 +2070,10 @@ date-format@^4.0.13:
   resolved "https://registry.yarnpkg.com/date-format/-/date-format-4.0.13.tgz#87c3aab3a4f6f37582c5f5f63692d2956fa67890"
   integrity sha512-bnYCwf8Emc3pTD8pXnre+wfnjGtfi5ncMDKy7+cWZXbmRAsdWkOQHrfC1yz/KiwP5thDp2kCHWYWKBX4HP1hoQ==
 
-dayjs@1.11.4:
-  version "1.11.4"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.4.tgz#3b3c10ca378140d8917e06ebc13a4922af4f433e"
-  integrity sha512-Zj/lPM5hOvQ1Bf7uAvewDaUcsJoI6JmNqmHhHl3nyumwe0XHwt8sWdOVAPACJzCebL8gQCi+K49w7iKWnGwX9g==
+dayjs@1.11.5:
+  version "1.11.5"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.5.tgz#00e8cc627f231f9499c19b38af49f56dc0ac5e93"
+  integrity sha512-CAdX5Q3YW3Gclyo5Vpqkgpj8fSdLQcRuzfX6mC6Phy0nfJ0eGYOeS7m4mt2plDWLAtA4TqTakvbboHvUxfe4iA==
 
 debug@2.6.9:
   version "2.6.9"
@@ -3506,10 +3506,10 @@ lowercase-keys@^2.0.0:
   resolved "https://registry.yarnpkg.com/lowercase-keys/-/lowercase-keys-2.0.0.tgz#2603e78b7b4b0006cbca2fbcc8a3202558ac9479"
   integrity sha512-tqNXrS78oMOE73NMxK4EMLQsQowWf8jKooH9g7xPavRT706R6bkQJ6DY2Te7QukaZsulxa30wQ7bk0pm4XiHmA==
 
-lru-cache@7.13.2:
-  version "7.13.2"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.13.2.tgz#bb5d3f1deea3f3a7a35c1c44345566a612e09cd0"
-  integrity sha512-VJL3nIpA79TodY/ctmZEfhASgqekbT574/c4j3jn4bKXbSCnTTCH/KltZyvL2GlV+tGSMtsWyem8DCX7qKTMBA==
+lru-cache@7.14.0:
+  version "7.14.0"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.14.0.tgz#21be64954a4680e303a09e9468f880b98a0b3c7f"
+  integrity sha512-EIRtP1GrSJny0dqb50QXRUNBxHJhcpxHC++M5tD7RYbvLLn5KVWKsbyswSSqDuU15UFi3bgTQIY8nhDMeF6aDQ==
 
 lru-cache@^4.1.3:
   version "4.1.5"
@@ -4558,10 +4558,10 @@ sequelize-pool@^7.1.0:
   resolved "https://registry.yarnpkg.com/sequelize-pool/-/sequelize-pool-7.1.0.tgz#210b391af4002762f823188fd6ecfc7413020768"
   integrity sha512-G9c0qlIWQSK29pR/5U2JF5dDQeqqHRragoyahj/Nx4KOOQ3CPPfzxnfqFPCSB7x5UgjOgnZ61nSxz+fjDpRlJg==
 
-sequelize@^6.21.3:
-  version "6.21.3"
-  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-6.21.3.tgz#6026b088b5327f8cc0501b0e7e5a8de1bf0346ce"
-  integrity sha512-cJPrTTVCofUxaaNKoIETiXCYh2xJ+OFq5jMHJQqftp34M4kNoLpTfUMPSwYtRUeTcSh1/5HodfJXIBi7troIFA==
+sequelize@^6.21.4:
+  version "6.21.4"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-6.21.4.tgz#8f5cb248d7cfc86ca9bf7e1f8306ac4bd83167de"
+  integrity sha512-5A0+giRhGHerTDRMsZ54TYRB8oQPWxeVscbc4USG9wRtw2Eqik0Vk0p2EVDrhoq7tmNBh2nHpd9YMfvGdwPEJw==
   dependencies:
     "@types/debug" "^4.1.7"
     "@types/validator" "^13.7.1"
@@ -4720,10 +4720,10 @@ split2@^4.1.0:
   resolved "https://registry.yarnpkg.com/split2/-/split2-4.1.0.tgz#101907a24370f85bb782f08adaabe4e281ecf809"
   integrity sha512-VBiJxFkxiXRlUIeyMQi8s4hgvKCSjtknJv/LVYbrgALPwf5zSKmEwV9Lst25AkvMDnvxODugjdl6KZgwKM1WYQ==
 
-sqlite3@5.0.8:
-  version "5.0.8"
-  resolved "https://registry.yarnpkg.com/sqlite3/-/sqlite3-5.0.8.tgz#b4b7eab7156debec80866ef492e01165b4688272"
-  integrity sha512-f2ACsbSyb2D1qFFcqIXPfFscLtPVOWJr5GmUzYxf4W+0qelu5MWrR+FAQE1d5IUArEltBrzSDxDORG8P/IkqyQ==
+sqlite3@5.0.11:
+  version "5.0.11"
+  resolved "https://registry.yarnpkg.com/sqlite3/-/sqlite3-5.0.11.tgz#102c835d70be66da9d95a383fd6ea084a082ef7f"
+  integrity sha512-4akFOr7u9lJEeAWLJxmwiV43DJcGV7w3ab7SjQFAFaTVyknY3rZjvXTKIVtWqUoY4xwhjwoHKYs2HDW2SoHVsA==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.0"
     node-addon-api "^4.2.0"
@@ -5074,9 +5074,9 @@ underscore@^1.13.1:
   integrity sha512-BQFnUDuAQ4Yf/cYY5LNrK9NCJFKriaRbD9uR1fTeXnBeoa97W0i41qkZfGO9pSo8I5KzjAcSY2XYtdf0oKd7KQ==
 
 undici@^5.4.0:
-  version "5.8.2"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.8.2.tgz#071fc8a6a5d24db0ad510ad442f607d9b09d5eec"
-  integrity sha512-3KLq3pXMS0Y4IELV045fTxqz04Nk9Ms7yfBBHum3yxsTR4XNn+ZCaUbf/mWitgYDAhsplQ0B1G4S5D345lMO3A==
+  version "5.9.1"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.9.1.tgz#fc9fd85dd488f965f153314a63d9426a11f3360b"
+  integrity sha512-6fB3a+SNnWEm4CJbgo0/CWR8RGcOCQP68SF4X0mxtYTq2VNN8T88NYrWVBAeSX+zb7bny2dx2iYhP3XHi00omg==
 
 unique-filename@^1.1.1:
   version "1.1.1"

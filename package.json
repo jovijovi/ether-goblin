@@ -1,6 +1,6 @@
 {
   "name": "ether-goblin",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "A microservice for the Ethereum ecosystem.",
   "author": "jovijovi <mageyul@hotmail.com>",
   "license": "MIT",
@@ -32,8 +32,8 @@
     "dist-run": "node ./dist/src/main/index.js"
   },
   "dependencies": {
-    "@jovijovi/ether-core": "0.4.1",
-    "@jovijovi/ether-network": "0.2.3",
+    "@jovijovi/ether-core": "0.5.0",
+    "@jovijovi/ether-network": "0.3.0",
     "@jovijovi/express-2fa-token": "^1.1.0",
     "@jovijovi/pedrojs-common": "1.1.14",
     "@jovijovi/pedrojs-mysql": "1.1.14",
@@ -41,7 +41,7 @@
     "@jovijovi/pedrojs-pg": "1.1.14",
     "@jovijovi/pedrojs-sqlite": "1.1.14",
     "@openzeppelin/contracts": "4.7.3",
-    "ethers": "5.6.9",
+    "ethers": "5.7.0",
     "fastq": "^1.13.0",
     "got": "11.8.5",
     "lru-cache": "7.14.0",
@@ -59,7 +59,7 @@
     "@types/chai": "4.3.3",
     "@types/chai-as-promised": "7.1.5",
     "@types/mocha": "9.1.1",
-    "@types/node": "18.7.6",
+    "@types/node": "18.7.9",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
     "chai": "4.3.6",

@@ -66,10 +66,12 @@ export function GetContractOwnerCacheConfig(): customConfig.CacheOptions {
 
 // Initialize cache
 export function InitCache() {
-	Cache.CacheContractOwner = Cache.CacheSet.New(DefaultNameOfContractOwnerCache, {
-		max: GetContractOwnerCacheConfig().max,
-		ttl: GetContractOwnerCacheConfig().cacheTTL ? TimeHourInMs * GetContractOwnerCacheConfig().cacheTTL : TimeDayInMs,   // Default TTL is 24 hours
+	const cacheConf = GetContractOwnerCacheConfig();
+	const opts = {
+		max: cacheConf.max,
+		ttl: cacheConf.cacheTTL ? TimeHourInMs * cacheConf.cacheTTL : TimeDayInMs,   // Default TTL is 24 hours
 		updateAgeOnGet: true,   // Update age(ttl) by 'get'
 		updateAgeOnHas: true,   // Update age(ttl) by 'has'
-	});
+	}
+	Cache.CacheContractOwner = Cache.CacheSet.New(DefaultNameOfContractOwnerCache, opts);
 }

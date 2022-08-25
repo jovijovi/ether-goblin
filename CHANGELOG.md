@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.8.3](https://github.com/jovijovi/ether-goblin/releases/tag/v0.8.3)
+
+Refactor:
+- (event/listener): init cache
+
+Build:
+- Bump node version
+- Bump packages
+
 ## [v0.8.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.8.0)
 
 Features:

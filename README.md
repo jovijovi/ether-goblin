@@ -8,6 +8,8 @@ A microservice for the Ethereum ecosystem.
 
 - `APIs` RESTFul APIs for the Ethereum ecosystem
 - `Watchdog` A simple balance Watchdog
+  - Low/High balance alert (reach limit)
+  - Balance change alert
   - Alert mail with PGP
   - Callback
 - `Event` ERC721 event
@@ -27,7 +29,7 @@ A microservice for the Ethereum ecosystem.
 ## Development Environment
 
 - typescript `4.7.4`
-- node `v16.16.0`
+- node `v16.17.0`
 - ts-node `v10.9.1`
 - yarn `v1.22.19`
 

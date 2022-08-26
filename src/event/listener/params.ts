@@ -1,8 +1,13 @@
+import {TimeDayInMs} from '../common/constants';
+
 // Default callback job concurrency
 export const DefaultCallbackJobConcurrency = 10;
 
 // Default loop interval (unit: ms)
 export const DefaultLoopInterval = 3000;
+
+// Default cache TTL
+export const DefaultCacheTTL = TimeDayInMs;
 
 // Default dump cache interval (unit: ms)
 export const DefaultDumpCacheInterval = 1000 * 60;
@@ -19,5 +24,8 @@ export const DefaultDumpCacheFile = 'contract_owner.json';
 // Retry times
 export const DefaultRetryTimes = 3;
 
-// Retry interval (second)
-export const DefaultRetryInterval = 3;
+// Retry min interval (unit: second)
+export const DefaultRetryMinInterval = 3;
+
+// Retry max interval (unit: second)
+export const DefaultRetryMaxInterval = DefaultRetryMinInterval * 3;

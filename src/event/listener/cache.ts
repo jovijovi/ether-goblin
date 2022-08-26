@@ -4,20 +4,39 @@ import writeFileAtomic from 'write-file-atomic';
 import {log} from '@jovijovi/pedrojs-common';
 import {Cache} from '../../common/cache';
 import {customConfig} from '../../config';
-import {DefaultDumpCacheDir, DefaultDumpCacheFile, DefaultNameOfContractOwnerCache,} from './params';
-import {TimeDayInMs, TimeHourInMs} from '../common/constants';
+import {DefaultCacheTTL, DefaultDumpCacheDir, DefaultDumpCacheFile, DefaultNameOfContractOwnerCache,} from './params';
+import {TimeHourInMs} from '../common/constants';
 
 // LoadCacheFromFile load cache from file
-export function LoadCacheFromFile(): number {
+export function LoadCacheFromFile(isForceUpdate = false, cacheTTL = DefaultCacheTTL): number {
 	const filePath = path.resolve(DefaultDumpCacheDir, DefaultDumpCacheFile);
 	if (!fs.existsSync(filePath)) {
 		return 0;
 	}
 
 	const data = fs.readFileSync(filePath, 'utf8');
-	Cache.CacheContractOwner.load(JSON.parse(data));
+	const cache = updateCache(isForceUpdate, data, cacheTTL);
+	Cache.CacheContractOwner.load(cache);
 
 	return Cache.CacheContractOwner.size;
+}
+
+// updateCache update cache TTL & start timestamp (unit: ms)
+function updateCache(isForceUpdate: boolean, data: string, cacheTTL: number): any {
+	if (!isForceUpdate) {
+		return JSON.parse(data);
+	}
+
+	const tm = Date.now();
+	return JSON.parse(data, (key, value) => {
+		if (key === 'ttl') {
+			value = TimeHourInMs * cacheTTL;
+		} else if (key === 'start') {
+			value = tm;
+		}
+
+		return value;
+	});
 }
 
 // DumpCacheToFile dump cache to file
@@ -69,7 +88,7 @@ export function InitCache() {
 	const cacheConf = GetContractOwnerCacheConfig();
 	const opts = {
 		max: cacheConf.max,
-		ttl: cacheConf.cacheTTL ? TimeHourInMs * cacheConf.cacheTTL : TimeDayInMs,   // Default TTL is 24 hours
+		ttl: cacheConf.cacheTTL ? TimeHourInMs * cacheConf.cacheTTL : DefaultCacheTTL,   // Default TTL is 24 hours
 		updateAgeOnGet: true,   // Update age(ttl) by 'get'
 		updateAgeOnHas: true,   // Update age(ttl) by 'has'
 	}

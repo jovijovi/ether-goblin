@@ -3,8 +3,7 @@ import {network} from '@jovijovi/ether-network';
 import {log, util} from '@jovijovi/pedrojs-common';
 import {core} from '@jovijovi/ether-core';
 import {Cache} from '../../common/cache';
-import {ErrorCodeCallException, ErrorReasonMissingRevertData} from '../common/errors';
-import {DefaultRetryInterval, DefaultRetryTimes} from './params';
+import {DefaultRetryMaxInterval, DefaultRetryMinInterval, DefaultRetryTimes} from './params';
 
 const owner = `
 [
@@ -52,32 +51,27 @@ async function getContractOwner(address: string): Promise<string> {
 	return owner;
 }
 
+// GetContractOwner returns contract owner
 export async function GetContractOwner(address: string): Promise<string> {
-	return await util.retry.Run(async (): Promise<string> => {
-		try {
-			if (await core.IsProxyContract(address)) {
-				// Not support proxy contract yet
-				log.RequestId().trace("Ignore proxy contract(%s), skipped", address);
-				return undefined;
-			}
-			return await getContractOwner(address);
-		} catch (e) {
+	try {
+		return await util.retry.Run(async (): Promise<string> => {
 			// Get cache
 			if (Cache.CacheContractOwner.has(address)) {
 				return Cache.CacheContractOwner.get(address);
 			}
 
-			// Set cache value 'undefined' if call contract failed
-			if (e.reason && e.reason.includes(ErrorReasonMissingRevertData) && e.code === ErrorCodeCallException) {
-				Cache.CacheContractOwner.set(address, undefined);
-				log.RequestId().trace("GetContractOwner(%s) failed, cacheSize=%d, reason=%s",
-					address, Cache.CacheContractOwner.size, e.reason);
+			if (await core.IsProxyContract(address)) {
+				// Not support proxy contract yet
+				log.RequestId().trace("Ignore proxy contract(%s), skipped", address);
 				return undefined;
 			}
 
-			// Throw other errors
-			log.RequestId().error("GetContractOwner(%s) failed, reason=%s", address, e.reason);
-			throw e;
-		}
-	}, DefaultRetryTimes, DefaultRetryInterval);
+			return await getContractOwner(address);
+		}, DefaultRetryTimes, util.retry.RandomRetryInterval(DefaultRetryMinInterval, DefaultRetryMaxInterval), false);
+	} catch (e) {
+		Cache.CacheContractOwner.set(address, undefined);
+		log.RequestId().warn("GetContractOwner(%s) failed, reason=%s", address, e.reason);
+	}
+
+	return undefined;
 }

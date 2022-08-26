@@ -35,7 +35,7 @@ export function Run() {
 
 	// Load contract owner cache from dump file (Optional)
 	try {
-		const size = LoadCacheFromFile();
+		const size = LoadCacheFromFile(true, GetContractOwnerCacheConfig().cacheTTL);
 		log.RequestId().info("Cache(ContractOwner) loaded. Size=", size);
 	} catch (e) {
 		log.RequestId().warn("Load cache(ContractOwner) failed, error=", e);

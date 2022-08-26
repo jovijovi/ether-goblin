@@ -24,5 +24,8 @@ export const DefaultDumpCacheFile = 'contract_owner.json';
 // Retry times
 export const DefaultRetryTimes = 3;
 
-// Retry interval (second)
-export const DefaultRetryInterval = 3;
+// Retry min interval (unit: second)
+export const DefaultRetryMinInterval = 3;
+
+// Retry max interval (unit: second)
+export const DefaultRetryMaxInterval = DefaultRetryMinInterval * 3;

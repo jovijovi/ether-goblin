@@ -16,7 +16,6 @@ export function LoadCacheFromFile(isForceUpdate = false, cacheTTL = DefaultCache
 
 	const data = fs.readFileSync(filePath, 'utf8');
 	const cache = updateCache(isForceUpdate, data, cacheTTL);
-	console.log(JSON.stringify(cache));
 	Cache.CacheContractOwner.load(cache);
 
 	return Cache.CacheContractOwner.size;

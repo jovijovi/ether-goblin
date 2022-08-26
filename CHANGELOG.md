@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.8.4](https://github.com/jovijovi/ether-goblin/releases/tag/v0.8.4)
+
+Features:
+- feat(event/listener): when loading the cache, set the cache TTL to the latest config and set the start timestamp to the current time 
+- feat(event/listener): retry to get contract owner with random interval
+
+Build:
+- Bump packages
+
 ## [v0.8.3](https://github.com/jovijovi/ether-goblin/releases/tag/v0.8.3)
 
 Refactor:

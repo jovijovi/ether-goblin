@@ -1,8 +1,13 @@
+import {TimeDayInMs} from '../common/constants';
+
 // Default callback job concurrency
 export const DefaultCallbackJobConcurrency = 10;
 
 // Default loop interval (unit: ms)
 export const DefaultLoopInterval = 3000;
+
+// Default cache TTL
+export const DefaultCacheTTL = TimeDayInMs;
 
 // Default dump cache interval (unit: ms)
 export const DefaultDumpCacheInterval = 1000 * 60;

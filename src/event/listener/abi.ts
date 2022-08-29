@@ -1,9 +1,9 @@
 import {ethers, utils} from 'ethers';
 import {network} from '@jovijovi/ether-network';
 import {log, util} from '@jovijovi/pedrojs-common';
-import {core} from '@jovijovi/ether-core';
 import {Cache} from '../../common/cache';
 import {DefaultRetryMaxInterval, DefaultRetryMinInterval, DefaultRetryTimes} from './params';
+import {ErrorCodeCallException, ErrorReasonMissingRevertData} from '../common/errors';
 
 const owner = `
 [
@@ -55,20 +55,25 @@ async function getContractOwner(address: string): Promise<string> {
 export async function GetContractOwner(address: string): Promise<string> {
 	try {
 		return await util.retry.Run(async (): Promise<string> => {
-			// Get cache
-			if (Cache.CacheContractOwner.has(address)) {
-				return Cache.CacheContractOwner.get(address);
-			}
+			try {
+				return await getContractOwner(address);
+			} catch (e) {
+				// Get cache
+				if (Cache.CacheContractOwner.has(address)) {
+					return Cache.CacheContractOwner.get(address);
+				}
 
-			if (await core.IsProxyContract(address)) {
-				// Not support proxy contract yet
-				log.RequestId().trace("Ignore proxy contract(%s), skipped", address);
-				return undefined;
+				// Set cache value 'undefined' if call contract failed and response is ErrorReasonMissingRevertData
+				if (e.reason && e.reason.includes(ErrorReasonMissingRevertData) && e.code === ErrorCodeCallException) {
+					Cache.CacheContractOwner.set(address, undefined);
+					log.RequestId().trace("GetContractOwner(%s) failed, reason=%s", address, e.reason);
+					return undefined;
+				}
+				throw e;
 			}
-
-			return await getContractOwner(address);
 		}, DefaultRetryTimes, util.retry.RandomRetryInterval(DefaultRetryMinInterval, DefaultRetryMaxInterval), false);
 	} catch (e) {
+		// Set contract owner to 'undefined' if retry failed
 		Cache.CacheContractOwner.set(address, undefined);
 		log.RequestId().warn("GetContractOwner(%s) failed, reason=%s", address, e.reason);
 	}

@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.8.6](https://github.com/jovijovi/ether-goblin/releases/tag/v0.8.6)
+
+Test:
+
+- (devenv): mount keystore volume
+
+Build:
+- Bump packages
+
 ## [v0.8.5](https://github.com/jovijovi/ether-goblin/releases/tag/v0.8.5)
 
 Features:

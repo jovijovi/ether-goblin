@@ -1,45 +1,41 @@
-import {auditor, log} from '@jovijovi/pedrojs-common';
-import {BigNumber, utils} from 'ethers';
-import * as util from 'util';
-import fastq, {queueAsPromised} from 'fastq';
-import got from 'got';
-import {Queue, retry} from '@jovijovi/pedrojs-common/util';
 import fs from 'fs';
-import {MailContent} from '../mailer/mailer';
-import {IsAlert} from './rules';
-import {customConfig} from '../config';
-import {mailer, Template} from '../mailer';
+import * as util from 'util';
+import got from 'got';
+import {BigNumber, utils} from 'ethers';
+import fastq, {queueAsPromised} from 'fastq';
+import {auditor, log} from '@jovijovi/pedrojs-common';
+import {Queue, retry} from '@jovijovi/pedrojs-common/util';
 import {network} from '@jovijovi/ether-network';
-import {DefaultAlertMailTemplate, DefaultAlertType, DefaultLoopInterval} from './params';
-import {BalanceCache} from './types';
+import {customConfig} from '../config';
+import {DefaultAlertMailTemplate, DefaultAlertType, DefaultBalanceCacheMaxLimit, DefaultLoopInterval} from './params';
+import {IsAlert} from './rules';
+import {CacheAddressBalance} from './cache';
+import {mailer, Template} from '../mailer';
 
-const blockQueue = new Queue<number>();     // Block queue (ASC, FIFO)
-const checkBalanceJob: queueAsPromised<number> = fastq.promise(checkAddressList, 1);    // Job: Check balance
-const balanceCacheMaxLimit = 1;             // Balance cache max limit
-const balanceCache: BalanceCache<any> = {}; // Balance cache
+// Block queue (ASC, FIFO)
+const blockQueue = new Queue<number>();
 
+// Check address list job
+const checkAddressListJob: queueAsPromised<number> = fastq.promise(checkAddressList, 1);
+
+// Run watchdog
 export function Run() {
-	// Check config
-	const watchdogConf = customConfig.GetWatchdog();
-	if (!watchdogConf) {
-		log.RequestId().info('No watchdog configuration, skipped.');
-		return;
-	} else if (!watchdogConf.enable) {
-		log.RequestId().info('Watchdog disabled.');
+	const [conf, ok] = init();
+	if (!ok) {
 		return;
 	}
 
-	log.RequestId().info("Watchdog is running...");
-
+	// Listen block event
 	const provider = network.MyProvider.Get();
 	let nextBlock = 0;
 	provider.on('block', (blockNumber) => {
 		if (blockNumber >= nextBlock) {
 			blockQueue.Push(blockNumber);
-			nextBlock = blockNumber + watchdogConf.period;
+			nextBlock = blockNumber + conf.period;
 		}
 	})
 
+	// Schedule processing job
 	setInterval(() => {
 		if (blockQueue.Length() === 0) {
 			return;
@@ -50,8 +46,25 @@ export function Run() {
 			return;
 		}
 
-		checkBalanceJob.push(blockNumber).catch((err) => log.RequestId().error(err));
+		checkAddressListJob.push(blockNumber).catch((err) => log.RequestId().error(err));
 	}, DefaultLoopInterval);
+
+	log.RequestId().info("Watchdog is running...");
+}
+
+// Init watchdog
+function init(): [customConfig.WatchdogConfig, boolean] {
+	// Check config
+	const conf = customConfig.GetWatchdog();
+	if (!conf) {
+		log.RequestId().info('No watchdog configuration, skipped.');
+		return;
+	} else if (!conf.enable) {
+		log.RequestId().info('Watchdog disabled.');
+		return;
+	}
+
+	return [conf, true];
 }
 
 async function checkAddressList(blockNumber: number): Promise<void> {
@@ -82,21 +95,21 @@ function combinationCacheKey(keys: string[]): string {
 // Set cache
 function setCache(address: string, rule: string, balance: BigNumber) {
 	const key = combinationCacheKey([address, rule]);
-	if (!balanceCache[key]) {
-		balanceCache[key] = new Queue(balanceCacheMaxLimit);
+	if (!CacheAddressBalance[key]) {
+		CacheAddressBalance[key] = new Queue(DefaultBalanceCacheMaxLimit);
 	}
 
-	balanceCache[key].Push(balance);
+	CacheAddressBalance[key].Push(balance);
 }
 
 // Get past balance from cache
 function getPastBalance(address: string, rule: string): BigNumber {
 	const key = combinationCacheKey([address, rule]);
-	if (!balanceCache[key]) {
-		balanceCache[key] = new Queue(balanceCacheMaxLimit);
+	if (!CacheAddressBalance[key]) {
+		CacheAddressBalance[key] = new Queue(DefaultBalanceCacheMaxLimit);
 	}
 
-	return balanceCache[key].First();
+	return CacheAddressBalance[key].First();
 }
 
 async function checkAddressBalance(watchedAddress: customConfig.WatchedAddress, blockNumber: number) {
@@ -225,7 +238,7 @@ function genHtmlMail(alertType: DefaultAlertType, arg: any): string {
 }
 
 // sendAlert send alert by mail
-async function sendAlert(mailContent: MailContent) {
+async function sendAlert(mailContent: mailer.MailContent) {
 	try {
 		if (!customConfig.GetWatchdog().mailer) {
 			return;

@@ -1,6 +1,9 @@
 // Default loop interval (unit: ms)
 export const DefaultLoopInterval = 3000;
 
+// Default balance cache max limit
+export const DefaultBalanceCacheMaxLimit = 1;
+
 // Default alert type
 export const enum DefaultAlertType {
 	BalanceReachLimit = 'BalanceReachLimit',

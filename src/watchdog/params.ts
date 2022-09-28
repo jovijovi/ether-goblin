@@ -4,6 +4,15 @@ export const DefaultLoopInterval = 3000;
 // Default balance cache max limit
 export const DefaultBalanceCacheMaxLimit = 1;
 
+// Retry times
+export const DefaultRetryTimes = 5;
+
+// Retry min interval (unit: second)
+export const DefaultRetryMinInterval = 3;
+
+// Retry max interval (unit: second)
+export const DefaultRetryMaxInterval = DefaultRetryMinInterval * 3;
+
 // Default alert type
 export const enum DefaultAlertType {
 	BalanceReachLimit = 'BalanceReachLimit',

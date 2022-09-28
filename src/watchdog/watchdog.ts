@@ -6,10 +6,16 @@ import {auditor, log} from '@jovijovi/pedrojs-common';
 import {Queue, retry} from '@jovijovi/pedrojs-common/util';
 import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../config';
-import {DefaultAlertType, DefaultLoopInterval} from './params';
+import {
+	DefaultAlertType,
+	DefaultLoopInterval,
+	DefaultRetryMaxInterval,
+	DefaultRetryMinInterval,
+	DefaultRetryTimes
+} from './params';
 import {IsAlert} from './rules';
 import {MailContent, mailer, Template} from '../mailer';
-import {AlertGeneratorParams, CheckAddressBalanceJobParams, FuncAlertGenerator} from './types';
+import {AlertGeneratorParams, Balance, CheckAddressBalanceJobParams, FuncAlertGenerator} from './types';
 import {GetPastBalance, SetCache} from './cache';
 import {GenHtmlMail} from './mail';
 
@@ -112,37 +118,14 @@ async function checkAddressList(blockNumber: number): Promise<void> {
 
 // Check address balance
 async function checkAddressBalance(opts: CheckAddressBalanceJobParams) {
+	// Check params
 	auditor.Check(utils.isAddress(opts.watchedAddress.address), 'invalid address');
 	auditor.Check(opts.blockNumber >= 0, 'invalid blockNumber');
 
-	const provider = network.MyProvider.Get();
-
-	// Get previous balance
-	let balancePrevious = GetPastBalance(opts.watchedAddress.address, opts.watchedAddress.rule);
-	if (!balancePrevious) {
-		balancePrevious = await retry.Run(async (): Promise<BigNumber> => {
-			log.RequestId().debug("Getting previous balance of address(%s)@block(%d)...",
-				opts.watchedAddress.address, opts.blockNumber - 1);
-			return await provider.getBalance(opts.watchedAddress.address, opts.blockNumber < 1 ? 0 : opts.blockNumber - 1);
-		});
-		SetCache(opts.watchedAddress.address, opts.watchedAddress.rule, balancePrevious);
-	}
-
-	// Get current balance
-	const balanceCurrent = await retry.Run(async (): Promise<BigNumber> => {
-		log.RequestId().debug("Getting current balance of address(%s)@block(%d)...",
-			opts.watchedAddress.address, opts.blockNumber);
-		return await provider.getBalance(opts.watchedAddress.address, opts.blockNumber);
-	});
-	if (!balanceCurrent.eq(balancePrevious)) {
-		SetCache(opts.watchedAddress.address, opts.watchedAddress.rule, balanceCurrent);
-	}
+	// Get previous balance & current balance
+	const balance = await getBalance(opts);
 
 	// Check if is alert
-	const balance = {
-		Current: balanceCurrent,
-		Previous: balancePrevious,
-	};
 	const [isAlert, alertType] = IsAlert(opts.watchedAddress, balance);
 	if (!isAlert) {
 		return;
@@ -200,6 +183,39 @@ async function callback(msg: any) {
 	} catch (e) {
 		log.RequestId().error("Callback failed, error=", e);
 	}
+}
+
+// Get previous balance & current balance
+async function getBalance(opts: CheckAddressBalanceJobParams): Promise<Balance> {
+	// Get previous balance
+	let balancePrevious = GetPastBalance(opts.watchedAddress.address, opts.watchedAddress.rule);
+	if (!balancePrevious) {
+		log.RequestId().trace("Getting previous balance of address(%s)@block(%d)...",
+			opts.watchedAddress.address, opts.blockNumber - 1);
+		balancePrevious = await retryGetBalance(opts.watchedAddress.address, opts.blockNumber < 1 ? 0 : opts.blockNumber - 1)
+		SetCache(opts.watchedAddress.address, opts.watchedAddress.rule, balancePrevious);
+	}
+
+	// Get current balance
+	log.RequestId().trace("Getting current balance of address(%s)@block(%d)...",
+		opts.watchedAddress.address, opts.blockNumber);
+	const balanceCurrent = await retryGetBalance(opts.watchedAddress.address, opts.blockNumber);
+	if (!balanceCurrent.eq(balancePrevious)) {
+		SetCache(opts.watchedAddress.address, opts.watchedAddress.rule, balanceCurrent);
+	}
+
+	return {
+		Previous: balancePrevious,
+		Current: balanceCurrent,
+	};
+}
+
+// Retry get balance
+async function retryGetBalance(address: string, blockNumber: number): Promise<BigNumber> {
+	const provider = network.MyProvider.Get();
+	return await retry.Run(async (): Promise<BigNumber> => {
+		return await provider.getBalance(address, blockNumber);
+	}, DefaultRetryTimes, retry.RandomRetryInterval(DefaultRetryMinInterval, DefaultRetryMaxInterval), false);
 }
 
 // Function to generate BalanceReachLimit alert

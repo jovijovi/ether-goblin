@@ -1,4 +1,3 @@
-import fs from 'fs';
 import * as util from 'util';
 import got from 'got';
 import {BigNumber, utils} from 'ethers';
@@ -7,10 +6,10 @@ import {auditor, log} from '@jovijovi/pedrojs-common';
 import {Queue, retry} from '@jovijovi/pedrojs-common/util';
 import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../config';
-import {DefaultAlertMailTemplate, DefaultAlertType, DefaultLoopInterval} from './params';
+import {DefaultAlertType, DefaultLoopInterval} from './params';
 import {IsAlert} from './rules';
 import {MailContent, mailer, Template} from '../mailer';
-import {CheckAddressBalanceJobParams} from './types';
+import {AlertGeneratorParams, CheckAddressBalanceJobParams, FuncAlertGenerator} from './types';
 import {GetPastBalance, SetCache} from './cache';
 import {GenHtmlMail} from './mail';
 
@@ -140,64 +139,27 @@ async function checkAddressBalance(opts: CheckAddressBalanceJobParams) {
 	}
 
 	// Check if is alert
-	const [isAlert, alertType] = IsAlert(opts.watchedAddress, {
+	const balance = {
 		Current: balanceCurrent,
 		Previous: balancePrevious,
-	});
-	if (isAlert) {
-		// Function to generate BalanceReachLimit alert
-		const genBalanceReachLimitAlert = (): [any, string] => {
-			const alertMsg = util.format("Address(%s) balance (%s) reaches limit (%s) at blockNumber(%d) [Chain:%s Network:%s ChainId:%s]",
-				opts.watchedAddress.address, utils.formatEther(balanceCurrent), utils.formatEther(opts.watchedAddress.limit), opts.blockNumber,
-				network.GetDefaultNetwork().chain, network.GetDefaultNetwork().network, network.GetChainId());
+	};
+	const [isAlert, alertType] = IsAlert(opts.watchedAddress, balance);
+	if (!isAlert) {
+		return;
+	}
 
-			log.RequestId().info("***** ALERT ***** %s", alertMsg);
-
-			const msg = {
-				address: opts.watchedAddress.address,
-				rule: opts.watchedAddress.rule,
-				balanceCurrent: utils.formatEther(balanceCurrent),
-				limit: utils.formatEther(opts.watchedAddress.limit),
-				addressUrl: util.format("%s/address/%s", network.GetBrowser(), opts.watchedAddress.address),
-				blockNumber: opts.blockNumber.toString(),
-				chain: network.GetDefaultNetwork().chain,
-				network: network.GetDefaultNetwork().network,
-				chainId: network.GetChainId(),
-			}
-			const subject = util.format("%s reaches limit (%s) @%d",
-				opts.watchedAddress.address, utils.formatEther(opts.watchedAddress.limit), opts.blockNumber);
-			return [msg, subject];
-		}
-
-		// Function to generate BalanceChanges alert
-		const genBalanceChangesAlert = (): [any, string] => {
-			const alertMsg = util.format("Address(%s) balance changed from (%s) to (%s) at blockNumber(%d) [Chain:%s Network:%s ChainId:%s]",
-				opts.watchedAddress.address, utils.formatEther(balancePrevious), utils.formatEther(balanceCurrent), opts.blockNumber,
-				network.GetDefaultNetwork().chain, network.GetDefaultNetwork().network, network.GetChainId());
-
-			log.RequestId().info("***** ALERT ***** %s", alertMsg);
-
-			const changed = balanceCurrent.sub(balancePrevious);
-			const plusSign = changed.gt(BigNumber.from(0)) ? '+' : '';
-			const balanceChanged = plusSign + utils.formatEther(balanceCurrent.sub(balancePrevious));
-			const msg = {
-				address: opts.watchedAddress.address,
-				rule: opts.watchedAddress.rule,
-				balanceChanged: balanceChanged,
-				balanceCurrent: utils.formatEther(balanceCurrent),
-				balancePrevious: utils.formatEther(balancePrevious),
-				addressUrl: util.format("%s/address/%s", network.GetBrowser(), opts.watchedAddress.address),
-				blockNumber: opts.blockNumber.toString(),
-				chain: network.GetDefaultNetwork().chain,
-				network: network.GetDefaultNetwork().network,
-				chainId: network.GetChainId(),
-			}
-			const subject = util.format("%s (%s @%d)", opts.watchedAddress.address, balanceChanged, opts.blockNumber);
-			return [msg, subject];
-		}
-
-		// Generate alert
-		const [msg, subject] = alertType === DefaultAlertType.BalanceReachLimit ? genBalanceReachLimitAlert() : genBalanceChangesAlert();
+	// Generate alert
+	const [msg, subject] = alertType === DefaultAlertType.BalanceReachLimit ?
+		balanceReachLimitAlert({
+			balance: balance,
+			blockNumber: opts.blockNumber,
+			watchedAddress: opts.watchedAddress
+		})()
+		: balanceChangesAlert({
+			balance: balance,
+			blockNumber: opts.blockNumber,
+			watchedAddress: opts.watchedAddress,
+		})();
 
 	// Send alert
 	await sendAlert(Template.BalanceAlertMailContent({
@@ -205,9 +167,8 @@ async function checkAddressBalance(opts: CheckAddressBalanceJobParams) {
 		html: GenHtmlMail(alertType, msg),
 	}));
 
-		// Callback (optional)
-		await callback(msg);
-	}
+	// Callback (optional)
+	await callback(msg);
 }
 
 // sendAlert send alert by mail
@@ -239,4 +200,59 @@ async function callback(msg: any) {
 	} catch (e) {
 		log.RequestId().error("Callback failed, error=", e);
 	}
+}
+
+// Function to generate BalanceReachLimit alert
+function balanceReachLimitAlert(opts: AlertGeneratorParams): FuncAlertGenerator {
+	return (): [any, string] => {
+		const alertMsg = util.format("Address(%s) balance (%s) reaches limit (%s) at blockNumber(%d) [Chain:%s Network:%s ChainId:%s]",
+			opts.watchedAddress.address, utils.formatEther(opts.balance.Current), utils.formatEther(opts.watchedAddress.limit), opts.blockNumber,
+			network.GetDefaultNetwork().chain, network.GetDefaultNetwork().network, network.GetChainId());
+
+		log.RequestId().info("***** ALERT ***** %s", alertMsg);
+
+		const msg = {
+			address: opts.watchedAddress.address,
+			rule: opts.watchedAddress.rule,
+			balanceCurrent: utils.formatEther(opts.balance.Current),
+			limit: utils.formatEther(opts.watchedAddress.limit),
+			addressUrl: util.format("%s/address/%s", network.GetBrowser(), opts.watchedAddress.address),
+			blockNumber: opts.blockNumber.toString(),
+			chain: network.GetDefaultNetwork().chain,
+			network: network.GetDefaultNetwork().network,
+			chainId: network.GetChainId(),
+		}
+		const subject = util.format("%s reaches limit (%s) @%d",
+			opts.watchedAddress.address, utils.formatEther(opts.watchedAddress.limit), opts.blockNumber);
+		return [msg, subject];
+	};
+}
+
+// Function to generate BalanceChanges alert
+function balanceChangesAlert(opts: AlertGeneratorParams): FuncAlertGenerator {
+	return (): [any, string] => {
+		const alertMsg = util.format("Address(%s) balance changed from (%s) to (%s) at blockNumber(%d) [Chain:%s Network:%s ChainId:%s]",
+			opts.watchedAddress.address, utils.formatEther(opts.balance.Previous), utils.formatEther(opts.balance.Current), opts.blockNumber,
+			network.GetDefaultNetwork().chain, network.GetDefaultNetwork().network, network.GetChainId());
+
+		log.RequestId().info("***** ALERT ***** %s", alertMsg);
+
+		const changed = opts.balance.Current.sub(opts.balance.Previous);
+		const plusSign = changed.gt(BigNumber.from(0)) ? '+' : '';
+		const balanceChanged = plusSign + utils.formatEther(opts.balance.Current.sub(opts.balance.Previous));
+		const msg = {
+			address: opts.watchedAddress.address,
+			rule: opts.watchedAddress.rule,
+			balanceChanged: balanceChanged,
+			balanceCurrent: utils.formatEther(opts.balance.Current),
+			balancePrevious: utils.formatEther(opts.balance.Previous),
+			addressUrl: util.format("%s/address/%s", network.GetBrowser(), opts.watchedAddress.address),
+			blockNumber: opts.blockNumber.toString(),
+			chain: network.GetDefaultNetwork().chain,
+			network: network.GetDefaultNetwork().network,
+			chainId: network.GetChainId(),
+		}
+		const subject = util.format("%s (%s @%d)", opts.watchedAddress.address, balanceChanged, opts.blockNumber);
+		return [msg, subject];
+	};
 }

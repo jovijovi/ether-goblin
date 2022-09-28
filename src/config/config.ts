@@ -32,7 +32,7 @@ export namespace customConfig {
 		limit: string   // limit unit is Wei
 	}
 
-	class Watchdog {
+	export class WatchdogConfig {
 		enable: boolean
 		mailer: Mailer
 		callback: string
@@ -95,7 +95,7 @@ export namespace customConfig {
 	export class CustomConfig {
 		apiResponseCode: any
 		tx: TxConfig
-		watchdog?: Watchdog
+		watchdog?: WatchdogConfig
 		events?: Events
 		database?: Database
 	}
@@ -116,7 +116,7 @@ export namespace customConfig {
 	}
 
 	// GetWatchdog returns watchdog config
-	export function GetWatchdog(): Watchdog {
+	export function GetWatchdog(): WatchdogConfig {
 		if (customConfig.watchdog) {
 			return customConfig.watchdog;
 		}

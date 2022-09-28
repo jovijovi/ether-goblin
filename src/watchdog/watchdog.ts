@@ -7,16 +7,20 @@ import {auditor, log} from '@jovijovi/pedrojs-common';
 import {Queue, retry} from '@jovijovi/pedrojs-common/util';
 import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../config';
-import {DefaultAlertMailTemplate, DefaultAlertType, DefaultBalanceCacheMaxLimit, DefaultLoopInterval} from './params';
+import {DefaultAlertMailTemplate, DefaultAlertType, DefaultLoopInterval} from './params';
 import {IsAlert} from './rules';
-import {CacheAddressBalance} from './cache';
-import {mailer, Template} from '../mailer';
+import {MailContent, mailer, Template} from '../mailer';
+import {CheckAddressBalanceJobParams} from './types';
+import {GetPastBalance, SetCache} from './cache';
 
 // Block queue (ASC, FIFO)
 const blockQueue = new Queue<number>();
 
-// Check address list job
+// Job: Check address list
 const checkAddressListJob: queueAsPromised<number> = fastq.promise(checkAddressList, 1);
+
+// Job scheduler: Check address balance
+const checkAddressBalanceJobScheduler: Map<string, queueAsPromised<CheckAddressBalanceJobParams>> = new Map();
 
 // Run watchdog
 export function Run() {
@@ -64,12 +68,20 @@ function init(): [customConfig.WatchdogConfig, boolean] {
 		return;
 	}
 
+	// Check address list
+	if (!conf.addressList) {
+		throw new Error(`invalid addressList`);
+	}
+	for (const watchedAddress of conf.addressList) {
+		auditor.Check(utils.isAddress(watchedAddress.address), 'invalid address');
+	}
+
 	return [conf, true];
 }
 
+// Check address list
 async function checkAddressList(blockNumber: number): Promise<void> {
 	auditor.Check(blockNumber >= 0, 'invalid blockNumber');
-	// log.RequestId().debug("# Check # BlockNumber: ", blockNumber);
 
 	// Get address list
 	const addressList = customConfig.GetWatchdog().addressList;
@@ -80,111 +92,106 @@ async function checkAddressList(blockNumber: number): Promise<void> {
 	// Check address list
 	for (let i = 0; i < addressList.length; i++) {
 		try {
-			await checkAddressBalance(addressList[i], blockNumber);
+			const address = addressList[i].address;
+			auditor.Check(utils.isAddress(address), 'invalid address');
+
+			if (!checkAddressBalanceJobScheduler.has(address)) {
+				checkAddressBalanceJobScheduler.set(address, fastq.promise(checkAddressBalance, 1));
+			}
+
+			checkAddressBalanceJobScheduler.get(address).push({
+				watchedAddress: addressList[i],
+				blockNumber: blockNumber,
+			}).catch((err) => log.RequestId().error(err));
 		} catch (e) {
-			log.RequestId().error("Check address balance(%s) failed, blockNumber=%d, error=%o", addressList[i], blockNumber, e);
+			log.RequestId().error("Check balance of address(%s)@block(%d) failed, error=%o",
+				addressList[i], blockNumber, e);
 		}
 	}
 }
 
-// Combination cache key
-function combinationCacheKey(keys: string[]): string {
-	return keys.toString();
-}
-
-// Set cache
-function setCache(address: string, rule: string, balance: BigNumber) {
-	const key = combinationCacheKey([address, rule]);
-	if (!CacheAddressBalance[key]) {
-		CacheAddressBalance[key] = new Queue(DefaultBalanceCacheMaxLimit);
-	}
-
-	CacheAddressBalance[key].Push(balance);
-}
-
-// Get past balance from cache
-function getPastBalance(address: string, rule: string): BigNumber {
-	const key = combinationCacheKey([address, rule]);
-	if (!CacheAddressBalance[key]) {
-		CacheAddressBalance[key] = new Queue(DefaultBalanceCacheMaxLimit);
-	}
-
-	return CacheAddressBalance[key].First();
-}
-
-async function checkAddressBalance(watchedAddress: customConfig.WatchedAddress, blockNumber: number) {
-	auditor.Check(utils.isAddress(watchedAddress.address), 'invalid address');
-	auditor.Check(blockNumber >= 0, 'invalid blockNumber');
+// Check address balance
+async function checkAddressBalance(opts: CheckAddressBalanceJobParams) {
+	auditor.Check(utils.isAddress(opts.watchedAddress.address), 'invalid address');
+	auditor.Check(opts.blockNumber >= 0, 'invalid blockNumber');
 
 	const provider = network.MyProvider.Get();
 
-	let balancePast = getPastBalance(watchedAddress.address, watchedAddress.rule);
-	if (!balancePast) {
-		balancePast = await retry.Run(async (): Promise<BigNumber> => {
-			return await provider.getBalance(watchedAddress.address, blockNumber < 1 ? 0 : blockNumber - 1);
+	// Get previous balance
+	let balancePrevious = GetPastBalance(opts.watchedAddress.address, opts.watchedAddress.rule);
+	if (!balancePrevious) {
+		balancePrevious = await retry.Run(async (): Promise<BigNumber> => {
+			log.RequestId().debug("Getting previous balance of address(%s)@block(%d)...",
+				opts.watchedAddress.address, opts.blockNumber - 1);
+			return await provider.getBalance(opts.watchedAddress.address, opts.blockNumber < 1 ? 0 : opts.blockNumber - 1);
 		});
-		setCache(watchedAddress.address, watchedAddress.rule, balancePast);
+		SetCache(opts.watchedAddress.address, opts.watchedAddress.rule, balancePrevious);
 	}
 
-	const balanceNow = await retry.Run(async (): Promise<BigNumber> => {
-		return await provider.getBalance(watchedAddress.address, blockNumber);
+	// Get current balance
+	const balanceCurrent = await retry.Run(async (): Promise<BigNumber> => {
+		log.RequestId().debug("Getting current balance of address(%s)@block(%d)...",
+			opts.watchedAddress.address, opts.blockNumber);
+		return await provider.getBalance(opts.watchedAddress.address, opts.blockNumber);
 	});
-	if (!balanceNow.eq(balancePast)) {
-		setCache(watchedAddress.address, watchedAddress.rule, balanceNow);
+	if (!balanceCurrent.eq(balancePrevious)) {
+		SetCache(opts.watchedAddress.address, opts.watchedAddress.rule, balanceCurrent);
 	}
 
-	const [isAlert, alertType] = IsAlert(watchedAddress, {
-		Now: balanceNow,
-		Past: balancePast,
+	// Check if is alert
+	const [isAlert, alertType] = IsAlert(opts.watchedAddress, {
+		Current: balanceCurrent,
+		Previous: balancePrevious,
 	});
 	if (isAlert) {
 		// Function to generate BalanceReachLimit alert
 		const genBalanceReachLimitAlert = (): [any, string] => {
 			const alertMsg = util.format("Address(%s) balance (%s) reaches limit (%s) at blockNumber(%d) [Chain:%s Network:%s ChainId:%s]",
-				watchedAddress.address, utils.formatEther(balanceNow), utils.formatEther(watchedAddress.limit), blockNumber,
+				opts.watchedAddress.address, utils.formatEther(balanceCurrent), utils.formatEther(opts.watchedAddress.limit), opts.blockNumber,
 				network.GetDefaultNetwork().chain, network.GetDefaultNetwork().network, network.GetChainId());
 
 			log.RequestId().info("***** ALERT ***** %s", alertMsg);
 
 			const msg = {
-				address: watchedAddress.address,
-				rule: watchedAddress.rule,
-				balanceNow: utils.formatEther(balanceNow),
-				limit: utils.formatEther(watchedAddress.limit),
-				addressUrl: util.format("%s/address/%s", network.GetBrowser(), watchedAddress.address),
-				blockNumber: blockNumber.toString(),
+				address: opts.watchedAddress.address,
+				rule: opts.watchedAddress.rule,
+				balanceCurrent: utils.formatEther(balanceCurrent),
+				limit: utils.formatEther(opts.watchedAddress.limit),
+				addressUrl: util.format("%s/address/%s", network.GetBrowser(), opts.watchedAddress.address),
+				blockNumber: opts.blockNumber.toString(),
 				chain: network.GetDefaultNetwork().chain,
 				network: network.GetDefaultNetwork().network,
 				chainId: network.GetChainId(),
 			}
-			const subject = util.format("%s reaches limit (%s) @%d", watchedAddress.address, utils.formatEther(watchedAddress.limit), blockNumber);
+			const subject = util.format("%s reaches limit (%s) @%d",
+				opts.watchedAddress.address, utils.formatEther(opts.watchedAddress.limit), opts.blockNumber);
 			return [msg, subject];
 		}
 
 		// Function to generate BalanceChanges alert
 		const genBalanceChangesAlert = (): [any, string] => {
 			const alertMsg = util.format("Address(%s) balance changed from (%s) to (%s) at blockNumber(%d) [Chain:%s Network:%s ChainId:%s]",
-				watchedAddress.address, utils.formatEther(balancePast), utils.formatEther(balanceNow), blockNumber,
+				opts.watchedAddress.address, utils.formatEther(balancePrevious), utils.formatEther(balanceCurrent), opts.blockNumber,
 				network.GetDefaultNetwork().chain, network.GetDefaultNetwork().network, network.GetChainId());
 
 			log.RequestId().info("***** ALERT ***** %s", alertMsg);
 
-			const changed = balanceNow.sub(balancePast);
+			const changed = balanceCurrent.sub(balancePrevious);
 			const plusSign = changed.gt(BigNumber.from(0)) ? '+' : '';
-			const balanceChanged = plusSign + utils.formatEther(balanceNow.sub(balancePast));
+			const balanceChanged = plusSign + utils.formatEther(balanceCurrent.sub(balancePrevious));
 			const msg = {
-				address: watchedAddress.address,
-				rule: watchedAddress.rule,
+				address: opts.watchedAddress.address,
+				rule: opts.watchedAddress.rule,
 				balanceChanged: balanceChanged,
-				balanceNow: utils.formatEther(balanceNow),
-				balancePast: utils.formatEther(balancePast),
-				addressUrl: util.format("%s/address/%s", network.GetBrowser(), watchedAddress.address),
-				blockNumber: blockNumber.toString(),
+				balanceCurrent: utils.formatEther(balanceCurrent),
+				balancePrevious: utils.formatEther(balancePrevious),
+				addressUrl: util.format("%s/address/%s", network.GetBrowser(), opts.watchedAddress.address),
+				blockNumber: opts.blockNumber.toString(),
 				chain: network.GetDefaultNetwork().chain,
 				network: network.GetDefaultNetwork().network,
 				chainId: network.GetChainId(),
 			}
-			const subject = util.format("%s (%s @%d)", watchedAddress.address, balanceChanged, blockNumber);
+			const subject = util.format("%s (%s @%d)", opts.watchedAddress.address, balanceChanged, opts.blockNumber);
 			return [msg, subject];
 		}
 
@@ -210,7 +217,7 @@ function genHtmlMail(alertType: DefaultAlertType, arg: any): string {
 			template = fs.readFileSync(DefaultAlertMailTemplate.BalanceReachLimit.Path, 'utf8');
 			template = template.replace(/\${address}/gi, arg.address);
 			template = template.replace(/\${rule}/gi, arg.rule);
-			template = template.replace(/\${balanceNow}/gi, arg.balanceNow);
+			template = template.replace(/\${balanceCurrent}/gi, arg.balanceCurrent);
 			template = template.replace(/\${limit}/gi, arg.limit);
 			template = template.replace(/\${addressUrl}/gi, arg.addressUrl);
 			template = template.replace(/\${blockNumber}/gi, arg.blockNumber);
@@ -223,8 +230,8 @@ function genHtmlMail(alertType: DefaultAlertType, arg: any): string {
 			template = fs.readFileSync(DefaultAlertMailTemplate.BalanceChanges.Path, 'utf8');
 			template = template.replace(/\${address}/gi, arg.address);
 			template = template.replace(/\${rule}/gi, arg.rule);
-			template = template.replace(/\${balanceNow}/gi, arg.balanceNow);
-			template = template.replace(/\${balancePast}/gi, arg.balancePast);
+			template = template.replace(/\${balanceCurrent}/gi, arg.balanceCurrent);
+			template = template.replace(/\${balancePrevious}/gi, arg.balancePrevious);
 			template = template.replace(/\${balanceChanged}/gi, arg.balanceChanged);
 			template = template.replace(/\${addressUrl}/gi, arg.addressUrl);
 			template = template.replace(/\${blockNumber}/gi, arg.blockNumber);

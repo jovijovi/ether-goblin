@@ -12,6 +12,7 @@ import {IsAlert} from './rules';
 import {MailContent, mailer, Template} from '../mailer';
 import {CheckAddressBalanceJobParams} from './types';
 import {GetPastBalance, SetCache} from './cache';
+import {GenHtmlMail} from './mail';
 
 // Block queue (ASC, FIFO)
 const blockQueue = new Queue<number>();
@@ -198,50 +199,15 @@ async function checkAddressBalance(opts: CheckAddressBalanceJobParams) {
 		// Generate alert
 		const [msg, subject] = alertType === DefaultAlertType.BalanceReachLimit ? genBalanceReachLimitAlert() : genBalanceChangesAlert();
 
-		// Send alert
-		await sendAlert(Template.BalanceAlertMailContent({
-			subject: subject,
-			html: genHtmlMail(alertType, msg),
-		}));
+	// Send alert
+	await sendAlert(Template.BalanceAlertMailContent({
+		subject: subject,
+		html: GenHtmlMail(alertType, msg),
+	}));
 
 		// Callback (optional)
 		await callback(msg);
 	}
-}
-
-function genHtmlMail(alertType: DefaultAlertType, arg: any): string {
-	let template = '';
-
-	switch (alertType) {
-		case DefaultAlertType.BalanceReachLimit:
-			template = fs.readFileSync(DefaultAlertMailTemplate.BalanceReachLimit.Path, 'utf8');
-			template = template.replace(/\${address}/gi, arg.address);
-			template = template.replace(/\${rule}/gi, arg.rule);
-			template = template.replace(/\${balanceCurrent}/gi, arg.balanceCurrent);
-			template = template.replace(/\${limit}/gi, arg.limit);
-			template = template.replace(/\${addressUrl}/gi, arg.addressUrl);
-			template = template.replace(/\${blockNumber}/gi, arg.blockNumber);
-			template = template.replace(/\${chain}/gi, arg.chain);
-			template = template.replace(/\${network}/gi, arg.network);
-			template = template.replace(/\${chainId}/gi, arg.chainId);
-			return template;
-
-		case DefaultAlertType.BalanceChanges:
-			template = fs.readFileSync(DefaultAlertMailTemplate.BalanceChanges.Path, 'utf8');
-			template = template.replace(/\${address}/gi, arg.address);
-			template = template.replace(/\${rule}/gi, arg.rule);
-			template = template.replace(/\${balanceCurrent}/gi, arg.balanceCurrent);
-			template = template.replace(/\${balancePrevious}/gi, arg.balancePrevious);
-			template = template.replace(/\${balanceChanged}/gi, arg.balanceChanged);
-			template = template.replace(/\${addressUrl}/gi, arg.addressUrl);
-			template = template.replace(/\${blockNumber}/gi, arg.blockNumber);
-			template = template.replace(/\${chain}/gi, arg.chain);
-			template = template.replace(/\${network}/gi, arg.network);
-			template = template.replace(/\${chainId}/gi, arg.chainId);
-			return template;
-	}
-
-	return undefined;
 }
 
 // sendAlert send alert by mail

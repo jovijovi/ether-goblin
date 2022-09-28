@@ -7,10 +7,10 @@ import {customConfig} from '../config';
 import * as util from 'util';
 import {Cache} from '../common/cache';
 
-export type MailContent = {
-	subject: string
-	text: string
-	html?: string
+export interface MailContent {
+	subject: string;
+	text: string;
+	html?: string;
 }
 
 // Send mail by configuration

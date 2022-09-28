@@ -238,7 +238,7 @@ function genHtmlMail(alertType: DefaultAlertType, arg: any): string {
 }
 
 // sendAlert send alert by mail
-async function sendAlert(mailContent: mailer.MailContent) {
+async function sendAlert(mailContent: MailContent) {
 	try {
 		if (!customConfig.GetWatchdog().mailer) {
 			return;

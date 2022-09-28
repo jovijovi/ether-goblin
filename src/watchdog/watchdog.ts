@@ -41,7 +41,7 @@ export function Run() {
 	})
 
 	setInterval(() => {
-		if (blockQueue.Length() == 0) {
+		if (blockQueue.Length() === 0) {
 			return;
 		}
 

@@ -89,10 +89,11 @@ A microservice for the Ethereum ecosystem.
 
 ## Roadmap
 
-- Documents
-- NFT APIs
-- ERC20 APIs
-- WebSite
+- [ ] Documents
+- [ ] ERC721(NFT) APIs
+- [ ] ERC20 APIs
+- [ ] WebSite
+- [x] Improve Watchdog performance
 
 ## License
 

@@ -3,21 +3,16 @@ import got from 'got';
 import {BigNumber, utils} from 'ethers';
 import fastq, {queueAsPromised} from 'fastq';
 import {auditor, log} from '@jovijovi/pedrojs-common';
-import {Queue, retry} from '@jovijovi/pedrojs-common/util';
+import {Queue} from '@jovijovi/pedrojs-common/util';
 import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../config';
-import {
-	DefaultAlertType,
-	DefaultLoopInterval,
-	DefaultRetryMaxInterval,
-	DefaultRetryMinInterval,
-	DefaultRetryTimes
-} from './params';
+import {DefaultAlertType, DefaultLoopInterval} from './params';
+import {AlertGeneratorParams, Balance, CheckAddressBalanceJobParams, FuncAlertGenerator} from './types';
 import {IsAlert} from './rules';
 import {MailContent, mailer, Template} from '../mailer';
-import {AlertGeneratorParams, Balance, CheckAddressBalanceJobParams, FuncAlertGenerator} from './types';
 import {GetPastBalance, SetCache} from './cache';
 import {GenHtmlMail} from './mail';
+import {RetryGetBalance} from './utils';
 
 // Block queue (ASC, FIFO)
 const blockQueue = new Queue<number>();
@@ -198,14 +193,14 @@ async function getBalance(opts: CheckAddressBalanceJobParams): Promise<Balance> 
 	if (!balancePrevious) {
 		log.RequestId().trace("Getting previous balance of address(%s)@block(%d)...",
 			opts.watchedAddress.address, opts.blockNumber - 1);
-		balancePrevious = await retryGetBalance(opts.watchedAddress.address, opts.blockNumber < 1 ? 0 : opts.blockNumber - 1)
+		balancePrevious = await RetryGetBalance(opts.watchedAddress.address, opts.blockNumber < 1 ? 0 : opts.blockNumber - 1)
 		SetCache(opts.watchedAddress.address, opts.watchedAddress.rule, balancePrevious);
 	}
 
 	// Get current balance
 	log.RequestId().trace("Getting current balance of address(%s)@block(%d)...",
 		opts.watchedAddress.address, opts.blockNumber);
-	const balanceCurrent = await retryGetBalance(opts.watchedAddress.address, opts.blockNumber);
+	const balanceCurrent = await RetryGetBalance(opts.watchedAddress.address, opts.blockNumber);
 	if (!balanceCurrent.eq(balancePrevious)) {
 		SetCache(opts.watchedAddress.address, opts.watchedAddress.rule, balanceCurrent);
 	}
@@ -214,14 +209,6 @@ async function getBalance(opts: CheckAddressBalanceJobParams): Promise<Balance> 
 		Previous: balancePrevious,
 		Current: balanceCurrent,
 	};
-}
-
-// Retry get balance
-async function retryGetBalance(address: string, blockNumber: number): Promise<BigNumber> {
-	const provider = network.MyProvider.Get();
-	return await retry.Run(async (): Promise<BigNumber> => {
-		return await provider.getBalance(address, blockNumber);
-	}, DefaultRetryTimes, retry.RandomRetryInterval(DefaultRetryMinInterval, DefaultRetryMaxInterval), false);
 }
 
 // Function to generate BalanceReachLimit alert

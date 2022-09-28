@@ -74,6 +74,8 @@ function init(): [customConfig.WatchdogConfig, boolean] {
 		return;
 	}
 
+	log.RequestId().info("Watchdog config=\n%s", JSON.stringify(conf, undefined, 4));
+
 	// Check params
 	auditor.Check(conf.period > 0, 'invalid period');
 	auditor.Check(conf.blockTime > 0, 'invalid blockTime');

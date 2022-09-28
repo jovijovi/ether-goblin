@@ -57,7 +57,7 @@ export function Run() {
 		}
 
 		checkAddressListJob.push(blockNumber).catch((err) => log.RequestId().error(err));
-	}, DefaultLoopInterval);
+	}, conf.blockTime ? conf.blockTime : DefaultLoopInterval);
 
 	log.RequestId().info("Watchdog is running...");
 }
@@ -73,6 +73,10 @@ function init(): [customConfig.WatchdogConfig, boolean] {
 		log.RequestId().info('Watchdog disabled.');
 		return;
 	}
+
+	// Check params
+	auditor.Check(conf.period > 0, 'invalid period');
+	auditor.Check(conf.blockTime > 0, 'invalid blockTime');
 
 	// Check address list
 	if (!conf.addressList) {

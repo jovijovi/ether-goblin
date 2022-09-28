@@ -37,6 +37,7 @@ export namespace customConfig {
 		mailer: Mailer
 		callback: string
 		period: number
+		blockTime: number
 		addressList: WatchedAddress[]
 	}
 

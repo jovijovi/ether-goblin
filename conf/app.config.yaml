@@ -91,8 +91,10 @@ custom:
 
     # Average block time (unit: ms)
     # Range: (0, MAX_NUMBER)
-    # Example:
-    #   blockTime: 3000
+    # Description:
+    #   If check balances every block, settings like this:
+    #     period: 1
+    #     blockTime: 3000
     blockTime: 3000
 
     # Rules

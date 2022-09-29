@@ -5,7 +5,9 @@
 Features:
 
 - (watchdog): initialize watchdog with block time from config
-- (mail/template): amend the wording
+- (watchdog): send alert mails by queue
+- (watchdog): try to catch up the latest block
+- (watchdog): modify template wording
 
 Refactor:
 
@@ -13,11 +15,13 @@ Refactor:
 - (watchdog): alert mail
 - (watchdog): alert generator
 - (watchdog): get balance
+- (watchdog): listen block event
 
 Fixes:
 
 - Use strict equality operators
 - (watchdog): export `MailContent` interface
+- (watchdog): remove magic number
 
 Performance:
 

@@ -40,16 +40,20 @@ export function Run() {
 
 	// Schedule processing job
 	setInterval(() => {
-		if (blockQueue.Length() === 0) {
+		const length = blockQueue.Length();
+		if (length === 0) {
 			return;
 		}
 
-		const blockNumber = blockQueue.Shift();
-		if (!blockNumber) {
-			return;
-		}
+		// Try to catch up the latest block
+		for (let i = 0; i < length; i++) {
+			const blockNumber = blockQueue.Shift();
+			if (!blockNumber) {
+				return;
+			}
 
-		checkAddressListJob.push(blockNumber).catch((err) => log.RequestId().error(err));
+			checkAddressListJob.push(blockNumber).catch((err) => log.RequestId().error(err));
+		}
 	}, conf.blockTime ? conf.blockTime : DefaultLoopInterval);
 
 	log.RequestId().info("Watchdog is running...");

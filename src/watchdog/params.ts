@@ -1,3 +1,9 @@
+// Default check address list job concurrency
+export const DefaultCheckAddressListJobConcurrency = 1;
+
+// Default check address balance job concurrency
+export const DefaultCheckAddressBalanceJobConcurrency = 1;
+
 // Default loop interval (unit: ms)
 export const DefaultLoopInterval = 3000;
 

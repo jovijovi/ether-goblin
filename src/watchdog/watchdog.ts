@@ -6,7 +6,12 @@ import {auditor, log} from '@jovijovi/pedrojs-common';
 import {Queue} from '@jovijovi/pedrojs-common/util';
 import {network} from '@jovijovi/ether-network';
 import {customConfig} from '../config';
-import {DefaultAlertType, DefaultLoopInterval} from './params';
+import {
+	DefaultAlertType,
+	DefaultCheckAddressBalanceJobConcurrency,
+	DefaultCheckAddressListJobConcurrency,
+	DefaultLoopInterval
+} from './params';
 import {AlertGeneratorParams, Balance, CheckAddressBalanceJobParams, FuncAlertGenerator} from './types';
 import {IsAlert} from './rules';
 import {MailContent, mailer, Template} from '../mailer';
@@ -18,7 +23,7 @@ import {RetryGetBalance} from './utils';
 const blockQueue = new Queue<number>();
 
 // Job: Check address list
-const checkAddressListJob: queueAsPromised<number> = fastq.promise(checkAddressList, 1);
+const checkAddressListJob: queueAsPromised<number> = fastq.promise(checkAddressList, DefaultCheckAddressListJobConcurrency);
 
 // Job scheduler: Check address balance
 const checkAddressBalanceJobScheduler: Map<string, queueAsPromised<CheckAddressBalanceJobParams>> = new Map();
@@ -103,7 +108,7 @@ async function checkAddressList(blockNumber: number): Promise<void> {
 			auditor.Check(utils.isAddress(address), 'invalid address');
 
 			if (!checkAddressBalanceJobScheduler.has(address)) {
-				checkAddressBalanceJobScheduler.set(address, fastq.promise(checkAddressBalance, 1));
+				checkAddressBalanceJobScheduler.set(address, fastq.promise(checkAddressBalance, DefaultCheckAddressBalanceJobConcurrency));
 			}
 
 			checkAddressBalanceJobScheduler.get(address).push({

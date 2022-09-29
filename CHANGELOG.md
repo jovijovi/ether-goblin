@@ -1,5 +1,40 @@
 # Changelog
 
+## [v0.9.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.8.6)
+
+Features:
+
+- (watchdog): initialize watchdog with block time from config
+- (watchdog): send alert mails by queue
+- (watchdog): try to catch up the latest block
+- (watchdog): modify template wording
+
+Refactor:
+
+- (watchdog): init watchdog with config
+- (watchdog): alert mail
+- (watchdog): alert generator
+- (watchdog): get balance
+- (watchdog): listen block event
+
+Fixes:
+
+- Use strict equality operators
+- (watchdog): export `MailContent` interface
+- (watchdog): remove magic number
+
+Performance:
+
+- (watchdog): improve the performance of checking balances
+
+Test:
+
+- (devenv): mount keystore volume
+- (devenv): bump postgres from 13.6 to 13.8
+
+Build:
+- Bump packages
+
 ## [v0.8.5](https://github.com/jovijovi/ether-goblin/releases/tag/v0.8.5)
 
 Features:

@@ -8,5 +8,6 @@ services:
     volumes:
       - ../conf:/opt/app/conf
       - ../database:/opt/app/database
+      - ../keystore:/opt/app/keystore
     ports:
       - "56550:56550"

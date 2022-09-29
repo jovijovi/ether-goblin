@@ -6,7 +6,7 @@ networks:
 services:
   postgres:
     container_name: devenv_postgres_pedrojs
-    image: postgres:13.6
+    image: postgres:13.8
     restart: always
     environment:
       POSTGRES_PASSWORD: example

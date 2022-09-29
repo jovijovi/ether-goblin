@@ -13,17 +13,17 @@ import {DefaultAlertType} from './params';
 export function IsAlert(watchedAddress: customConfig.WatchedAddress, balance: Balance): [boolean, DefaultAlertType] {
 	switch (watchedAddress.rule) {
 		case '<':
-			return [balance.Now.lt(watchedAddress.limit), DefaultAlertType.BalanceReachLimit];
+			return [balance.Current.lt(watchedAddress.limit), DefaultAlertType.BalanceReachLimit];
 		case '>':
-			return [balance.Now.gt(watchedAddress.limit), DefaultAlertType.BalanceReachLimit];
+			return [balance.Current.gt(watchedAddress.limit), DefaultAlertType.BalanceReachLimit];
 		case '=':
-			return [balance.Now.eq(watchedAddress.limit), DefaultAlertType.BalanceReachLimit];
+			return [balance.Current.eq(watchedAddress.limit), DefaultAlertType.BalanceReachLimit];
 		case '+':
-			return [balance.Now.gt(balance.Past), DefaultAlertType.BalanceChanges];
+			return [balance.Current.gt(balance.Previous), DefaultAlertType.BalanceChanges];
 		case '-':
-			return [balance.Now.lt(balance.Past), DefaultAlertType.BalanceChanges];
+			return [balance.Current.lt(balance.Previous), DefaultAlertType.BalanceChanges];
 		case '*':
-			return [!balance.Now.eq(balance.Past), DefaultAlertType.BalanceChanges];
+			return [!balance.Current.eq(balance.Previous), DefaultAlertType.BalanceChanges];
 	}
 
 	return [false, undefined];

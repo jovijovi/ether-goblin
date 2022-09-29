@@ -1,0 +1,18 @@
+# misc
+.DS_Store
+.env.*
+
+# IDE
+/.idea
+/.vscode
+
+# builders
+/*.tar
+/*.tar.gz
+/_dev
+/_release
+/keystore
+/flattened
+
+# db
+/database

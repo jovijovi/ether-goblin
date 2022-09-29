@@ -166,7 +166,7 @@ export function Run() {
 	// Schedule processing job
 	setInterval(() => {
 		auditor.Check(eventQueue, "Event queue is nil");
-		if (eventQueue.Length() == 0) {
+		if (eventQueue.Length() === 0) {
 			return;
 		}
 

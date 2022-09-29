@@ -1,3 +1,3 @@
 export * as mailer from './mailer';
-export {Template} from './template';
-export {MailContent} from './mailer';
+export {Mailer} from './mailer';
+export {MailContent, MailQueue} from './types';

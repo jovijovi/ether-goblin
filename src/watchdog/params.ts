@@ -19,6 +19,12 @@ export const DefaultRetryMinInterval = 3;
 // Retry max interval (unit: second)
 export const DefaultRetryMaxInterval = DefaultRetryMinInterval * 3;
 
+// Default interval for checking mail queue
+export const DefaultCheckMailQueueInterval = 3000;
+
+// Default send alert mail job concurrency
+export const DefaultSendAlertMailJobConcurrency = 1;
+
 // Default alert type
 export const enum DefaultAlertType {
 	BalanceReachLimit = 'BalanceReachLimit',

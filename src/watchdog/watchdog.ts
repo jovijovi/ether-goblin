@@ -14,9 +14,9 @@ import {
 } from './params';
 import {AlertGeneratorParams, Balance, CheckAddressBalanceJobParams, FuncAlertGenerator} from './types';
 import {IsAlert} from './rules';
-import {MailContent, mailer, Template} from '../mailer';
+import {BuildBalanceAlertMailContent} from './template';
 import {GetPastBalance, SetCache} from './cache';
-import {GenHtmlMail} from './mail';
+import {AlertMailer, GenHtmlMail, InitAlertMailer} from './mail';
 import {RetryGetBalance} from './utils';
 
 // Block queue (ASC, FIFO)
@@ -80,6 +80,9 @@ function init(): [customConfig.WatchdogConfig, boolean] {
 	for (const watchedAddress of conf.addressList) {
 		auditor.Check(utils.isAddress(watchedAddress.address), 'invalid address');
 	}
+
+	// Init alert mailer
+	InitAlertMailer();
 
 	return [conf, true];
 }
@@ -155,27 +158,14 @@ async function checkAddressBalance(opts: CheckAddressBalanceJobParams) {
 			watchedAddress: opts.watchedAddress,
 		})();
 
-	// Send alert
-	await sendAlert(Template.BalanceAlertMailContent({
+	// Add alert mail to queue
+	AlertMailer().Queue().Push(BuildBalanceAlertMailContent({
 		subject: subject,
 		html: GenHtmlMail(alertType, msg),
 	}));
 
 	// Callback (optional)
 	await callback(msg);
-}
-
-// sendAlert send alert by mail
-async function sendAlert(mailContent: MailContent) {
-	try {
-		if (!customConfig.GetWatchdog().mailer) {
-			return;
-		}
-
-		await mailer.Send(customConfig.GetWatchdog().mailer, mailContent);
-	} catch (e) {
-		log.RequestId().error("SendAlert failed, error=", e);
-	}
 }
 
 // callback

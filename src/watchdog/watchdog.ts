@@ -36,14 +36,7 @@ export function Run() {
 	}
 
 	// Listen block event
-	const provider = network.MyProvider.Get();
-	let nextBlock = 0;
-	provider.on('block', (blockNumber) => {
-		if (blockNumber >= nextBlock) {
-			blockQueue.Push(blockNumber);
-			nextBlock = blockNumber + conf.period;
-		}
-	})
+	listenBlockEvent(conf.period);
 
 	// Schedule processing job
 	setInterval(() => {
@@ -89,6 +82,18 @@ function init(): [customConfig.WatchdogConfig, boolean] {
 	}
 
 	return [conf, true];
+}
+
+// Listen block event
+function listenBlockEvent(period: number) {
+	const provider = network.MyProvider.Get();
+	let nextBlock = 0;
+	provider.on('block', (blockNumber) => {
+		if (blockNumber >= nextBlock) {
+			blockQueue.Push(blockNumber);
+			nextBlock = blockNumber + period;
+		}
+	})
 }
 
 // Check address list

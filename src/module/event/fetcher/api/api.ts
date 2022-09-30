@@ -1,7 +1,7 @@
 import {log} from '@jovijovi/pedrojs-common';
 import {KEY} from '@jovijovi/pedrojs-network-http/middleware/requestid';
-import {MyResponse} from '../../common/response';
-import {fetcher} from '../fetcher';
+import {MyResponse} from '../../../../common/response';
+import {fetcher} from '../index';
 
 // FetchEvents push FetchEvents job to scheduler
 export async function FetchEvents(req, res) {

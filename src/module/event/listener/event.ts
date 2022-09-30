@@ -3,7 +3,7 @@ import got from 'got';
 import fastq, {queueAsPromised} from 'fastq';
 import {log, util} from '@jovijovi/pedrojs-common';
 import {network} from '@jovijovi/ether-network';
-import {customConfig} from '../../config';
+import {customConfig} from '../../../config';
 import {DefaultCallbackJobConcurrency, DefaultDumpCacheInterval, DefaultLoopInterval} from './params';
 import {EventNameTransfer, TimeSecondInMs} from '../common/constants';
 import {EventTransfer, Response} from '../common/types';

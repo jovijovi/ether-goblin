@@ -1,7 +1,7 @@
 import fs from 'fs';
 import fastq, {queueAsPromised} from 'fastq';
 import {log} from '@jovijovi/pedrojs-common';
-import {customConfig} from '../config';
+import {customConfig} from '../../config';
 import {
 	DefaultAlertMailTemplate,
 	DefaultAlertType,

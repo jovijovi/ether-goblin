@@ -18,7 +18,7 @@ import {
 	DefaultRetryTimes,
 } from './params';
 import {EventTransfer, Response} from '../common/types';
-import {customConfig} from '../../config';
+import {customConfig} from '../../../config';
 import {DB} from './db';
 import {EventNameTransfer, EventTypeMint} from '../common/constants';
 import {CheckEventType, CheckTopics} from '../utils';
@@ -239,3 +239,6 @@ export function PushFetchEventsJob(opts: Options) {
 		pushJobIntervals: opts.pushJobIntervals ? opts.pushJobIntervals : customConfig.GetEvents().fetcher.pushJobIntervals,
 	}).catch((err) => log.RequestId().error(err));
 }
+
+// Export handler
+export {Handler} from './handler';

@@ -1,7 +1,7 @@
 import {ethers, utils} from 'ethers';
 import {network} from '@jovijovi/ether-network';
 import {log, util} from '@jovijovi/pedrojs-common';
-import {Cache} from '../../common/cache';
+import {Cache} from '../../../common/cache';
 import {DefaultRetryMaxInterval, DefaultRetryMinInterval, DefaultRetryTimes} from './params';
 import {ErrorCodeCallException, ErrorReasonMissingRevertData} from '../common/errors';
 

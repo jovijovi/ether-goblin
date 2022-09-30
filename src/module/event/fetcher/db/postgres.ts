@@ -1,10 +1,10 @@
 import {Sequelize} from 'sequelize';
-import {Mysql} from '@jovijovi/pedrojs-mysql';
-import {customConfig} from '../../../config';
+import {Postgresql} from '@jovijovi/pedrojs-pg';
+import {customConfig} from '../../../../config';
 import {IMintEvents, ModelAttrs, ModelName, TableName} from './model';
 import {Database} from './interface';
 
-export class MysqlDB extends Database {
+export class PostgresDB extends Database {
 	private _engine: Sequelize;
 
 	// Connect database
@@ -14,16 +14,16 @@ export class MysqlDB extends Database {
 		}
 
 		// Connect
-		const e = Mysql.Connect({
-			uri: customConfig.GetMysqlConfig().uri,
+		const e = Postgresql.Connect({
+			uri: customConfig.GetPostgresConfig().uri,
 		});
 
 		// Ping
-		await Mysql.Ping(e);
+		await Postgresql.Ping(e);
 
 		// Model options
 		const opts = {
-			tableName: customConfig.GetMysqlConfig().table ? customConfig.GetMysqlConfig().table : TableName,
+			tableName: customConfig.GetPostgresConfig().table ? customConfig.GetPostgresConfig().table : TableName,
 			timestamps: false,
 		};
 
@@ -37,4 +37,4 @@ export class MysqlDB extends Database {
 	}
 }
 
-export const MysqlClient = new MysqlDB();
+export const PostgresClient = new PostgresDB();

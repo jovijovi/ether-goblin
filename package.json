@@ -1,6 +1,6 @@
 {
   "name": "ether-goblin",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "A microservice for the Ethereum ecosystem.",
   "author": "jovijovi <mageyul@hotmail.com>",
   "license": "MIT",
@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@jovijovi/ether-core": "0.5.2",
+    "@jovijovi/ether-core-api": "0.1.0",
     "@jovijovi/ether-network": "0.3.2",
     "@jovijovi/express-2fa-token": "^1.1.0",
     "@jovijovi/pedrojs-common": "1.1.15",

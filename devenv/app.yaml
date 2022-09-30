@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  pedrojs:
+  ether-goblin:
     container_name: devenv_ether_goblin
     image: ether-goblin:latest
     restart: always

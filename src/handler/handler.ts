@@ -1,7 +1,7 @@
 import * as core from 'express-serve-static-core';
 import {ITaskHandler} from '@jovijovi/pedrojs-network-http';
 import {TwoFAToken} from '@jovijovi/express-2fa-token';
-import * as eth from '../eth';
+import * as eth from '@jovijovi/ether-core-api';
 import {yanft} from '../contracts';
 import * as event from '../event';
 

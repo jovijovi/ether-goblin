@@ -22,6 +22,7 @@ import {customConfig} from '../../../config';
 import {DB} from './db';
 import {EventNameTransfer, EventTypeMint} from '../common/constants';
 import {CheckEventType, CheckTopics} from '../utils';
+import {NewProgress} from './progress';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -108,10 +109,15 @@ async function fetchEvents(opts: Options = {
 	// Connect to database
 	await DB.Connect();
 
+	// Init progress bar
+	const totalProgress = blockNumber - nextFrom;
+	const progress = NewProgress(totalProgress);
+
 	do {
 		leftBlocks = blockNumber - nextFrom;
 		if (leftBlocks <= 0) {
 			if (!opts.keepRunning) {
+				progress.tick(totalProgress);
 				break;
 			}
 			await util.time.SleepSeconds(DefaultQueryIntervals);
@@ -133,6 +139,9 @@ async function fetchEvents(opts: Options = {
 			fromBlock: nextFrom,        // Fetch from block number
 			toBlock: nextTo,            // Fetch to block number
 		}).catch((err) => log.RequestId().error(err));
+
+		// Update progress
+		progress.tick(nextTo - nextFrom);
 
 		nextFrom = nextTo + 1;
 

@@ -35,7 +35,7 @@ let queryLogsJobs: queueAsPromised<Options>;
 // Dump job
 const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 1);
 
-// Execute query mint events job
+// Execute query events job
 async function queryLogs(opts: Options = {
 	eventType: [EventTypeMint],
 	fromBlock: DefaultFromBlock
@@ -144,6 +144,7 @@ async function fetchEvents(opts: Options = {
 	return;
 }
 
+// Run event fetcher
 export function Run() {
 	// Check config
 	const conf = customConfig.GetEvents();
@@ -217,9 +218,8 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 			await callback(evt);
 
 			// Dump event to database
+			log.RequestId().info("Dumping events to db, count=%d, event=%o", i + 1, evt);
 			await DB.Client().Save(evt);
-
-			log.RequestId().info("Dumped events count=%d, event=%o", i + 1, evt);
 		}
 	} catch (e) {
 		log.RequestId().error("Dump failed, error=", e);

@@ -40,7 +40,8 @@ async function queryLogs(opts: Options = {
 	eventType: [EventTypeMint],
 	fromBlock: DefaultFromBlock
 }): Promise<void> {
-	log.RequestId().info("EXEC JOB, QueryLogs(blocks[%d,%d]) running... QueryLogsJobsCount=%d", opts.fromBlock, opts.toBlock, queryLogsJobs.length());
+	log.RequestId().trace("EXEC JOB(%s), QueryLogs(blocks[%d,%d]) running... QueryLogsJobsCount=%d",
+		opts.eventType, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
 	const provider = network.MyProvider.Get();
 	const evtFilter = {
@@ -82,8 +83,8 @@ async function queryLogs(opts: Options = {
 		eventQueue.Push(evt);
 	}
 
-	log.RequestId().info("JOB FINISHED, QueryLogs(blocks[%d,%d]), QueryLogsJobsCount=%d",
-		opts.fromBlock, opts.toBlock, queryLogsJobs.length());
+	log.RequestId().trace("JOB(%s) FINISHED, QueryLogs(blocks[%d,%d]), QueryLogsJobsCount=%d",
+		opts.eventType, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
 	return;
 }
@@ -122,9 +123,9 @@ async function fetchEvents(opts: Options = {
 		nextTo = nextFrom + blockRange;
 
 		if (blockRange >= 0 && blockRange <= 1) {
-			log.RequestId().info("Catch up the latest block(%d)", blockNumber);
+			log.RequestId().debug("Catch up the latest block(%d)", blockNumber);
 		}
-		log.RequestId().info("PUSH JOB, blocks[%d,%d](range=%d), queryLogsJobs=%d", nextFrom, nextTo, blockRange, queryLogsJobs.length());
+		log.RequestId().trace("PUSH JOB, blocks[%d,%d](range=%d), queryLogsJobs=%d", nextFrom, nextTo, blockRange, queryLogsJobs.length());
 
 		queryLogsJobs.push({
 			address: opts.address,      // The address to filter by, or null to match any address

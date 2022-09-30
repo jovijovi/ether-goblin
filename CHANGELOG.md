@@ -1,6 +1,16 @@
 # Changelog
 
-## [v0.9.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.8.6)
+## [v0.9.1](https://github.com/jovijovi/ether-goblin/releases/tag/v0.9.1)
+
+Fixes:
+
+- (watchdog): error response in init()
+
+Build:
+
+- Replace alpine by slim. Ref: <https://github.com/NomicFoundation/hardhat/issues/3195>
+
+## [v0.9.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.9.0)
 
 Features:
 

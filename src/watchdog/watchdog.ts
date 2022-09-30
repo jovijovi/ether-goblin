@@ -65,10 +65,10 @@ function init(): [customConfig.WatchdogConfig, boolean] {
 	const conf = customConfig.GetWatchdog();
 	if (!conf) {
 		log.RequestId().info('No watchdog configuration, skipped.');
-		return;
+		return [undefined, false];
 	} else if (!conf.enable) {
 		log.RequestId().info('Watchdog disabled.');
-		return;
+		return [undefined, false];
 	}
 
 	log.RequestId().info("Watchdog config=\n%s", JSON.stringify(conf, undefined, 4));

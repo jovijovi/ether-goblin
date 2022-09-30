@@ -2,8 +2,8 @@ APP_NAME:=ether-goblin
 HUB:=$(if $(HUB),$(HUB),some_docker_image_repo)
 OS:=linux
 NODE_VER=16.17
+IMAGE_TAG:=slim
 TS_VER=$(shell tsc -v)
-ALPINE_VER:=3.16
 
 prj_dir:=$(shell pwd -L)
 git_br:=$(shell git -C "${prj_dir}" rev-parse --abbrev-ref HEAD | grep -v HEAD || git describe --tags || git -C "${prj_dir}" rev-parse --short HEAD)
@@ -48,7 +48,7 @@ build: build-prepare
 docker:
 	@echo "[MAKEFILE] Building docker image..."
 	@echo $(VERSION_INFO) > $(prj_dir)/git.json
-	docker build --force-rm -f $(DOCKER_FILE) --build-arg NODE_VER=$(NODE_VER) -t $(APP_NAME):$(VER) .
+	docker build --force-rm -f $(DOCKER_FILE) --build-arg NODE_VER=$(NODE_VER) --build-arg IMAGE_TAG=$(IMAGE_TAG) -t $(APP_NAME):$(VER) .
 	docker tag $(APP_NAME):$(VER) $(APP_NAME):latest
 	docker images|grep $(APP_NAME)
 	@echo "[MAKEFILE] Build docker image done"

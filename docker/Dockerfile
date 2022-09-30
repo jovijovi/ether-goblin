@@ -1,6 +1,7 @@
 ARG NODE_VER
+ARG IMAGE_TAG
 
-FROM node:${NODE_VER}-alpine as builder
+FROM node:${NODE_VER}-${IMAGE_TAG} as builder
 MAINTAINER pedro
 
 ADD conf /opt/app_src/conf
@@ -18,9 +19,9 @@ WORKDIR /opt/app_src
 RUN yarn install --frozen-lockfile \
     && yarn build
 
-FROM node:${NODE_VER}-alpine as runtime
+FROM node:${NODE_VER}-${IMAGE_TAG} as runtime
 
-RUN apk add --no-cache bash
+RUN apt-get update && apt-get install bash
 
 COPY --from=builder /opt/app_src/dist /opt/app
 COPY --from=builder /opt/app_src/node_modules /opt/app/node_modules

@@ -5,7 +5,7 @@ import fastq, {queueAsPromised} from 'fastq';
 import {auditor, log} from '@jovijovi/pedrojs-common';
 import {Queue} from '@jovijovi/pedrojs-common/util';
 import {network} from '@jovijovi/ether-network';
-import {customConfig} from '../config';
+import {customConfig} from '../../config';
 import {
 	DefaultAlertType,
 	DefaultCheckAddressBalanceJobConcurrency,

@@ -1,5 +1,5 @@
 import {Sqlite} from '@jovijovi/pedrojs-sqlite';
-import {customConfig} from '../../../config';
+import {customConfig} from '../../../../config';
 import {IMintEvents, ModelAttrs, ModelName, TableName} from './model';
 import {Database} from './interface';
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## [v0.10.1](https://github.com/jovijovi/ether-goblin/releases/tag/v0.10.1)
+
+Features:
+
+- Load modules and register HTTP APIs through the module loader
+- (module/event/fetcher): add progress bar of event fetcher
+
+Refactor:
+
+- Import the package [@jovijovi/ether-core-api](https://www.npmjs.com/package/@jovijovi/ether-core-api)
+
+Build:
+
+- Bump packages
+
 ## [v0.9.1](https://github.com/jovijovi/ether-goblin/releases/tag/v0.9.1)
 
 Fixes:

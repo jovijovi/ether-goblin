@@ -1,6 +1,6 @@
 import {BigNumber} from 'ethers';
 import {Queue} from '@jovijovi/pedrojs-common/util/queue';
-import {customConfig} from '../config';
+import {customConfig} from '../../config';
 
 // Balance cache
 export type BalanceCache<T> = {

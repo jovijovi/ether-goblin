@@ -5,8 +5,8 @@ import nodemailer from 'nodemailer';
 import nodemailerOpenpgp from 'nodemailer-openpgp';
 import {log} from '@jovijovi/pedrojs-common';
 import {Queue} from '@jovijovi/pedrojs-common/util';
-import {customConfig} from '../config';
-import {Cache} from '../common/cache';
+import {customConfig} from '../../config';
+import {Cache} from '../../common/cache';
 import {MailContent, MailQueue} from './types';
 
 export class Mailer {

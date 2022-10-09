@@ -1,4 +1,4 @@
-import {customConfig} from '../../../config';
+import {customConfig} from '../../../../config';
 import {auditor} from '@jovijovi/pedrojs-common';
 import {PostgresClient, PostgresDB} from './postgres';
 import {MysqlClient, MysqlDB} from './mysql';

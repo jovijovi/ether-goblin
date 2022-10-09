@@ -1,4 +1,4 @@
-import {customConfig} from '../config';
+import {customConfig} from '../../config';
 import {Balance} from './types';
 import {DefaultAlertType} from './params';
 

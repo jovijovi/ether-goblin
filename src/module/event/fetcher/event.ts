@@ -18,10 +18,11 @@ import {
 	DefaultRetryTimes,
 } from './params';
 import {EventTransfer, Response} from '../common/types';
-import {customConfig} from '../../config';
+import {customConfig} from '../../../config';
 import {DB} from './db';
 import {EventNameTransfer, EventTypeMint} from '../common/constants';
 import {CheckEventType, CheckTopics} from '../utils';
+import {NewProgress} from './progress';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -35,12 +36,13 @@ let queryLogsJobs: queueAsPromised<Options>;
 // Dump job
 const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 1);
 
-// Execute query mint events job
+// Execute query events job
 async function queryLogs(opts: Options = {
 	eventType: [EventTypeMint],
 	fromBlock: DefaultFromBlock
 }): Promise<void> {
-	log.RequestId().info("EXEC JOB, QueryLogs(blocks[%d,%d]) running... QueryLogsJobsCount=%d", opts.fromBlock, opts.toBlock, queryLogsJobs.length());
+	log.RequestId().trace("EXEC JOB(%s), QueryLogs(blocks[%d,%d]) running... QueryLogsJobsCount=%d",
+		opts.eventType, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
 	const provider = network.MyProvider.Get();
 	const evtFilter = {
@@ -82,8 +84,8 @@ async function queryLogs(opts: Options = {
 		eventQueue.Push(evt);
 	}
 
-	log.RequestId().info("JOB FINISHED, QueryLogs(blocks[%d,%d]), QueryLogsJobsCount=%d",
-		opts.fromBlock, opts.toBlock, queryLogsJobs.length());
+	log.RequestId().trace("JOB(%s) FINISHED, QueryLogs(blocks[%d,%d]), QueryLogsJobsCount=%d",
+		opts.eventType, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
 	return;
 }
@@ -107,10 +109,15 @@ async function fetchEvents(opts: Options = {
 	// Connect to database
 	await DB.Connect();
 
+	// Init progress bar
+	const totalProgress = blockNumber - nextFrom;
+	const progress = NewProgress(totalProgress);
+
 	do {
 		leftBlocks = blockNumber - nextFrom;
 		if (leftBlocks <= 0) {
 			if (!opts.keepRunning) {
+				progress.tick(totalProgress);
 				break;
 			}
 			await util.time.SleepSeconds(DefaultQueryIntervals);
@@ -122,9 +129,9 @@ async function fetchEvents(opts: Options = {
 		nextTo = nextFrom + blockRange;
 
 		if (blockRange >= 0 && blockRange <= 1) {
-			log.RequestId().info("Catch up the latest block(%d)", blockNumber);
+			log.RequestId().debug("Catch up the latest block(%d)", blockNumber);
 		}
-		log.RequestId().info("PUSH JOB, blocks[%d,%d](range=%d), queryLogsJobs=%d", nextFrom, nextTo, blockRange, queryLogsJobs.length());
+		log.RequestId().trace("PUSH JOB, blocks[%d,%d](range=%d), queryLogsJobs=%d", nextFrom, nextTo, blockRange, queryLogsJobs.length());
 
 		queryLogsJobs.push({
 			address: opts.address,      // The address to filter by, or null to match any address
@@ -132,6 +139,9 @@ async function fetchEvents(opts: Options = {
 			fromBlock: nextFrom,        // Fetch from block number
 			toBlock: nextTo,            // Fetch to block number
 		}).catch((err) => log.RequestId().error(err));
+
+		// Update progress
+		progress.tick(nextTo - nextFrom);
 
 		nextFrom = nextTo + 1;
 
@@ -143,6 +153,7 @@ async function fetchEvents(opts: Options = {
 	return;
 }
 
+// Run event fetcher
 export function Run() {
 	// Check config
 	const conf = customConfig.GetEvents();
@@ -216,9 +227,8 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 			await callback(evt);
 
 			// Dump event to database
+			log.RequestId().info("Dumping events to db, count=%d, event=%o", i + 1, evt);
 			await DB.Client().Save(evt);
-
-			log.RequestId().info("Dumped events count=%d, event=%o", i + 1, evt);
 		}
 	} catch (e) {
 		log.RequestId().error("Dump failed, error=", e);
@@ -239,3 +249,6 @@ export function PushFetchEventsJob(opts: Options) {
 		pushJobIntervals: opts.pushJobIntervals ? opts.pushJobIntervals : customConfig.GetEvents().fetcher.pushJobIntervals,
 	}).catch((err) => log.RequestId().error(err));
 }
+
+// Export handler
+export {Handler} from './handler';

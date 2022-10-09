@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import writeFileAtomic from 'write-file-atomic';
 import {log} from '@jovijovi/pedrojs-common';
-import {Cache} from '../../common/cache';
-import {customConfig} from '../../config';
+import {Cache} from '../../../common/cache';
+import {customConfig} from '../../../config';
 import {DefaultCacheTTL, DefaultDumpCacheDir, DefaultDumpCacheFile, DefaultNameOfContractOwnerCache,} from './params';
 import {TimeHourInMs} from '../common/constants';
 

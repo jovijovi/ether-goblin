@@ -22,7 +22,7 @@ import {customConfig} from '../../../config';
 import {DB} from './db';
 import {EventNameTransfer, EventTypeMint} from '../common/constants';
 import {CheckEventType, CheckTopics} from '../utils';
-import {NewProgress} from './progress';
+import {NewProgressBar, UpdateProgressBar} from './progress';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -111,13 +111,15 @@ async function fetchEvents(opts: Options = {
 
 	// Init progress bar
 	const totalProgress = blockNumber - nextFrom;
-	const progress = NewProgress(totalProgress);
+	const progress = NewProgressBar(totalProgress);
 
 	do {
+		await util.time.SleepMilliseconds(opts.pushJobIntervals);
+
 		leftBlocks = blockNumber - nextFrom;
 		if (leftBlocks <= 0) {
 			if (!opts.keepRunning) {
-				progress.tick(totalProgress);
+				UpdateProgressBar(progress, totalProgress);
 				break;
 			}
 			await util.time.SleepSeconds(DefaultQueryIntervals);
@@ -141,11 +143,9 @@ async function fetchEvents(opts: Options = {
 		}).catch((err) => log.RequestId().error(err));
 
 		// Update progress
-		progress.tick(nextTo - nextFrom);
+		UpdateProgressBar(progress, nextTo - nextFrom);
 
 		nextFrom = nextTo + 1;
-
-		await util.time.SleepMilliseconds(opts.pushJobIntervals);
 	} while (nextFrom > 0);
 
 	log.RequestId().info("FetchEvents finished, options=%o", opts);

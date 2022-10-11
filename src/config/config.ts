@@ -60,6 +60,7 @@ export namespace customConfig {
 
 	class EventFetcher {
 		enable: boolean
+		progressBar: boolean
 		eventType: string[]
 		callback: string
 		fromBlock: number

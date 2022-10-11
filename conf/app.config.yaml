@@ -158,6 +158,9 @@ custom:
     fetcher:
       enable: false
 
+      # Display progress bar
+      progressBar: false
+
       # Enabled event type
       eventType:
         # 'mint' means transfer token from zero address to another address

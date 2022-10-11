@@ -2,6 +2,7 @@ import {ModelCtor} from 'sequelize';
 import {log, util} from '@jovijovi/pedrojs-common';
 import {EventTransfer} from '../../common/types';
 import {IMintEvents} from './model';
+import {IQuery} from './types';
 
 interface IDatabase {
 	ModelEvent: ModelCtor<IMintEvents>;
@@ -34,6 +35,22 @@ export class Database implements IDatabase {
 		}
 
 		return;
+	}
+
+	// Check if exists
+	async IsExists(query: IQuery): Promise<boolean> {
+		try {
+			return await this.ModelEvent.count({
+				where: {
+					address: query.address,
+					block_number: query.blockNumber,
+					transaction_hash: query.transactionHash,
+					token_id: query.tokenId,
+				},
+			}) > 0;
+		} catch (e) {
+			log.RequestId().error('IsExist failed, error=', e.message);
+		}
 	}
 }
 

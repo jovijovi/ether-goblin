@@ -246,6 +246,7 @@ async function callback(evt: EventTransfer): Promise<void> {
 // Dump events
 async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 	try {
+		const conf = customConfig.GetEvents().fetcher;
 		const len = queue.Length();
 		if (len === 0) {
 			return;
@@ -258,6 +259,16 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 			await callback(evt);
 
 			// Dump event to database
+			if (!conf.forceUpdate && await DB.Client().IsExists({
+				address: evt.address,
+				blockNumber: evt.blockNumber,
+				transactionHash: evt.transactionHash,
+				tokenId: evt.tokenId.toString(),
+			})) {
+				log.RequestId().trace("Token(%s) in block(%d) tx(%s) already exists, skipped",
+					evt.tokenId.toString(), evt.blockNumber, evt.transactionHash);
+				return;
+			}
 			log.RequestId().info("Dumping events to db, count=%d, event=%o", i + 1, evt);
 			await DB.Client().Save(evt);
 		}

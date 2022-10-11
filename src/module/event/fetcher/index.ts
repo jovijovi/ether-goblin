@@ -1,1 +1,1 @@
-export * as fetcher from './event';
+export * as fetcher from './fetcher';

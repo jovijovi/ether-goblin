@@ -67,6 +67,8 @@ export namespace customConfig {
 		maxBlockRange?: number
 		pushJobIntervals?: number
 		executeJobConcurrency?: number
+		keepRunning?: boolean
+		forceUpdate?: boolean
 		db: string
 		contractOwners: string[]
 	}

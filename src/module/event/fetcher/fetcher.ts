@@ -239,14 +239,18 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 }
 
 // PushFetchEventsJob push FetchEvents job to scheduler
+// (Push default config if option is empty)
 export function PushFetchEventsJob(opts: Options) {
 	fetchEventsJobs.push({
 		address: opts.address,
-		eventType: opts.eventType,
-		fromBlock: opts.fromBlock,
+		eventType: opts.eventType ? opts.eventType : customConfig.GetEvents().fetcher.eventType,
+		fromBlock: opts.fromBlock ? opts.fromBlock : customConfig.GetEvents().fetcher.fromBlock,
 		toBlock: opts.toBlock,
 		maxBlockRange: opts.maxBlockRange ? opts.maxBlockRange : customConfig.GetEvents().fetcher.maxBlockRange,
 		pushJobIntervals: opts.pushJobIntervals ? opts.pushJobIntervals : customConfig.GetEvents().fetcher.pushJobIntervals,
+		executeJobConcurrency: opts.executeJobConcurrency ? opts.executeJobConcurrency : customConfig.GetEvents().fetcher.executeJobConcurrency,
+		keepRunning: opts.keepRunning ? opts.keepRunning : customConfig.GetEvents().fetcher.keepRunning,
+		forceUpdate: opts.forceUpdate ? opts.forceUpdate : customConfig.GetEvents().fetcher.forceUpdate,
 	}).catch((err) => log.RequestId().error(err));
 }
 

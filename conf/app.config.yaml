@@ -185,6 +185,12 @@ custom:
       # Execute job concurrency
       executeJobConcurrency: 20
 
+      # Keep running fetcher
+      keepRunning: false
+
+      # Force update database if the data already exists
+      forceUpdate: true
+
       # Supported Database: postgres, mysql or sqlite
       db: postgres
 

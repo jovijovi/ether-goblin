@@ -6,8 +6,7 @@ import {fetcher} from '../index';
 // FetchEvents push FetchEvents job to scheduler
 export async function FetchEvents(req, res) {
 	if (!req.body ||
-		!req.body.eventType ||
-		!req.body.toBlock
+		!req.body.eventType
 	) {
 		log.RequestId(req[KEY]).error("Bad request, req=", req.body);
 		return MyResponse.BadRequest(res);
@@ -17,12 +16,15 @@ export async function FetchEvents(req, res) {
 		log.RequestId(req[KEY]).info("FetchEvents Request=\n%o", req.body);
 
 		fetcher.PushFetchEventsJob({
-			address: req.body.address,      // The address to filter by, or null to match any address (Optional)
-			eventType: req.body.eventType,  // ERC721 event type: mint/transfer/burn ("mint" by default)
-			fromBlock: req.body.fromBlock,  // Fetch from block number (Optional, 0 by default)
-			toBlock: req.body.toBlock,      // Fetch to block number
-			maxBlockRange: req.body.maxBlockRange,          // eth_getLogs block range (Optional)
-			pushJobIntervals: req.body.pushJobIntervals,    // Push job intervals (unit: ms) (Optional)
+			address: req.body.address,          // The address to filter by, or null to match any address (Optional)
+			eventType: req.body.eventType,      // ERC721 event type: mint/transfer/burn
+			fromBlock: req.body.fromBlock,      // Fetch from block number (Optional, 0 by default)
+			toBlock: req.body.toBlock,          // Fetch to block number (Optional, the highest block number by default)
+			maxBlockRange: req.body.maxBlockRange,                  // eth_getLogs block range (Optional)
+			pushJobIntervals: req.body.pushJobIntervals,            // Push job intervals (unit: ms) (Optional)
+			executeJobConcurrency: req.body.executeJobConcurrency,  // Execute job concurrency (Optional)
+			keepRunning: req.body.keepRunning,  // Keep running fetcher (Optional)
+			forceUpdate: req.body.forceUpdate,  // Force update database if the data already exists (Optional)
 		});
 		res.send(MyResponse.OK());
 

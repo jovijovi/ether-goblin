@@ -6,5 +6,6 @@ export function APIs(router: core.Express) {
 }
 
 function defaultAPIs(router: core.Express) {
+	router.get('/api/v1/nft/history', API.GetTokenHistory);
 	router.post('/api/v1/nft/events', API.FetchEvents);
 }

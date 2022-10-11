@@ -22,6 +22,7 @@ import {EventMapper, EventNameMapper, EventTypeBurn, EventTypeMint, EventTypeTra
 import {CheckEventType, CheckTopics, GetEventType} from '../utils';
 import {NewProgressBar, UpdateProgressBar} from './progress';
 import {GetBlockNumber, GetBlockTimestamp, RandomRetryInterval} from './common';
+import {Cache} from '../../../common/cache';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -292,6 +293,29 @@ export function PushJob(opts: Options) {
 		pushJobIntervals: opts.pushJobIntervals ? opts.pushJobIntervals : customConfig.GetEvents().fetcher.pushJobIntervals,
 		keepRunning: opts.keepRunning ? opts.keepRunning : customConfig.GetEvents().fetcher.keepRunning,
 	}).catch((err) => log.RequestId().error(err));
+}
+
+// Get token history
+export async function GetTokenHistory(address: string, tokenId: string): Promise<any> {
+	const key = Cache.CombinationKey([address, tokenId]);
+	if (Cache.CacheNFTHistory.has(key)) {
+		return Cache.CacheNFTHistory.get(key);
+	}
+
+	const historyDetails = await DB.Client().QueryTokenHistory(address, tokenId);
+	const result = [];
+	for (const moment of historyDetails) {
+		result.push({
+			block_number: moment.block_number,
+			transaction_hash: moment.transaction_hash,
+			from: moment.from,
+			to: moment.to,
+			event_type: moment.event_type,
+		})
+	}
+	Cache.CacheNFTHistory.set(key, result);
+
+	return result;
 }
 
 // Export handler

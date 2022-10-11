@@ -52,6 +52,24 @@ export class Database implements IDatabase {
 			log.RequestId().error('IsExist failed, error=', e.message);
 		}
 	}
+
+	// Query token history (all event type)
+	async QueryTokenHistory(address: string, tokenId: string): Promise<any> {
+		try {
+			return await this.ModelEvent.findAll(
+				{
+					where: {
+						address: address,
+						token_id: tokenId,
+					},
+					order: [
+						['block_number', 'ASC'],
+					],
+				});
+		} catch (e) {
+			log.RequestId().error('Query failed, error=', e.message);
+		}
+	}
 }
 
 

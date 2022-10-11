@@ -33,3 +33,30 @@ export async function FetchEvents(req, res) {
 
 	return;
 }
+
+// GetTokenHistory get token history
+export async function GetTokenHistory(req, res) {
+	if (!req.query ||
+		!req.query.address ||
+		!req.query.tokenId
+	) {
+		return MyResponse.BadRequest(res);
+	}
+
+	log.RequestId().debug("New request query=", req.query);
+
+	try {
+		const history = await fetcher.GetTokenHistory(req.query.address, req.query.tokenId);
+
+		if (!history) {
+			return MyResponse.NotFound(res);
+		}
+		res.send(history);
+
+		log.RequestId().debug("history=", history);
+	} catch (e) {
+		return MyResponse.Error(res, e);
+	}
+
+	return;
+}

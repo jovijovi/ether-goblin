@@ -6,7 +6,5 @@ export type Options = {
 	toBlock?: number                // Fetch to block number (Optional, the highest block number by default)
 	maxBlockRange?: number          // eth_getLogs block range (Optional)
 	pushJobIntervals?: number       // Push job intervals (unit: ms)
-	executeJobConcurrency?: number  // Execute job concurrency (Optional)
 	keepRunning?: boolean           // Keep running fetcher (Optional)
-	forceUpdate?: boolean           // Force update database if the data already exists (Optional)
 }

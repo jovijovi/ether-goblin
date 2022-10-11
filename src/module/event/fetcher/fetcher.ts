@@ -36,6 +36,67 @@ let queryLogsJobs: queueAsPromised<Options>;
 // Dump job
 const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 1);
 
+// Run event fetcher
+export async function Run() {
+	const [conf, ok] = await init();
+	if (!ok) {
+		return;
+	}
+
+	// Schedule processing job
+	setInterval(() => {
+		auditor.Check(eventQueue, "Event queue is nil");
+		if (eventQueue.Length() === 0) {
+			return;
+		}
+
+		dumpJob.push(eventQueue).catch((err) => log.RequestId().error(err));
+	}, DefaultLoopInterval);
+
+	// Push FetchEvents job
+	if (!conf.api) {
+		PushJob({
+			eventType: conf.eventType,
+			fromBlock: conf.fromBlock,
+			toBlock: conf.toBlock,
+			maxBlockRange: conf.maxBlockRange ? conf.maxBlockRange : DefaultMaxBlockRange,
+			pushJobIntervals: conf.pushJobIntervals ? conf.pushJobIntervals : DefaultPushJobIntervals,
+			keepRunning: conf.keepRunning,
+		})
+	}
+
+	log.RequestId().info("Event fetcher is running...");
+
+	return;
+}
+
+// Init fetcher
+async function init(): Promise<[customConfig.EventFetcherConfig, boolean]> {
+	// Load config
+	const conf = customConfig.GetEvents();
+	if (!conf) {
+		log.RequestId().info('No events configuration, skipped.');
+		return [undefined, false];
+	} else if (!conf.fetcher.enable) {
+		log.RequestId().info('Event fetcher disabled.');
+		return [undefined, false];
+	}
+
+	log.RequestId().info("Event fetcher config=", conf.fetcher);
+
+	// Check params
+	auditor.Check(conf.fetcher.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
+	auditor.Check(conf.fetcher.fromBlock >= 0, "Invalid fromBlock");
+
+	// Connect to database
+	await DB.Connect();
+
+	// Build query logs job
+	queryLogsJobs = fastq.promise(queryLogs, conf.fetcher.executeJobConcurrency ? conf.fetcher.executeJobConcurrency : DefaultExecuteJobConcurrency);
+
+	return [conf.fetcher, true];
+}
+
 // Execute query events job
 async function queryLogs(opts: Options = {
 	eventType: [EventTypeMint],
@@ -106,9 +167,6 @@ async function fetchEvents(opts: Options = {
 
 	auditor.Check(blockNumber >= nextFrom, "Invalid fromBlock/toBlock");
 
-	// Connect to database
-	await DB.Connect();
-
 	// Init progress bar
 	const totalProgress = blockNumber - nextFrom;
 	const progress = NewProgressBar(totalProgress);
@@ -149,40 +207,6 @@ async function fetchEvents(opts: Options = {
 	} while (nextFrom > 0);
 
 	log.RequestId().info("FetchEvents finished, options=%o", opts);
-
-	return;
-}
-
-// Run event fetcher
-export function Run() {
-	// Check config
-	const conf = customConfig.GetEvents();
-	if (!conf) {
-		log.RequestId().info('No events configuration, skipped.');
-		return;
-	} else if (!conf.fetcher.enable) {
-		log.RequestId().info('Event fetcher disabled.');
-		return;
-	}
-
-	log.RequestId().info("Event fetcher config=", conf.fetcher);
-
-	auditor.Check(conf.fetcher.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
-	auditor.Check(conf.fetcher.fromBlock >= 0, "Invalid fromBlock");
-
-	queryLogsJobs = fastq.promise(queryLogs, conf.fetcher.executeJobConcurrency ? conf.fetcher.executeJobConcurrency : DefaultExecuteJobConcurrency);
-
-	log.RequestId().info("Event fetcher is running...");
-
-	// Schedule processing job
-	setInterval(() => {
-		auditor.Check(eventQueue, "Event queue is nil");
-		if (eventQueue.Length() === 0) {
-			return;
-		}
-
-		dumpJob.push(eventQueue).catch((err) => log.RequestId().error(err));
-	}, DefaultLoopInterval);
 
 	return;
 }
@@ -238,9 +262,9 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 	return;
 }
 
-// PushFetchEventsJob push FetchEvents job to scheduler
-// (Push default config if option is empty)
-export function PushFetchEventsJob(opts: Options) {
+// PushJob push FetchEvents job to scheduler
+// (Set default config if option is empty)
+export function PushJob(opts: Options) {
 	fetchEventsJobs.push({
 		address: opts.address,
 		eventType: opts.eventType ? opts.eventType : customConfig.GetEvents().fetcher.eventType,
@@ -248,9 +272,7 @@ export function PushFetchEventsJob(opts: Options) {
 		toBlock: opts.toBlock,
 		maxBlockRange: opts.maxBlockRange ? opts.maxBlockRange : customConfig.GetEvents().fetcher.maxBlockRange,
 		pushJobIntervals: opts.pushJobIntervals ? opts.pushJobIntervals : customConfig.GetEvents().fetcher.pushJobIntervals,
-		executeJobConcurrency: opts.executeJobConcurrency ? opts.executeJobConcurrency : customConfig.GetEvents().fetcher.executeJobConcurrency,
 		keepRunning: opts.keepRunning ? opts.keepRunning : customConfig.GetEvents().fetcher.keepRunning,
-		forceUpdate: opts.forceUpdate ? opts.forceUpdate : customConfig.GetEvents().fetcher.forceUpdate,
 	}).catch((err) => log.RequestId().error(err));
 }
 

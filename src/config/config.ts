@@ -58,13 +58,14 @@ export namespace customConfig {
 		contractOwners: string[]
 	}
 
-	class EventFetcherConfig {
+	export class EventFetcherConfig {
 		enable: boolean
 		api: boolean
 		progressBar: boolean
 		eventType: string[]
 		callback: string
 		fromBlock: number
+		toBlock: number
 		maxBlockRange?: number
 		pushJobIntervals?: number
 		executeJobConcurrency?: number

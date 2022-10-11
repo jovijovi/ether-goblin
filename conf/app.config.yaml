@@ -176,8 +176,11 @@ custom:
       # Callback URL
       callback: 'YOUR CALLBACK URL'
 
-      # Fetch from block number (history or future block)
+      # Pull from block number (history or future block)
       fromBlock: 0
+
+      # Pull to block number (history or future block, optional)
+      toBlock:
 
       # eth_getLogs block range
       maxBlockRange: 3500

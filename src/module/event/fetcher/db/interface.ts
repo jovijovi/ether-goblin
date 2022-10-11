@@ -1,5 +1,5 @@
 import {ModelCtor} from 'sequelize';
-import {log} from '@jovijovi/pedrojs-common';
+import {log, util} from '@jovijovi/pedrojs-common';
 import {EventTransfer} from '../../common/types';
 import {IMintEvents} from './model';
 
@@ -18,12 +18,15 @@ export class Database implements IDatabase {
 			return await this.ModelEvent.upsert(
 				{
 					address: evt.address,                       // NFT Contract address
-					blockNumber: evt.blockNumber.toString(),    // Block number
-					blockHash: evt.blockHash,                   // Block hash
-					transactionHash: evt.transactionHash,       // Tx hash
+					block_number: evt.blockNumber.toString(),   // Block number
+					block_hash: evt.blockHash,                  // Block hash
+					block_timestamp: evt.blockTimestamp,        // Block timestamp
+					block_datetime: util.time.GetUnixTimestamp(evt.blockTimestamp, 'UTC'),  // Block datetime
+					transaction_hash: evt.transactionHash,      // Tx hash
 					from: evt.from,                             // From
 					to: evt.to,                                 // To
-					tokenId: evt.tokenId.toString(),            // NFT Token ID
+					token_id: evt.tokenId.toString(),           // NFT Token ID
+					event_type: evt.eventType                   // Event type
 				}
 			);
 		} catch (e) {

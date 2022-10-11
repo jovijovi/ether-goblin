@@ -19,8 +19,11 @@ export const DefaultLoopInterval = 3000;
 // Retry times
 export const DefaultRetryTimes = 5;
 
-// Retry interval (second)
-export const DefaultRetryInterval = 5;
+// Retry min interval (in seconds)
+export const DefaultRetryMinInterval = 5;
+
+// Retry max interval (in seconds)
+export const DefaultRetryMaxInterval = DefaultRetryMinInterval * 3;
 
 // Keep running or not
 export const DefaultKeepRunning = false;

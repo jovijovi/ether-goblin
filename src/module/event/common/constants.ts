@@ -1,10 +1,28 @@
-// ERC721 Transfer event name
-export const EventNameTransfer = 'Transfer(address,address,uint256)';
+import {utils} from 'ethers';
 
-// ERC721 event type
+// ERC721 event names
+export const EventNameTransfer = 'Transfer(address,address,uint256)';
+export const EventNameMint = EventNameTransfer;
+export const EventNameBurn = EventNameTransfer;
+
+// ERC721 event types
 export const EventTypeMint = 'mint';
 export const EventTypeTransfer = 'transfer';
 export const EventTypeBurn = 'burn';
+
+// mapper: EventType - EventName
+export const EventMapper = new Map([
+	[EventTypeMint, EventNameMint],
+	[EventTypeTransfer, EventNameTransfer],
+	[EventTypeBurn, EventNameBurn],
+]);
+
+// mapper: EventName - TopicID
+export const EventNameMapper = new Map([
+	[EventNameMint, utils.id(EventNameMint)],
+	[EventNameTransfer, utils.id(EventNameTransfer)],
+	[EventNameBurn, utils.id(EventNameBurn)],
+])
 
 // Time unit in millisecond
 // Day/Hour/Minute/Second

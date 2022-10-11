@@ -33,6 +33,14 @@ export namespace Cache {
 		updateAgeOnHas: true,   // Update age(ttl) by 'has'
 	});
 
+	// CacheBlockTimestamp cache of block timestamp, ttl is 60 seconds
+	export const CacheBlockTimestamp = CacheSet.New("BlockTimestamp", {
+		max: 500000,
+		ttl: 1000 * 60,
+		updateAgeOnGet: true,   // Update age(ttl) by 'get'
+		updateAgeOnHas: true,   // Update age(ttl) by 'has'
+	});
+
 	export function MemCache(name: string, ttl: number = 1000 * 60, max = 10): LRUCache<any, any> {
 		return CacheSet.New(name, {
 			max: max,   // 10 by default

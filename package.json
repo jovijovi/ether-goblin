@@ -1,6 +1,6 @@
 {
   "name": "ether-goblin",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "description": "A microservice for the Ethereum ecosystem.",
   "author": "jovijovi <mageyul@hotmail.com>",
   "license": "MIT",

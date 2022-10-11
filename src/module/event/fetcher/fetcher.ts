@@ -5,7 +5,6 @@ import fastq, {queueAsPromised} from 'fastq';
 import got from 'got';
 import {network} from '@jovijovi/ether-network';
 import {Options} from './options';
-import {core} from '@jovijovi/ether-core';
 import {
 	DefaultExecuteJobConcurrency,
 	DefaultFromBlock,
@@ -14,15 +13,15 @@ import {
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
 	DefaultQueryIntervals,
-	DefaultRetryInterval,
 	DefaultRetryTimes,
 } from './params';
 import {EventTransfer, Response} from '../common/types';
 import {customConfig} from '../../../config';
 import {DB} from './db';
-import {EventNameTransfer, EventTypeMint} from '../common/constants';
-import {CheckEventType, CheckTopics} from '../utils';
+import {EventMapper, EventNameMapper, EventTypeBurn, EventTypeMint, EventTypeTransfer} from '../common/constants';
+import {CheckEventType, CheckTopics, GetEventType} from '../utils';
 import {NewProgressBar, UpdateProgressBar} from './progress';
+import {GetBlockNumber, GetBlockTimestamp, RandomRetryInterval} from './common';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -62,7 +61,7 @@ export async function Run() {
 			maxBlockRange: conf.maxBlockRange ? conf.maxBlockRange : DefaultMaxBlockRange,
 			pushJobIntervals: conf.pushJobIntervals ? conf.pushJobIntervals : DefaultPushJobIntervals,
 			keepRunning: conf.keepRunning,
-		})
+		});
 	}
 
 	log.RequestId().info("Event fetcher is running...");
@@ -99,26 +98,31 @@ async function init(): Promise<[customConfig.EventFetcherConfig, boolean]> {
 
 // Execute query events job
 async function queryLogs(opts: Options = {
-	eventType: [EventTypeMint],
+	eventType: [EventTypeMint, EventTypeTransfer, EventTypeBurn],
 	fromBlock: DefaultFromBlock
 }): Promise<void> {
 	log.RequestId().trace("EXEC JOB(%s), QueryLogs(blocks[%d,%d]) running... QueryLogsJobsCount=%d",
 		opts.eventType, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
-	const provider = network.MyProvider.Get();
+	// Get topic ID (string array)
+	const eventFragments = opts.eventType.map(x => EventMapper.get(x));
+	const topicIDs = eventFragments.map(x => EventNameMapper.get(x));
+
+	// Build event filter
 	const evtFilter = {
 		address: opts.address,
 		fromBlock: opts.fromBlock,
 		toBlock: opts.toBlock,
 		topics: [
-			utils.id(EventNameTransfer),
-			null,
+			topicIDs,
 		]
 	};
 
+	// Get event logs
+	const provider = network.MyProvider.Get();
 	const events = await util.retry.Run(async (): Promise<Array<Log>> => {
 		return await provider.getLogs(evtFilter);
-	}, DefaultRetryTimes, DefaultRetryInterval);
+	}, DefaultRetryTimes, RandomRetryInterval(), false);
 
 	for (const event of events) {
 		// Check event topics
@@ -126,6 +130,7 @@ async function queryLogs(opts: Options = {
 			continue;
 		}
 
+		// Check event type
 		if (!CheckEventType(event.topics, opts.eventType)) {
 			continue;
 		}
@@ -135,11 +140,13 @@ async function queryLogs(opts: Options = {
 			address: event.address,
 			blockNumber: event.blockNumber,
 			blockHash: event.blockHash,
+			blockTimestamp: await GetBlockTimestamp(event.blockHash),
 			transactionHash: event.transactionHash,
 			from: utils.hexZeroPad(utils.hexValue(event.topics[1]), 20),
 			to: utils.hexZeroPad(utils.hexValue(event.topics[2]), 20),
 			tokenId: Number(utils.hexValue(event.topics[3])),
-		}
+			eventType: GetEventType(event.topics),
+		};
 
 		// Push event to queue
 		eventQueue.Push(evt);
@@ -163,7 +170,7 @@ async function fetchEvents(opts: Options = {
 	let nextTo = 0;
 	let blockRange = opts.maxBlockRange;
 	let leftBlocks = 0;
-	let blockNumber = opts.toBlock ? opts.toBlock : await core.GetBlockNumber();
+	let blockNumber = opts.toBlock ? opts.toBlock : await GetBlockNumber();
 
 	auditor.Check(blockNumber >= nextFrom, "Invalid fromBlock/toBlock");
 
@@ -181,7 +188,7 @@ async function fetchEvents(opts: Options = {
 				break;
 			}
 			await util.time.SleepSeconds(DefaultQueryIntervals);
-			blockNumber = await core.GetBlockNumber();
+			blockNumber = await GetBlockNumber();
 			continue;
 		}
 

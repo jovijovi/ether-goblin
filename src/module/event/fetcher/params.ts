@@ -2,7 +2,7 @@
 export const DefaultFromBlock = 0;
 
 // Default max block range
-export const DefaultMaxBlockRange = 10000;
+export const DefaultMaxBlockRange = 1000;
 
 // Default query intervals (unit: second)
 export const DefaultQueryIntervals = 3;

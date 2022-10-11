@@ -5,7 +5,6 @@ import fastq, {queueAsPromised} from 'fastq';
 import got from 'got';
 import {network} from '@jovijovi/ether-network';
 import {Options} from './options';
-import {core} from '@jovijovi/ether-core';
 import {
 	DefaultExecuteJobConcurrency,
 	DefaultFromBlock,
@@ -14,15 +13,16 @@ import {
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
 	DefaultQueryIntervals,
-	DefaultRetryInterval,
 	DefaultRetryTimes,
 } from './params';
 import {EventTransfer, Response} from '../common/types';
 import {customConfig} from '../../../config';
 import {DB} from './db';
-import {EventNameTransfer, EventTypeMint} from '../common/constants';
-import {CheckEventType, CheckTopics} from '../utils';
-import {NewProgress} from './progress';
+import {EventMapper, EventNameMapper, EventTypeBurn, EventTypeMint, EventTypeTransfer} from '../common/constants';
+import {CheckEventType, CheckTopics, GetEventType} from '../utils';
+import {NewProgressBar, UpdateProgressBar} from './progress';
+import {GetBlockNumber, GetBlockTimestamp, RandomRetryInterval} from './common';
+import {Cache} from '../../../common/cache';
 
 // Event queue (ASC, FIFO)
 const eventQueue = new util.Queue<EventTransfer>();
@@ -36,28 +36,94 @@ let queryLogsJobs: queueAsPromised<Options>;
 // Dump job
 const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 1);
 
+// Run event fetcher
+export async function Run() {
+	const [conf, ok] = await init();
+	if (!ok) {
+		return;
+	}
+
+	// Schedule processing job
+	setInterval(() => {
+		auditor.Check(eventQueue, "Event queue is nil");
+		if (eventQueue.Length() === 0) {
+			return;
+		}
+
+		dumpJob.push(eventQueue).catch((err) => log.RequestId().error(err));
+	}, DefaultLoopInterval);
+
+	// Push FetchEvents job
+	if (!conf.api) {
+		PushJob({
+			eventType: conf.eventType,
+			fromBlock: conf.fromBlock,
+			toBlock: conf.toBlock,
+			maxBlockRange: conf.maxBlockRange ? conf.maxBlockRange : DefaultMaxBlockRange,
+			pushJobIntervals: conf.pushJobIntervals ? conf.pushJobIntervals : DefaultPushJobIntervals,
+			keepRunning: conf.keepRunning,
+		});
+	}
+
+	log.RequestId().info("Event fetcher is running...");
+
+	return;
+}
+
+// Init fetcher
+async function init(): Promise<[customConfig.EventFetcherConfig, boolean]> {
+	// Load config
+	const conf = customConfig.GetEvents();
+	if (!conf) {
+		log.RequestId().info('No events configuration, skipped.');
+		return [undefined, false];
+	} else if (!conf.fetcher.enable) {
+		log.RequestId().info('Event fetcher disabled.');
+		return [undefined, false];
+	}
+
+	log.RequestId().info("Event fetcher config=", conf.fetcher);
+
+	// Check params
+	auditor.Check(conf.fetcher.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
+	auditor.Check(conf.fetcher.fromBlock >= 0, "Invalid fromBlock");
+
+	// Connect to database
+	await DB.Connect();
+
+	// Build query logs job
+	queryLogsJobs = fastq.promise(queryLogs, conf.fetcher.executeJobConcurrency ? conf.fetcher.executeJobConcurrency : DefaultExecuteJobConcurrency);
+
+	return [conf.fetcher, true];
+}
+
 // Execute query events job
 async function queryLogs(opts: Options = {
-	eventType: [EventTypeMint],
+	eventType: [EventTypeMint, EventTypeTransfer, EventTypeBurn],
 	fromBlock: DefaultFromBlock
 }): Promise<void> {
 	log.RequestId().trace("EXEC JOB(%s), QueryLogs(blocks[%d,%d]) running... QueryLogsJobsCount=%d",
 		opts.eventType, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
-	const provider = network.MyProvider.Get();
+	// Get topic ID (string array)
+	const eventFragments = opts.eventType.map(x => EventMapper.get(x));
+	const topicIDs = eventFragments.map(x => EventNameMapper.get(x));
+
+	// Build event filter
 	const evtFilter = {
 		address: opts.address,
 		fromBlock: opts.fromBlock,
 		toBlock: opts.toBlock,
 		topics: [
-			utils.id(EventNameTransfer),
-			null,
+			topicIDs,
 		]
 	};
 
+	// Get event logs
+	const provider = network.MyProvider.Get();
 	const events = await util.retry.Run(async (): Promise<Array<Log>> => {
 		return await provider.getLogs(evtFilter);
-	}, DefaultRetryTimes, DefaultRetryInterval);
+	}, DefaultRetryTimes, RandomRetryInterval(), false);
 
 	for (const event of events) {
 		// Check event topics
@@ -65,6 +131,7 @@ async function queryLogs(opts: Options = {
 			continue;
 		}
 
+		// Check event type
 		if (!CheckEventType(event.topics, opts.eventType)) {
 			continue;
 		}
@@ -74,11 +141,13 @@ async function queryLogs(opts: Options = {
 			address: event.address,
 			blockNumber: event.blockNumber,
 			blockHash: event.blockHash,
+			blockTimestamp: await GetBlockTimestamp(event.blockHash),
 			transactionHash: event.transactionHash,
 			from: utils.hexZeroPad(utils.hexValue(event.topics[1]), 20),
 			to: utils.hexZeroPad(utils.hexValue(event.topics[2]), 20),
 			tokenId: Number(utils.hexValue(event.topics[3])),
-		}
+			eventType: GetEventType(event.topics),
+		};
 
 		// Push event to queue
 		eventQueue.Push(evt);
@@ -102,26 +171,25 @@ async function fetchEvents(opts: Options = {
 	let nextTo = 0;
 	let blockRange = opts.maxBlockRange;
 	let leftBlocks = 0;
-	let blockNumber = opts.toBlock ? opts.toBlock : await core.GetBlockNumber();
+	let blockNumber = opts.toBlock ? opts.toBlock : await GetBlockNumber();
 
 	auditor.Check(blockNumber >= nextFrom, "Invalid fromBlock/toBlock");
 
-	// Connect to database
-	await DB.Connect();
-
 	// Init progress bar
 	const totalProgress = blockNumber - nextFrom;
-	const progress = NewProgress(totalProgress);
+	const progress = NewProgressBar(totalProgress);
 
 	do {
+		await util.time.SleepMilliseconds(opts.pushJobIntervals);
+
 		leftBlocks = blockNumber - nextFrom;
 		if (leftBlocks <= 0) {
 			if (!opts.keepRunning) {
-				progress.tick(totalProgress);
+				UpdateProgressBar(progress, totalProgress);
 				break;
 			}
 			await util.time.SleepSeconds(DefaultQueryIntervals);
-			blockNumber = await core.GetBlockNumber();
+			blockNumber = await GetBlockNumber();
 			continue;
 		}
 
@@ -141,48 +209,12 @@ async function fetchEvents(opts: Options = {
 		}).catch((err) => log.RequestId().error(err));
 
 		// Update progress
-		progress.tick(nextTo - nextFrom);
+		UpdateProgressBar(progress, nextTo - nextFrom);
 
 		nextFrom = nextTo + 1;
-
-		await util.time.SleepMilliseconds(opts.pushJobIntervals);
 	} while (nextFrom > 0);
 
 	log.RequestId().info("FetchEvents finished, options=%o", opts);
-
-	return;
-}
-
-// Run event fetcher
-export function Run() {
-	// Check config
-	const conf = customConfig.GetEvents();
-	if (!conf) {
-		log.RequestId().info('No events configuration, skipped.');
-		return;
-	} else if (!conf.fetcher.enable) {
-		log.RequestId().info('Event fetcher disabled.');
-		return;
-	}
-
-	log.RequestId().info("Event fetcher config=", conf.fetcher);
-
-	auditor.Check(conf.fetcher.executeJobConcurrency >= 1, "Invalid executeJobConcurrency");
-	auditor.Check(conf.fetcher.fromBlock >= 0, "Invalid fromBlock");
-
-	queryLogsJobs = fastq.promise(queryLogs, conf.fetcher.executeJobConcurrency ? conf.fetcher.executeJobConcurrency : DefaultExecuteJobConcurrency);
-
-	log.RequestId().info("Event fetcher is running...");
-
-	// Schedule processing job
-	setInterval(() => {
-		auditor.Check(eventQueue, "Event queue is nil");
-		if (eventQueue.Length() === 0) {
-			return;
-		}
-
-		dumpJob.push(eventQueue).catch((err) => log.RequestId().error(err));
-	}, DefaultLoopInterval);
 
 	return;
 }
@@ -215,6 +247,7 @@ async function callback(evt: EventTransfer): Promise<void> {
 // Dump events
 async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 	try {
+		const conf = customConfig.GetEvents().fetcher;
 		const len = queue.Length();
 		if (len === 0) {
 			return;
@@ -227,6 +260,16 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 			await callback(evt);
 
 			// Dump event to database
+			if (!conf.forceUpdate && await DB.Client().IsExists({
+				address: evt.address,
+				blockNumber: evt.blockNumber,
+				transactionHash: evt.transactionHash,
+				tokenId: evt.tokenId.toString(),
+			})) {
+				log.RequestId().trace("Token(%s) in block(%d) tx(%s) already exists, skipped",
+					evt.tokenId.toString(), evt.blockNumber, evt.transactionHash);
+				return;
+			}
 			log.RequestId().info("Dumping events to db, count=%d, event=%o", i + 1, evt);
 			await DB.Client().Save(evt);
 		}
@@ -238,16 +281,41 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 	return;
 }
 
-// PushFetchEventsJob push FetchEvents job to scheduler
-export function PushFetchEventsJob(opts: Options) {
+// PushJob push FetchEvents job to scheduler
+// (Set default config if option is empty)
+export function PushJob(opts: Options) {
 	fetchEventsJobs.push({
 		address: opts.address,
-		eventType: opts.eventType,
-		fromBlock: opts.fromBlock,
+		eventType: opts.eventType ? opts.eventType : customConfig.GetEvents().fetcher.eventType,
+		fromBlock: opts.fromBlock ? opts.fromBlock : customConfig.GetEvents().fetcher.fromBlock,
 		toBlock: opts.toBlock,
 		maxBlockRange: opts.maxBlockRange ? opts.maxBlockRange : customConfig.GetEvents().fetcher.maxBlockRange,
 		pushJobIntervals: opts.pushJobIntervals ? opts.pushJobIntervals : customConfig.GetEvents().fetcher.pushJobIntervals,
+		keepRunning: opts.keepRunning ? opts.keepRunning : customConfig.GetEvents().fetcher.keepRunning,
 	}).catch((err) => log.RequestId().error(err));
+}
+
+// Get token history
+export async function GetTokenHistory(address: string, tokenId: string): Promise<any> {
+	const key = Cache.CombinationKey([address, tokenId]);
+	if (Cache.CacheNFTHistory.has(key)) {
+		return Cache.CacheNFTHistory.get(key);
+	}
+
+	const historyDetails = await DB.Client().QueryTokenHistory(address, tokenId);
+	const result = [];
+	for (const moment of historyDetails) {
+		result.push({
+			block_number: moment.block_number,
+			transaction_hash: moment.transaction_hash,
+			from: moment.from,
+			to: moment.to,
+			event_type: moment.event_type,
+		})
+	}
+	Cache.CacheNFTHistory.set(key, result);
+
+	return result;
 }
 
 // Export handler

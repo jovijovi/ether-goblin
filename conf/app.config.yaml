@@ -158,6 +158,12 @@ custom:
     fetcher:
       enable: false
 
+      # Enable HTTP APIs
+      api: false
+
+      # Display progress bar
+      progressBar: false
+
       # Enabled event type
       eventType:
         # 'mint' means transfer token from zero address to another address
@@ -170,8 +176,11 @@ custom:
       # Callback URL
       callback: 'YOUR CALLBACK URL'
 
-      # Fetch from block number (history or future block)
+      # Pull from block number (history or future block)
       fromBlock: 0
+
+      # Pull to block number (history or future block, optional)
+      toBlock:
 
       # eth_getLogs block range
       maxBlockRange: 3500
@@ -181,6 +190,12 @@ custom:
 
       # Execute job concurrency
       executeJobConcurrency: 20
+
+      # Keep running fetcher
+      keepRunning: false
+
+      # Force update database if the data already exists
+      forceUpdate: true
 
       # Supported Database: postgres, mysql or sqlite
       db: postgres

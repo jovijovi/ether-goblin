@@ -33,6 +33,20 @@ export namespace Cache {
 		updateAgeOnHas: true,   // Update age(ttl) by 'has'
 	});
 
+	// CacheBlockTimestamp cache of block timestamp, ttl is 60 seconds
+	export const CacheBlockTimestamp = CacheSet.New("BlockTimestamp", {
+		max: 500000,
+		ttl: 1000 * 60,
+		updateAgeOnGet: true,   // Update age(ttl) by 'get'
+		updateAgeOnHas: true,   // Update age(ttl) by 'has'
+	});
+
+	// CacheNFTHistory cache of NFT history, ttl is 10 seconds
+	export const CacheNFTHistory = CacheSet.New("NFTHistory", {
+		max: 100000,
+		ttl: 1000 * 10,
+	});
+
 	export function MemCache(name: string, ttl: number = 1000 * 60, max = 10): LRUCache<any, any> {
 		return CacheSet.New(name, {
 			max: max,   // 10 by default

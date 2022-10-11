@@ -1,3 +1,4 @@
+import {loader} from '@jovijovi/pedrojs-loader';
 import {customConfig} from '../config';
 import {watchdog} from './watchdog';
 import * as event from './event';
@@ -20,24 +21,14 @@ const eventFetcherLoader = () => {
 	event.fetcher.Run();
 
 	// Register HTTP APIs
-	RestfulHandlers.RegisterAPIs(ModuleEventFetcher, event.fetcher.Handler.APIs);
-}
-
-// Loader mapper
-const loaderMapper = new Map([
-	[ModuleWatchdog, watchdogLoader],
-	[ModuleEventListener, eventListenerLoader],
-	[ModuleEventFetcher, eventFetcherLoader],
-])
-
-// Module loader
-function loader(id: string) {
-	return loaderMapper.get(id)();
+	if (customConfig.GetEvents().fetcher.api) {
+		RestfulHandlers.RegisterAPIs(ModuleEventFetcher, event.fetcher.Handler.APIs);
+	}
 }
 
 // Load module by config
 export function Load() {
-	customConfig.GetWatchdog().enable ? loader(ModuleWatchdog) : false;
-	customConfig.GetEvents().listener.enable ? loader(ModuleEventListener) : false;
-	customConfig.GetEvents().fetcher.enable ? loader(ModuleEventFetcher) : false;
+	customConfig.GetWatchdog().enable ? loader.Load(ModuleWatchdog, watchdogLoader) : false;
+	customConfig.GetEvents().listener.enable ? loader.Load(ModuleEventListener, eventListenerLoader) : false;
+	customConfig.GetEvents().fetcher.enable ? loader.Load(ModuleEventFetcher, eventFetcherLoader) : false;
 }

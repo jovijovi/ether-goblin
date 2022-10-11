@@ -48,7 +48,7 @@ export namespace customConfig {
 		max: number
 	}
 
-	class EventListener {
+	class EventListenerConfig {
 		enable: boolean
 		eventType: string[]
 		responseCode?: string | number
@@ -58,21 +58,26 @@ export namespace customConfig {
 		contractOwners: string[]
 	}
 
-	class EventFetcher {
+	export class EventFetcherConfig {
 		enable: boolean
+		api: boolean
+		progressBar: boolean
 		eventType: string[]
 		callback: string
 		fromBlock: number
+		toBlock: number
 		maxBlockRange?: number
 		pushJobIntervals?: number
 		executeJobConcurrency?: number
+		keepRunning?: boolean
+		forceUpdate?: boolean
 		db: string
 		contractOwners: string[]
 	}
 
-	class Events {
-		listener: EventListener
-		fetcher: EventFetcher
+	class EventsConfig {
+		listener: EventListenerConfig
+		fetcher: EventFetcherConfig
 	}
 
 	interface PostgresqlConfig extends Postgresql.Config {
@@ -87,7 +92,7 @@ export namespace customConfig {
 		table: string
 	}
 
-	class Database {
+	class DatabaseConfig {
 		postgres: PostgresqlConfig
 		mysql: MysqlConfig
 		sqlite: SqliteConfig
@@ -97,8 +102,8 @@ export namespace customConfig {
 		apiResponseCode: any
 		tx: TxConfig
 		watchdog?: WatchdogConfig
-		events?: Events
-		database?: Database
+		events?: EventsConfig
+		database?: DatabaseConfig
 	}
 
 	let customConfig: CustomConfig;
@@ -126,7 +131,7 @@ export namespace customConfig {
 	}
 
 	// GetEvents returns events config
-	export function GetEvents(): Events {
+	export function GetEvents(): EventsConfig {
 		if (customConfig.events) {
 			return customConfig.events;
 		}

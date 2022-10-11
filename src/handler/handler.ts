@@ -22,7 +22,7 @@ class privateImplHandlers implements ITaskHandler {
 	RegisterHandlers(router: core.Express) {
 		for (const [id, api] of this._apis) {
 			api(router);
-			log.RequestId().info("HTTP API(%s) registered", id);
+			log.RequestId().info("HTTP APIs(%s) registered", id);
 		}
 
 		defaultAPIs(router);

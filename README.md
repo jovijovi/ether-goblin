@@ -17,6 +17,8 @@ A microservice for the Ethereum ecosystem.
   - `Event Fetcher` Fetching ERC721 events from block history
   - Support `Mint`/`Transfer`/`Burn` event
 - `Out-of-the-box` NFT APIs (under development)
+  - `Event Fetcher` APIs
+    - GetTokenHistory
 - API authorization via `2FA` token
 - `Microservice` run in Docker
 

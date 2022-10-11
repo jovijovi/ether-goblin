@@ -21,7 +21,9 @@ const eventFetcherLoader = () => {
 	event.fetcher.Run();
 
 	// Register HTTP APIs
-	RestfulHandlers.RegisterAPIs(ModuleEventFetcher, event.fetcher.Handler.APIs);
+	if (customConfig.GetEvents().fetcher.api) {
+		RestfulHandlers.RegisterAPIs(ModuleEventFetcher, event.fetcher.Handler.APIs);
+	}
 }
 
 // Load module by config

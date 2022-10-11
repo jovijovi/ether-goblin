@@ -158,6 +158,9 @@ custom:
     fetcher:
       enable: false
 
+      # Enable HTTP APIs
+      api: false
+
       # Display progress bar
       progressBar: false
 

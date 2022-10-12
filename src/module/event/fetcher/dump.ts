@@ -74,8 +74,14 @@ async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
 			// Calc left events
 			leftEvents -= chunkSize;
 
-			log.RequestId().debug("EXEC JOB(Dump|id:%s), %d events dumped, progress=%d/%d (%d%)",
-				jobId, events.length, len - leftEvents, len, ((len - leftEvents) * 100 / len).toFixed(1));
+			log.RequestId().debug("EXEC JOB(Dump|id:%s), %d events dumped, progress=%d%(%d/%d), lastBlockInChunk=%s",
+				jobId,
+				events.length,
+				((len - leftEvents) * 100 / len).toFixed(1),
+				len - leftEvents,
+				len,
+				events[chunkSize - 1].block_number,
+			);
 		} while (leftEvents > 0);
 	} catch (e) {
 		log.RequestId().error("Dump failed, error=", e);

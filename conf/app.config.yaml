@@ -194,11 +194,11 @@ custom:
       # Keep running fetcher
       keepRunning: false
 
-      # Force update database if the data already exists
-      forceUpdate: true
-
       # Supported Database: postgres, mysql or sqlite
       db: postgres
+
+      # Chunk size for saving data to the database
+      chunkSize: 200
 
       # NFT contract owners (TODO)
       contractOwners:

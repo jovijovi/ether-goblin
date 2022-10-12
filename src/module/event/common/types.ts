@@ -4,6 +4,7 @@ export type EventTransfer = {
 	blockNumber: number     // Block number
 	blockHash: string       // Block hash
 	blockTimestamp?: number // Block timestamp
+	blockDatetime?: string  // Block datetime
 	transactionHash: string // Tx hash
 	from: string            // From
 	to: string              // To

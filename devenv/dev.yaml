@@ -5,7 +5,7 @@ networks:
 
 services:
   postgres:
-    container_name: devenv_postgres_pedrojs
+    container_name: devenv_postgres_goblin
     image: postgres:13.8
     restart: always
     environment:
@@ -19,7 +19,7 @@ services:
       - devenv-network-ether-goblin
 
   mysql:
-    container_name: devenv_mysql_pedrojs
+    container_name: devenv_mysql_goblin
     image: mysql:8.0.26
     command: --default-authentication-plugin=mysql_native_password
     restart: always

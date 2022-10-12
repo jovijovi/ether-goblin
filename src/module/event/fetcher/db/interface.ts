@@ -1,5 +1,5 @@
 import {ModelCtor} from 'sequelize';
-import {log, util} from '@jovijovi/pedrojs-common';
+import {log} from '@jovijovi/pedrojs-common';
 import {EventTransfer} from '../../common/types';
 import {IMintEvents} from './model';
 import {IQuery} from './types';
@@ -22,7 +22,7 @@ export class Database implements IDatabase {
 					block_number: evt.blockNumber.toString(),   // Block number
 					block_hash: evt.blockHash,                  // Block hash
 					block_timestamp: evt.blockTimestamp,        // Block timestamp
-					block_datetime: util.time.GetUnixTimestamp(evt.blockTimestamp, 'UTC'),  // Block datetime
+					block_datetime: evt.blockDatetime,          // Block datetime
 					transaction_hash: evt.transactionHash,      // Tx hash
 					from: evt.from,                             // From
 					to: evt.to,                                 // To
@@ -35,6 +35,19 @@ export class Database implements IDatabase {
 		}
 
 		return;
+	}
+
+	// Save records in bulk, ignore duplicates
+	async BulkSave(records: any[]): Promise<any> {
+		try {
+			await this.ModelEvent.bulkCreate(records,
+				{
+					ignoreDuplicates: true,
+				}
+			);
+		} catch (e) {
+			log.RequestId().error('BulkSave failed, error=', e.message);
+		}
 	}
 
 	// Check if exists
@@ -53,7 +66,7 @@ export class Database implements IDatabase {
 		}
 	}
 
-	// Query token history (all event type)
+	// Query token history(all event types) order by 'block_number' ASC
 	async QueryTokenHistory(address: string, tokenId: string): Promise<any> {
 		try {
 			return await this.ModelEvent.findAll(
@@ -71,5 +84,3 @@ export class Database implements IDatabase {
 		}
 	}
 }
-
-

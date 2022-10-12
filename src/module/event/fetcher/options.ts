@@ -1,4 +1,5 @@
 export type Options = {
+	jobId?: string                  // Job ID
 	eventType: string[]             // ERC721 event type: mint/transfer/burn
 	abi?: any
 	address?: string                // The address to filter by, or null to match any address (Optional)

@@ -1,5 +1,7 @@
 import {constants} from 'ethers';
+import {util} from '@jovijovi/pedrojs-common';
 import {EventTypeBurn, EventTypeMint, EventTypeTransfer} from '../common/constants';
+import {DefaultJobIDLength, DefaultNanoIDAlphabet} from './params';
 
 // Check if the event topics is ERC721 compliant.
 export function CheckTopics(topics: Array<string>): boolean {
@@ -36,4 +38,12 @@ export function GetEventType(topics: Array<string>): string {
 	}
 
 	return undefined;
+}
+
+// New job ID
+export function NewJobID(): string {
+	return util.nanoid.NewNanoID({
+		alphabet: DefaultNanoIDAlphabet,
+		size: DefaultJobIDLength,
+	});
 }

@@ -2,39 +2,33 @@ import {utils} from 'ethers';
 import {Log} from '@ethersproject/abstract-provider';
 import {auditor, log, util} from '@jovijovi/pedrojs-common';
 import fastq, {queueAsPromised} from 'fastq';
-import got from 'got';
 import {network} from '@jovijovi/ether-network';
 import {Options} from './options';
 import {
 	DefaultExecuteJobConcurrency,
 	DefaultFromBlock,
 	DefaultKeepRunning,
-	DefaultLoopInterval,
 	DefaultMaxBlockRange,
 	DefaultPushJobIntervals,
 	DefaultQueryIntervals,
 	DefaultRetryTimes,
 } from './params';
-import {EventTransfer, Response} from '../common/types';
+import {EventTransfer} from '../common/types';
 import {customConfig} from '../../../config';
 import {DB} from './db';
 import {EventMapper, EventNameMapper, EventTypeBurn, EventTypeMint, EventTypeTransfer} from '../common/constants';
-import {CheckEventType, CheckTopics, GetEventType} from '../utils';
+import {CheckEventType, CheckTopics, GetEventType, NewJobID} from '../utils';
 import {NewProgressBar, UpdateProgressBar} from './progress';
+import * as callback from './callback';
+import * as dump from './dump';
 import {GetBlockNumber, GetBlockTimestamp, RandomRetryInterval} from './common';
 import {Cache} from '../../../common/cache';
-
-// Event queue (ASC, FIFO)
-const eventQueue = new util.Queue<EventTransfer>();
 
 // Fetch events jobs
 const fetchEventsJobs: queueAsPromised<Options> = fastq.promise(fetchEvents, 1);
 
 // Query logs jobs
 let queryLogsJobs: queueAsPromised<Options>;
-
-// Dump job
-const dumpJob: queueAsPromised<util.Queue<EventTransfer>> = fastq.promise(dump, 1);
 
 // Run event fetcher
 export async function Run() {
@@ -43,15 +37,13 @@ export async function Run() {
 		return;
 	}
 
-	// Schedule processing job
-	setInterval(() => {
-		auditor.Check(eventQueue, "Event queue is nil");
-		if (eventQueue.Length() === 0) {
-			return;
-		}
+	// Schedule dump job
+	await dump.Run();
 
-		dumpJob.push(eventQueue).catch((err) => log.RequestId().error(err));
-	}, DefaultLoopInterval);
+	// Schedule callback job
+	if (conf.callback) {
+		await callback.Run();
+	}
 
 	// Push FetchEvents job
 	if (!conf.api) {
@@ -102,8 +94,8 @@ async function queryLogs(opts: Options = {
 	eventType: [EventTypeMint, EventTypeTransfer, EventTypeBurn],
 	fromBlock: DefaultFromBlock
 }): Promise<void> {
-	log.RequestId().trace("EXEC JOB(%s), QueryLogs(blocks[%d,%d]) running... QueryLogsJobsCount=%d",
-		opts.eventType, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
+	log.RequestId().trace("EXEC JOB(QueryLogs|id:%s), blocks[%d,%d], TotalJobs=%d",
+		opts.jobId, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
 	// Get topic ID (string array)
 	const eventFragments = opts.eventType.map(x => EventMapper.get(x));
@@ -137,11 +129,13 @@ async function queryLogs(opts: Options = {
 		}
 
 		// Build event
+		const blockTimestamp = await GetBlockTimestamp(event.blockHash);
 		const evt: EventTransfer = {
 			address: event.address,
 			blockNumber: event.blockNumber,
 			blockHash: event.blockHash,
-			blockTimestamp: await GetBlockTimestamp(event.blockHash),
+			blockTimestamp: blockTimestamp,
+			blockDatetime: util.time.GetUnixTimestamp(blockTimestamp, 'UTC'),
 			transactionHash: event.transactionHash,
 			from: utils.hexZeroPad(utils.hexValue(event.topics[1]), 20),
 			to: utils.hexZeroPad(utils.hexValue(event.topics[2]), 20),
@@ -150,11 +144,11 @@ async function queryLogs(opts: Options = {
 		};
 
 		// Push event to queue
-		eventQueue.Push(evt);
+		dump.Push(evt);
 	}
 
-	log.RequestId().trace("JOB(%s) FINISHED, QueryLogs(blocks[%d,%d]), QueryLogsJobsCount=%d",
-		opts.eventType, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
+	log.RequestId().trace("FINISHED JOB(QueryLogs|id:%s), blocks[%d,%d], TotalJobs=%d",
+		opts.jobId, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
 	return;
 }
@@ -199,14 +193,17 @@ async function fetchEvents(opts: Options = {
 		if (blockRange >= 0 && blockRange <= 1) {
 			log.RequestId().debug("Catch up the latest block(%d)", blockNumber);
 		}
-		log.RequestId().trace("PUSH JOB, blocks[%d,%d](range=%d), queryLogsJobs=%d", nextFrom, nextTo, blockRange, queryLogsJobs.length());
 
-		queryLogsJobs.push({
+		const jobOpts = {
+			jobId: NewJobID(),          // Job ID
 			address: opts.address,      // The address to filter by, or null to match any address
 			eventType: opts.eventType,  // ERC721 event type: mint/transfer/burn
 			fromBlock: nextFrom,        // Fetch from block number
 			toBlock: nextTo,            // Fetch to block number
-		}).catch((err) => log.RequestId().error(err));
+		}
+		log.RequestId().trace("PUSH JOB(QueryLogs|id:%s), blocks[%d,%d](range=%d), TotalJobs=%d",
+			jobOpts.jobId, nextFrom, nextTo, blockRange, queryLogsJobs.length());
+		queryLogsJobs.push(jobOpts).catch((err) => log.RequestId().error(err));
 
 		// Update progress
 		UpdateProgressBar(progress, nextTo - nextFrom);
@@ -214,69 +211,7 @@ async function fetchEvents(opts: Options = {
 		nextFrom = nextTo + 1;
 	} while (nextFrom > 0);
 
-	log.RequestId().info("FetchEvents finished, options=%o", opts);
-
-	return;
-}
-
-// Event callback
-async function callback(evt: EventTransfer): Promise<void> {
-	try {
-		const conf = customConfig.GetEvents().fetcher;
-
-		// Check URL
-		if (!conf.callback) {
-			return;
-		}
-
-		// Callback
-		log.RequestId().debug("Fetcher calling back(%s)... event:", conf.callback, evt);
-		const rsp: Response = await got.post(conf.callback, {
-			json: evt
-		}).json();
-
-		log.RequestId().trace("Fetcher callback response=", rsp);
-	} catch (e) {
-		log.RequestId().error("Fetcher callback failed, error=", e);
-		return;
-	}
-
-	return;
-}
-
-// Dump events
-async function dump(queue: util.Queue<EventTransfer>): Promise<void> {
-	try {
-		const conf = customConfig.GetEvents().fetcher;
-		const len = queue.Length();
-		if (len === 0) {
-			return;
-		}
-
-		for (let i = 0; i < len; i++) {
-			const evt = queue.Shift();
-
-			// Callback (Optional)
-			await callback(evt);
-
-			// Dump event to database
-			if (!conf.forceUpdate && await DB.Client().IsExists({
-				address: evt.address,
-				blockNumber: evt.blockNumber,
-				transactionHash: evt.transactionHash,
-				tokenId: evt.tokenId.toString(),
-			})) {
-				log.RequestId().trace("Token(%s) in block(%d) tx(%s) already exists, skipped",
-					evt.tokenId.toString(), evt.blockNumber, evt.transactionHash);
-				return;
-			}
-			log.RequestId().info("Dumping events to db, count=%d, event=%o", i + 1, evt);
-			await DB.Client().Save(evt);
-		}
-	} catch (e) {
-		log.RequestId().error("Dump failed, error=", e);
-		return;
-	}
+	log.RequestId().info("All JOBs(QueryLogs) are scheduled, options=%o", opts);
 
 	return;
 }

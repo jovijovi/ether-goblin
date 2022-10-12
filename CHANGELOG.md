@@ -1,5 +1,23 @@
 # Changelog
 
+## [v0.11.2](https://github.com/jovijovi/ether-goblin/releases/tag/v0.11.2)
+
+### Features
+
+- (module/event/fetcher/db): add `BulkSave`
+
+### Performance
+
+- (module/event/fetcher): improve dump events performance by `BulkSave`
+
+### Refactor
+
+- (module/event/fetcher): refactor callback
+
+### Build
+
+- Bump packages
+
 ## [v0.11.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.11.0)
 
 ### BREAKING CHANGES

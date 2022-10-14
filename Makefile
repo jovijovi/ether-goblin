@@ -1,7 +1,7 @@
 APP_NAME:=ether-goblin
 HUB:=$(if $(HUB),$(HUB),some_docker_image_repo)
 OS:=linux
-NODE_VER=16.17
+NODE_VER=16.18
 IMAGE_TAG:=slim
 TS_VER=$(shell tsc -v)
 

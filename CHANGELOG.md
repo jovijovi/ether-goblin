@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.11.6](https://github.com/jovijovi/ether-goblin/releases/tag/v0.11.6)
+
+### Fixes
+
+- (module/event/fetcher): push event to callback queue
+
+### Build
+
+- Replaced node-slim with node-alpine because the bug was fixed in hardhat@2.12.1. Ref: <https://github.com/NomicFoundation/hardhat/issues/3195>
+- Bump node version from 16.17 to 16.18
+- Bump packages
+
 ## [v0.11.2](https://github.com/jovijovi/ether-goblin/releases/tag/v0.11.2)
 
 ### Features
@@ -67,7 +79,7 @@
 
 ### Build
 
-- Replace alpine by slim. Ref: <https://github.com/NomicFoundation/hardhat/issues/3195>
+- Replace node-alpine with node-slim. Ref: <https://github.com/NomicFoundation/hardhat/issues/3195>
 
 ## [v0.9.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.9.0)
 

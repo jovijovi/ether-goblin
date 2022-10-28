@@ -21,7 +21,7 @@ RUN yarn install --frozen-lockfile \
 
 FROM node:${NODE_VER}-${IMAGE_TAG} as runtime
 
-RUN apt-get update && apt-get install bash
+RUN apk add --no-cache bash
 
 COPY --from=builder /opt/app_src/dist /opt/app
 COPY --from=builder /opt/app_src/node_modules /opt/app/node_modules

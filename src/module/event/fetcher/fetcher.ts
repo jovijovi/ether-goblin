@@ -97,6 +97,9 @@ async function queryLogs(opts: Options = {
 	log.RequestId().trace("EXEC JOB(QueryLogs|id:%s), blocks[%d,%d], TotalJobs=%d",
 		opts.jobId, opts.fromBlock, opts.toBlock, queryLogsJobs.length());
 
+	// Get fetcher config
+	const conf = customConfig.GetEvents().fetcher;
+
 	// Get topic ID (string array)
 	const eventFragments = opts.eventType.map(x => EventMapper.get(x));
 	const topicIDs = eventFragments.map(x => EventNameMapper.get(x));
@@ -145,6 +148,11 @@ async function queryLogs(opts: Options = {
 
 		// Push event to queue
 		dump.Push(evt);
+
+		// Push event to callback queue
+		if (conf.callback) {
+			callback.Push(evt);
+		}
 	}
 
 	log.RequestId().trace("FINISHED JOB(QueryLogs|id:%s), blocks[%d,%d], TotalJobs=%d",

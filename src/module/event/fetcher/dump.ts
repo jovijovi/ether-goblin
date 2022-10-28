@@ -30,6 +30,7 @@ export async function Run() {
 	}, DefaultLoopInterval);
 }
 
+// Push event to dump queue
 export function Push(evt: EventTransfer) {
 	eventQueue.Push(evt);
 }

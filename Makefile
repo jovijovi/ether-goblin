@@ -2,7 +2,7 @@ APP_NAME:=ether-goblin
 HUB:=$(if $(HUB),$(HUB),some_docker_image_repo)
 OS:=linux
 NODE_VER=16.18
-IMAGE_TAG:=slim
+IMAGE_TAG:=alpine
 TS_VER=$(shell tsc -v)
 
 prj_dir:=$(shell pwd -L)

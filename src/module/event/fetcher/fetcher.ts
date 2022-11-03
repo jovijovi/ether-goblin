@@ -49,6 +49,7 @@ export async function Run() {
 	if (!conf.api) {
 		PushJob({
 			eventType: conf.eventType,
+			address: conf.contractAddress,
 			fromBlock: conf.fromBlock,
 			toBlock: conf.toBlock,
 			maxBlockRange: conf.maxBlockRange ? conf.maxBlockRange : DefaultMaxBlockRange,

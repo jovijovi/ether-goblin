@@ -200,6 +200,9 @@ custom:
       # Chunk size for saving data to the database
       chunkSize: 200
 
+      # The address to filter by, or null to match any address
+      contractAddress: ''
+
       # NFT contract owners (TODO)
       contractOwners:
         - 'CONTRACT_OWNER_ADDRESS_1'

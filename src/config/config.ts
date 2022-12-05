@@ -72,6 +72,7 @@ export namespace customConfig {
 		keepRunning?: boolean
 		db: string
 		chunkSize: number
+		contractAddress: string
 		contractOwners: string[]
 	}
 

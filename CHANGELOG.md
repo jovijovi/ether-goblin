@@ -1,5 +1,18 @@
 # Changelog
 
+## [v0.12.0](https://github.com/jovijovi/ether-goblin/releases/tag/v0.12.0)
+
+### Features
+
+- (module/event/fetcher): fetch events by contract address
+
+### Build
+
+- Bump node version from 16.18 to 18.12
+- Bump typescript from 4.8.4 to 4.9.3
+- Bump @openzeppelin/contracts from 4.7.3 to 4.8.0
+- Bump packages
+
 ## [v0.11.6](https://github.com/jovijovi/ether-goblin/releases/tag/v0.11.6)
 
 ### Fixes

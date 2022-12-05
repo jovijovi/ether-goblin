@@ -26,18 +26,18 @@ A microservice for the Ethereum ecosystem.
 
 - [Ethereum](https://ethereum.org/)
 - [Polygon](https://polygon.technology/)
-- [zkSync 2.0 (alpha testnet)](https://zksync.io/)
+- [zkSync 2.0](https://zksync.io/)
 
 ## Development Environment
 
-- typescript `4.8.4`
-- node `v16.18.0`
+- typescript `4.9.3`
+- node `v18.12.1`
 - ts-node `v10.9.1`
 - yarn `v1.22.19`
 
 ## Contract Dependencies
 
-- @openzeppelin/contracts: [`4.7.3`](https://www.npmjs.com/package/@openzeppelin/contracts/v/4.7.3)
+- @openzeppelin/contracts: [`4.8.0`](https://www.npmjs.com/package/@openzeppelin/contracts/v/4.8.0)
 
 ## Quick Guide
 
